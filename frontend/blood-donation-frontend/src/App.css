@@ -8,7 +8,8 @@
 .login-form,
 .donor-form,
 .request-form,
-.inventory-form {
+.inventory-form,
+.donation-form {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -21,7 +22,9 @@
 .request-form input,
 .request-form select,
 .inventory-form input,
-.inventory-form select {
+.inventory-form select,
+.donation-form input,
+.donation-form select {
   padding: 8px;
   font-size: 16px;
   border: 1px solid #ccc;
@@ -31,7 +34,8 @@
 .login-form button,
 .donor-form button,
 .request-form button,
-.inventory-form button {
+.inventory-form button,
+.donation-form button {
   padding: 10px;
   background-color: #28a745;
   color: white;
@@ -44,20 +48,23 @@
 .login-form button:hover,
 .donor-form button:hover,
 .request-form button:hover,
-.inventory-form button:hover {
+.inventory-form button:hover,
+.donation-form button:hover {
   background-color: #218838;
 }
 
 .donor-list,
 .request-list,
-.inventory-list {
+.inventory-list,
+.donation-list {
   list-style: none;
   padding: 0;
 }
 
 .donor-list li,
 .request-list li,
-.inventory-list li {
+.inventory-list li,
+.donation-list li {
   padding: 10px;
   border-bottom: 1px solid #eee;
 }

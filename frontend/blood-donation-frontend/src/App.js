@@ -6,6 +6,7 @@ function App() {
   const [donors, setDonors] = useState([]);
   const [requests, setRequests] = useState([]);
   const [inventory, setInventory] = useState([]);
+  const [donations, setDonations] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     blood_group: '',
@@ -20,6 +21,11 @@ function App() {
     hospital: '',
     blood_group: '',
     units_available: '',
+  });
+  const [donationFormData, setDonationFormData] = useState({
+    blood_group: '',
+    hospital: '',
+    units_donated: '',
   });
   const [loginData, setLoginData] = useState({
     username: '',
@@ -59,6 +65,16 @@ function App() {
         })
         .catch(error => {
           console.error('Error fetching inventory:', error);
+        });
+
+      axios.get('http://127.0.0.1:8000/api/donations/', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then(response => {
+          setDonations(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching donations:', error);
         });
     }
   }, [token]);
@@ -140,6 +156,27 @@ function App() {
       })
       .catch(error => {
         console.error('Error adding inventory:', error);
+      });
+  };
+
+  // Handle donation form
+  const handleDonationInputChange = (e) => {
+    setDonationFormData({ ...donationFormData, [e.target.name]: e.target.value });
+  };
+
+  const handleDonationSubmit = (e) => {
+    e.preventDefault();
+    console.log('Submitting donation:', donationFormData); // Debug donation
+    axios.post('http://127.0.0.1:8000/api/donations/', donationFormData, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(response => {
+        console.log('Donation response:', response.data); // Debug response
+        setDonations([...donations, response.data]);
+        setDonationFormData({ blood_group: '', hospital: '', units_donated: '' });
+      })
+      .catch(error => {
+        console.error('Error adding donation:', error);
       });
   };
 
@@ -285,6 +322,43 @@ function App() {
             <button type="submit">Add Inventory</button>
           </form>
 
+          <h2>Record Donation</h2>
+          <form onSubmit={handleDonationSubmit} className="donation-form">
+            <select
+              name="blood_group"
+              value={donationFormData.blood_group}
+              onChange={handleDonationInputChange}
+              required
+            >
+              <option value="">Select Blood Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+            </select>
+            <input
+              type="text"
+              name="hospital"
+              value={donationFormData.hospital}
+              onChange={handleDonationInputChange}
+              placeholder="Enter hospital name"
+              required
+            />
+            <input
+              type="number"
+              name="units_donated"
+              value={donationFormData.units_donated}
+              onChange={handleDonationInputChange}
+              placeholder="Enter units donated"
+              required
+            />
+            <button type="submit">Record Donation</button>
+          </form>
+
           <h2>Donors</h2>
           <ul className="donor-list">
             {donors.map(donor => (
@@ -308,6 +382,15 @@ function App() {
             {inventory.map(item => (
               <li key={item.id}>
                 {item.hospital} - {item.blood_group} - {item.units_available} units
+              </li>
+            ))}
+          </ul>
+
+          <h2>Donations</h2>
+          <ul className="donation-list">
+            {donations.map(donation => (
+              <li key={donation.id}>
+                {donation.blood_group} - {donation.hospital} - {donation.units_donated} units - {new Date(donation.donation_date).toLocaleDateString()}
               </li>
             ))}
           </ul>

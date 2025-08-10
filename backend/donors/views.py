@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from .models import Donor, Request, BloodInventory
-from .serializers import DonorSerializer, RequestSerializer, BloodInventorySerializer
+from .models import Donor, Request, BloodInventory, Donation
+from .serializers import DonorSerializer, RequestSerializer, BloodInventorySerializer, DonationSerializer
 
 class DonorList(generics.ListCreateAPIView):
     queryset = Donor.objects.all()
@@ -20,3 +20,11 @@ class BloodInventoryList(generics.ListCreateAPIView):
     queryset = BloodInventory.objects.all()
     serializer_class = BloodInventorySerializer
     permission_classes = [IsAuthenticated]
+
+class DonationList(generics.ListCreateAPIView):
+    queryset = Donation.objects.all()
+    serializer_class = DonationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
