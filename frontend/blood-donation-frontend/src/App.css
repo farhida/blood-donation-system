@@ -5,13 +5,14 @@
   font-family: Arial, sans-serif;
 }
 
-.donor-form {
+.login-form, .donor-form {
   display: flex;
   flex-direction: column;
   gap: 10px;
   margin-bottom: 30px;
 }
 
+.login-form input,
 .donor-form input,
 .donor-form select {
   padding: 8px;
@@ -20,6 +21,7 @@
   border-radius: 4px;
 }
 
+.login-form button,
 .donor-form button {
   padding: 10px;
   background-color: #28a745;
@@ -30,6 +32,7 @@
   font-size: 16px;
 }
 
+.login-form button:hover,
 .donor-form button:hover {
   background-color: #218838;
 }
