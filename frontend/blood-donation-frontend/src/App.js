@@ -5,6 +5,7 @@ import './App.css';
 function App() {
   const [donors, setDonors] = useState([]);
   const [requests, setRequests] = useState([]);
+  const [inventory, setInventory] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     blood_group: '',
@@ -15,15 +16,21 @@ function App() {
     city: '',
     urgency: '',
   });
+  const [inventoryFormData, setInventoryFormData] = useState({
+    hospital: '',
+    blood_group: '',
+    units_available: '',
+  });
   const [loginData, setLoginData] = useState({
     username: '',
     password: '',
   });
   const [token, setToken] = useState(null);
 
-  // Fetch donors and requests
+  // Fetch data
   useEffect(() => {
     if (token) {
+      console.log('Fetching data with token:', token); // Debug token
       axios.get('http://127.0.0.1:8000/api/donors/', {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -43,19 +50,30 @@ function App() {
         .catch(error => {
           console.error('Error fetching requests:', error);
         });
+
+      axios.get('http://127.0.0.1:8000/api/inventory/', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then(response => {
+          setInventory(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching inventory:', error);
+        });
     }
   }, [token]);
 
-  // Handle login form input changes
+  // Handle login form
   const handleLoginChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
 
-  // Handle login form submission
   const handleLoginSubmit = (e) => {
     e.preventDefault();
+    console.log('Submitting login:', loginData); // Debug login
     axios.post('http://127.0.0.1:8000/api/token/', loginData)
       .then(response => {
+        console.log('Login response:', response.data); // Debug response
         setToken(response.data.access);
         setLoginData({ username: '', password: '' });
       })
@@ -64,14 +82,14 @@ function App() {
       });
   };
 
-  // Handle donor form input changes
+  // Handle donor form
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle donor form submission
   const handleDonorSubmit = (e) => {
     e.preventDefault();
+    console.log('Submitting donor:', formData); // Debug donor
     axios.post('http://127.0.0.1:8000/api/donors/', formData, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -84,14 +102,14 @@ function App() {
       });
   };
 
-  // Handle request form input changes
+  // Handle request form
   const handleRequestInputChange = (e) => {
     setRequestFormData({ ...requestFormData, [e.target.name]: e.target.value });
   };
 
-  // Handle request form submission
   const handleRequestSubmit = (e) => {
     e.preventDefault();
+    console.log('Submitting request:', requestFormData); // Debug request
     axios.post('http://127.0.0.1:8000/api/requests/', requestFormData, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -101,6 +119,27 @@ function App() {
       })
       .catch(error => {
         console.error('Error adding request:', error);
+      });
+  };
+
+  // Handle inventory form
+  const handleInventoryInputChange = (e) => {
+    setInventoryFormData({ ...inventoryFormData, [e.target.name]: e.target.value });
+  };
+
+  const handleInventorySubmit = (e) => {
+    e.preventDefault();
+    console.log('Submitting inventory:', inventoryFormData); // Debug inventory
+    axios.post('http://127.0.0.1:8000/api/inventory/', inventoryFormData, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(response => {
+        console.log('Inventory response:', response.data); // Debug response
+        setInventory([...inventory, response.data]);
+        setInventoryFormData({ hospital: '', blood_group: '', units_available: '' });
+      })
+      .catch(error => {
+        console.error('Error adding inventory:', error);
       });
   };
 
@@ -209,6 +248,43 @@ function App() {
             <button type="submit">Request Blood</button>
           </form>
 
+          <h2>Add Blood Inventory</h2>
+          <form onSubmit={handleInventorySubmit} className="inventory-form">
+            <input
+              type="text"
+              name="hospital"
+              value={inventoryFormData.hospital}
+              onChange={handleInventoryInputChange}
+              placeholder="Enter hospital name"
+              required
+            />
+            <select
+              name="blood_group"
+              value={inventoryFormData.blood_group}
+              onChange={handleInventoryInputChange}
+              required
+            >
+              <option value="">Select Blood Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+            </select>
+            <input
+              type="number"
+              name="units_available"
+              value={inventoryFormData.units_available}
+              onChange={handleInventoryInputChange}
+              placeholder="Enter units available"
+              required
+            />
+            <button type="submit">Add Inventory</button>
+          </form>
+
           <h2>Donors</h2>
           <ul className="donor-list">
             {donors.map(donor => (
@@ -223,6 +299,15 @@ function App() {
             {requests.map(request => (
               <li key={request.id}>
                 {request.blood_group} - {request.city} - {request.urgency}
+              </li>
+            ))}
+          </ul>
+
+          <h2>Blood Inventory</h2>
+          <ul className="inventory-list">
+            {inventory.map(item => (
+              <li key={item.id}>
+                {item.hospital} - {item.blood_group} - {item.units_available} units
               </li>
             ))}
           </ul>

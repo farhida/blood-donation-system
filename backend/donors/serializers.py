@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Donor, Request
+from .models import Donor, Request, BloodInventory
 
 class DonorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,3 +11,8 @@ class RequestSerializer(serializers.ModelSerializer):
         model = Request
         fields = ['id', 'user', 'blood_group', 'city', 'urgency', 'created_at']
         read_only_fields = ['user', 'created_at']
+
+class BloodInventorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BloodInventory
+        fields = ['id', 'hospital', 'blood_group', 'units_available', 'updated_at']

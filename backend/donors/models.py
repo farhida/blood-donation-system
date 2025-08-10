@@ -19,3 +19,12 @@ class Request(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.blood_group} - {self.city}"
+
+class BloodInventory(models.Model):
+    hospital = models.CharField(max_length=100)
+    blood_group = models.CharField(max_length=10)
+    units_available = models.PositiveIntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.hospital} - {self.blood_group} - {self.units_available} units"
