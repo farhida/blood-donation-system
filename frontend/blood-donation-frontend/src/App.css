@@ -1,4 +1,45 @@
 .App {
   text-align: center;
-  margin-top: 50px;
+  margin: 50px auto;
+  max-width: 600px;
+  font-family: Arial, sans-serif;
+}
+
+.donor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.donor-form input,
+.donor-form select {
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.donor-form button {
+  padding: 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.donor-form button:hover {
+  background-color: #218838;
+}
+
+.donor-list {
+  list-style: none;
+  padding: 0;
+}
+
+.donor-list li {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
 }
