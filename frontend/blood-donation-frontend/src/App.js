@@ -4,10 +4,16 @@ import './App.css';
 
 function App() {
   const [donors, setDonors] = useState([]);
+  const [requests, setRequests] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     blood_group: '',
     phone: '',
+  });
+  const [requestFormData, setRequestFormData] = useState({
+    blood_group: '',
+    city: '',
+    urgency: '',
   });
   const [loginData, setLoginData] = useState({
     username: '',
@@ -15,7 +21,7 @@ function App() {
   });
   const [token, setToken] = useState(null);
 
-  // Fetch donors (only if logged in)
+  // Fetch donors and requests
   useEffect(() => {
     if (token) {
       axios.get('http://127.0.0.1:8000/api/donors/', {
@@ -26,6 +32,16 @@ function App() {
         })
         .catch(error => {
           console.error('Error fetching donors:', error);
+        });
+
+      axios.get('http://127.0.0.1:8000/api/requests/', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then(response => {
+          setRequests(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching requests:', error);
         });
     }
   }, [token]);
@@ -54,7 +70,7 @@ function App() {
   };
 
   // Handle donor form submission
-  const handleSubmit = (e) => {
+  const handleDonorSubmit = (e) => {
     e.preventDefault();
     axios.post('http://127.0.0.1:8000/api/donors/', formData, {
       headers: { Authorization: `Bearer ${token}` },
@@ -65,6 +81,26 @@ function App() {
       })
       .catch(error => {
         console.error('Error adding donor:', error);
+      });
+  };
+
+  // Handle request form input changes
+  const handleRequestInputChange = (e) => {
+    setRequestFormData({ ...requestFormData, [e.target.name]: e.target.value });
+  };
+
+  // Handle request form submission
+  const handleRequestSubmit = (e) => {
+    e.preventDefault();
+    axios.post('http://127.0.0.1:8000/api/requests/', requestFormData, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(response => {
+        setRequests([...requests, response.data]);
+        setRequestFormData({ blood_group: '', city: '', urgency: '' });
+      })
+      .catch(error => {
+        console.error('Error adding request:', error);
       });
   };
 
@@ -98,7 +134,7 @@ function App() {
       ) : (
         <>
           <h2>Add New Donor</h2>
-          <form onSubmit={handleSubmit} className="donor-form">
+          <form onSubmit={handleDonorSubmit} className="donor-form">
             <input
               type="text"
               name="name"
@@ -134,11 +170,59 @@ function App() {
             <button type="submit">Add Donor</button>
           </form>
 
+          <h2>Request Blood</h2>
+          <form onSubmit={handleRequestSubmit} className="request-form">
+            <select
+              name="blood_group"
+              value={requestFormData.blood_group}
+              onChange={handleRequestInputChange}
+              required
+            >
+              <option value="">Select Blood Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+            </select>
+            <input
+              type="text"
+              name="city"
+              value={requestFormData.city}
+              onChange={handleRequestInputChange}
+              placeholder="Enter city"
+              required
+            />
+            <select
+              name="urgency"
+              value={requestFormData.urgency}
+              onChange={handleRequestInputChange}
+              required
+            >
+              <option value="">Select Urgency</option>
+              <option value="urgent">Urgent</option>
+              <option value="non_urgent">Non-Urgent</option>
+            </select>
+            <button type="submit">Request Blood</button>
+          </form>
+
           <h2>Donors</h2>
           <ul className="donor-list">
             {donors.map(donor => (
               <li key={donor.id}>
                 {donor.name} - {donor.blood_group} - {donor.phone}
+              </li>
+            ))}
+          </ul>
+
+          <h2>Blood Requests</h2>
+          <ul className="request-list">
+            {requests.map(request => (
+              <li key={request.id}>
+                {request.blood_group} - {request.city} - {request.urgency}
               </li>
             ))}
           </ul>

@@ -5,7 +5,9 @@
   font-family: Arial, sans-serif;
 }
 
-.login-form, .donor-form {
+.login-form,
+.donor-form,
+.request-form {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -14,7 +16,9 @@
 
 .login-form input,
 .donor-form input,
-.donor-form select {
+.donor-form select,
+.request-form input,
+.request-form select {
   padding: 8px;
   font-size: 16px;
   border: 1px solid #ccc;
@@ -22,7 +26,8 @@
 }
 
 .login-form button,
-.donor-form button {
+.donor-form button,
+.request-form button {
   padding: 10px;
   background-color: #28a745;
   color: white;
@@ -33,16 +38,19 @@
 }
 
 .login-form button:hover,
-.donor-form button:hover {
+.donor-form button:hover,
+.request-form button:hover {
   background-color: #218838;
 }
 
-.donor-list {
+.donor-list,
+.request-list {
   list-style: none;
   padding: 0;
 }
 
-.donor-list li {
+.donor-list li,
+.request-list li {
   padding: 10px;
   border-bottom: 1px solid #eee;
 }
