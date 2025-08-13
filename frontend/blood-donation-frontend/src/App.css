@@ -14,11 +14,21 @@
   border-radius: 8px;
 }
 
+.profile-container {
+  max-width: 500px;
+  margin: 0 auto 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  text-align: left;
+}
+
 .login-form,
 .donor-form,
 .request-form,
 .inventory-form,
-.donation-form {
+.donation-form
+.profile-form {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -36,7 +46,9 @@
 .inventory-form input,
 .inventory-form select,
 .donation-form input,
-.donation-form select {
+.donation-form select
+.profile-form input,
+.profile-form select {
   padding: 8px;
   font-size: 16px;
   border: 1px solid #ccc;
@@ -49,7 +61,8 @@
 .donor-form button,
 .request-form button,
 .inventory-form button,
-.donation-form button {
+.donation-form button
+.profile-form button {
   padding: 10px;
   background-color: #28a745;
   color: white;
@@ -63,7 +76,8 @@
 .donor-form button:hover,
 .request-form button:hover,
 .inventory-form button:hover,
-.donation-form button:hover {
+.donation-form button:hover
+.profile-form button:hover {
   background-color: #218838;
 }
 
@@ -92,7 +106,8 @@
     padding: 0 10px;
   }
 
-  .chart-container {
+  .chart-container
+  .profile-container {
     max-width: 100%;
     padding: 10px;
   }
@@ -101,7 +116,8 @@
   .donor-form,
   .request-form,
   .inventory-form,
-  .donation-form {
+  .donation-form
+  .profile-form {
     max-width: 100%;
   }
 
@@ -130,7 +146,9 @@
   .inventory-form input,
   .inventory-form select,
   .donation-form input,
-  .donation-form select {
+  .donation-form select
+  .profile-form input,
+  .profile-form select {
     font-size: 14px;
   }
 
@@ -138,7 +156,8 @@
   .donor-form button,
   .request-form button,
   .inventory-form button,
-  .donation-form button {
+  .donation-form button
+  .profile-form button {
     font-size: 14px;
   }
 }

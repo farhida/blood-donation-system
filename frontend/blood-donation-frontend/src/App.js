@@ -12,6 +12,7 @@ function App() {
   const [inventory, setInventory] = useState([]);
   const [donations, setDonations] = useState([]);
   const [analytics, setAnalytics] = useState({ blood_groups: [], demand: [], inventory: [] });
+  const [profile, setProfile] = useState({ username: '', email: '', phone: '', blood_group: '' });
   const [formData, setFormData] = useState({
     name: '',
     blood_group: '',
@@ -31,6 +32,12 @@ function App() {
     blood_group: '',
     hospital: '',
     units_donated: '',
+  });
+  const [profileFormData, setProfileFormData] = useState({
+    username: '',
+    email: '',
+    phone: '',
+    blood_group: '',
   });
   const [loginData, setLoginData] = useState({
     username: '',
@@ -91,6 +98,18 @@ function App() {
         })
         .catch(error => {
           console.error('Error fetching analytics:', error);
+        });
+
+        axios.get('http://127.0.0.1:8000/api/profile/', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then(response => {
+          console.log('Profile response:', response.data); // Debug profile
+          setProfile(response.data);
+          setProfileFormData(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching profile:', error);
         });
     }
   }, [token]);
@@ -196,6 +215,27 @@ function App() {
       });
   };
 
+  // Handle profile form
+  const handleProfileInputChange = (e) => {
+    setProfileFormData({ ...profileFormData, [e.target.name]: e.target.value });
+  };
+
+  const handleProfileSubmit = (e) => {
+    e.preventDefault();
+    console.log('Submitting profile:', profileFormData); // Debug profile
+    axios.put('http://127.0.0.1:8000/api/profile/', profileFormData, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(response => {
+        console.log('Profile update response:', response.data); // Debug response
+        setProfile(response.data);
+        setProfileFormData(response.data);
+      })
+      .catch(error => {
+        console.error('Error updating profile:', error);
+      });
+  };
+  
   // Chart data
   const chartData = {
     labels: analytics.blood_groups,
@@ -264,6 +304,56 @@ function App() {
         </>
       ) : (
         <>
+          <h2>User Profile</h2>
+          <div className="profile-container">
+            <p><strong>Username:</strong> {profile.username}</p>
+            <p><strong>Email:</strong> {profile.email}</p>
+            <p><strong>Phone:</strong> {profile.phone || 'Not set'}</p>
+            <p><strong>Blood Group:</strong> {profile.blood_group || 'Not set'}</p>
+          </div>
+          <h3>Update Profile</h3>
+          <form onSubmit={handleProfileSubmit} className="profile-form">
+            <input
+              type="text"
+              name="username"
+              value={profileFormData.username}
+              onChange={handleProfileInputChange}
+              placeholder="Enter username"
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              value={profileFormData.email}
+              onChange={handleProfileInputChange}
+              placeholder="Enter email"
+              required
+            />
+            <input
+              type="tel"
+              name="phone"
+              value={profileFormData.phone}
+              onChange={handleProfileInputChange}
+              placeholder="Enter phone number"
+            />
+            <select
+              name="blood_group"
+              value={profileFormData.blood_group}
+              onChange={handleProfileInputChange}
+            >
+              <option value="">Select Blood Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+            </select>
+            <button type="submit">Update Profile</button>
+          </form>
+          
           <h2>Analytics Dashboard</h2>
           <div className="chart-container">
             <Bar data={chartData} options={chartOptions} />
