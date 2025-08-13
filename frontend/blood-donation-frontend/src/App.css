@@ -1,8 +1,17 @@
 .App {
   text-align: center;
-  margin: 50px auto;
-  max-width: 600px;
+  margin: 20px auto;
+  max-width: 1200px;
+  padding: 0 20px;
   font-family: Arial, sans-serif;
+}
+
+.chart-container {
+  max-width: 800px;
+  margin: 0 auto 40px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
 }
 
 .login-form,
@@ -14,6 +23,9 @@
   flex-direction: column;
   gap: 10px;
   margin-bottom: 30px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .login-form input,
@@ -29,6 +41,8 @@
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .login-form button,
@@ -59,6 +73,8 @@
 .donation-list {
   list-style: none;
   padding: 0;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .donor-list li,
@@ -67,4 +83,62 @@
 .donation-list li {
   padding: 10px;
   border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .App {
+    padding: 0 10px;
+  }
+
+  .chart-container {
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  .login-form,
+  .donor-form,
+  .request-form,
+  .inventory-form,
+  .donation-form {
+    max-width: 100%;
+  }
+
+  .donor-list,
+  .request-list,
+  .inventory-list,
+  .donation-list {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5em;
+  }
+
+  h2 {
+    font-size: 1.2em;
+  }
+
+  .login-form input,
+  .donor-form input,
+  .donor-form select,
+  .request-form input,
+  .request-form select,
+  .inventory-form input,
+  .inventory-form select,
+  .donation-form input,
+  .donation-form select {
+    font-size: 14px;
+  }
+
+  .login-form button,
+  .donor-form button,
+  .request-form button,
+  .inventory-form button,
+  .donation-form button {
+    font-size: 14px;
+  }
 }

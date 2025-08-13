@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import './App.css';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function App() {
   const [donors, setDonors] = useState([]);
   const [requests, setRequests] = useState([]);
   const [inventory, setInventory] = useState([]);
   const [donations, setDonations] = useState([]);
+  const [analytics, setAnalytics] = useState({ blood_groups: [], demand: [], inventory: [] });
   const [formData, setFormData] = useState({
     name: '',
     blood_group: '',
@@ -75,6 +80,17 @@ function App() {
         })
         .catch(error => {
           console.error('Error fetching donations:', error);
+        });
+
+      axios.get('http://127.0.0.1:8000/api/analytics/', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then(response => {
+          console.log('Analytics response:', response.data); // Debug analytics
+          setAnalytics(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching analytics:', error);
         });
     }
   }, [token]);
@@ -180,6 +196,45 @@ function App() {
       });
   };
 
+  // Chart data
+  const chartData = {
+    labels: analytics.blood_groups,
+    datasets: [
+      {
+        label: 'Blood Group Demand (Requests)',
+        data: analytics.demand,
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+      },
+      {
+        label: 'Blood Inventory (Units)',
+        data: analytics.inventory,
+        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Blood Group Demand vs Inventory',
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
   return (
     <div className="App">
       <h1>Blood Donation Platform</h1>
@@ -209,6 +264,11 @@ function App() {
         </>
       ) : (
         <>
+          <h2>Analytics Dashboard</h2>
+          <div className="chart-container">
+            <Bar data={chartData} options={chartOptions} />
+          </div>
+
           <h2>Add New Donor</h2>
           <form onSubmit={handleDonorSubmit} className="donor-form">
             <input
