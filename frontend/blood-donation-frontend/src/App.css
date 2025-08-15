@@ -23,11 +23,31 @@
   text-align: left;
 }
 
+.logout-container {
+  max-width: 500px;
+  margin: 0 auto 20px;
+  text-align: right;
+}
+
+.logout-button {
+  padding: 10px 20px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.logout-button:hover {
+  background-color: #c82333;
+}
+
 .login-form,
 .donor-form,
 .request-form,
 .inventory-form,
-.donation-form
+.donation-form,
 .profile-form {
   display: flex;
   flex-direction: column;
@@ -46,7 +66,7 @@
 .inventory-form input,
 .inventory-form select,
 .donation-form input,
-.donation-form select
+.donation-form select,
 .profile-form input,
 .profile-form select {
   padding: 8px;
@@ -61,7 +81,7 @@
 .donor-form button,
 .request-form button,
 .inventory-form button,
-.donation-form button
+.donation-form button,
 .profile-form button {
   padding: 10px;
   background-color: #28a745;
@@ -76,7 +96,7 @@
 .donor-form button:hover,
 .request-form button:hover,
 .inventory-form button:hover,
-.donation-form button:hover
+.donation-form button:hover,
 .profile-form button:hover {
   background-color: #218838;
 }
@@ -106,8 +126,9 @@
     padding: 0 10px;
   }
 
-  .chart-container
-  .profile-container {
+  .chart-container,
+  .profile-container,
+  .logout-container {
     max-width: 100%;
     padding: 10px;
   }
@@ -116,7 +137,7 @@
   .donor-form,
   .request-form,
   .inventory-form,
-  .donation-form
+  .donation-form,
   .profile-form {
     max-width: 100%;
   }
@@ -134,7 +155,7 @@
     font-size: 1.5em;
   }
 
-  h2 {
+  h2, h3 {
     font-size: 1.2em;
   }
 
@@ -146,9 +167,10 @@
   .inventory-form input,
   .inventory-form select,
   .donation-form input,
-  .donation-form select
+  .donation-form select,
   .profile-form input,
-  .profile-form select {
+  .profile-form select,
+  .logout-button {
     font-size: 14px;
   }
 
@@ -156,8 +178,9 @@
   .donor-form button,
   .request-form button,
   .inventory-form button,
-  .donation-form button
-  .profile-form button {
+  .donation-form button,
+  .profile-form button,
+  .logout-button {
     font-size: 14px;
   }
 }

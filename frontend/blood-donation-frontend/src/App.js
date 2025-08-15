@@ -100,7 +100,7 @@ function App() {
           console.error('Error fetching analytics:', error);
         });
 
-        axios.get('http://127.0.0.1:8000/api/profile/', {
+      axios.get('http://127.0.0.1:8000/api/profile/', {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(response => {
@@ -131,6 +131,18 @@ function App() {
       .catch(error => {
         console.error('Login error:', error);
       });
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    console.log('Logging out'); // Debug logout
+    setToken(null);
+    setProfile({ username: '', email: '', phone: '', blood_group: '' });
+    setDonors([]);
+    setRequests([]);
+    setInventory([]);
+    setDonations([]);
+    setAnalytics({ blood_groups: [], demand: [], inventory: [] });
   };
 
   // Handle donor form
@@ -235,7 +247,7 @@ function App() {
         console.error('Error updating profile:', error);
       });
   };
-  
+
   // Chart data
   const chartData = {
     labels: analytics.blood_groups,
@@ -304,6 +316,10 @@ function App() {
         </>
       ) : (
         <>
+          <div className="logout-container">
+            <button onClick={handleLogout} className="logout-button">Logout</button>
+          </div>
+
           <h2>User Profile</h2>
           <div className="profile-container">
             <p><strong>Username:</strong> {profile.username}</p>
@@ -353,7 +369,7 @@ function App() {
             </select>
             <button type="submit">Update Profile</button>
           </form>
-          
+
           <h2>Analytics Dashboard</h2>
           <div className="chart-container">
             <Bar data={chartData} options={chartOptions} />
