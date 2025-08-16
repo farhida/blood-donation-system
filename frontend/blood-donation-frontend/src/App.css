@@ -4,6 +4,7 @@
   max-width: 1200px;
   padding: 0 20px;
   font-family: Arial, sans-serif;
+  transition: all 0.3s ease;
 }
 
 .chart-container {
@@ -12,6 +13,7 @@
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
+  animation: fadeIn 0.5s ease-in;
 }
 
 .profile-container {
@@ -21,6 +23,7 @@
   background-color: #f9f9f9;
   border-radius: 8px;
   text-align: left;
+  animation: fadeIn 0.5s ease-in;
 }
 
 .logout-container {
@@ -37,10 +40,12 @@
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .logout-button:hover {
   background-color: #c82333;
+  transform: scale(1.05);
 }
 
 .login-form,
@@ -56,6 +61,11 @@
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-in;
 }
 
 .login-form input,
@@ -75,6 +85,22 @@
   border-radius: 4px;
   width: 100%;
   box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.login-form input:focus,
+.donor-form input:focus,
+.donor-form select:focus,
+.request-form input:focus,
+.request-form select:focus,
+.inventory-form input:focus,
+.inventory-form select:focus,
+.donation-form input:focus,
+.donation-form select:focus,
+.profile-form input:focus,
+.profile-form select:focus {
+  border-color: #28a745;
+  outline: none;
 }
 
 .login-form button,
@@ -90,6 +116,7 @@
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .login-form button:hover,
@@ -99,6 +126,7 @@
 .donation-form button:hover,
 .profile-form button:hover {
   background-color: #218838;
+  transform: scale(1.05);
 }
 
 .donor-list,
@@ -109,6 +137,7 @@
   padding: 0;
   max-width: 500px;
   margin: 0 auto;
+  animation: fadeIn 0.5s ease-in;
 }
 
 .donor-list li,
@@ -118,6 +147,26 @@
   padding: 10px;
   border-bottom: 1px solid #eee;
   text-align: left;
+  transition: background-color 0.3s ease;
+}
+
+.donor-list li:hover,
+.request-list li:hover,
+.inventory-list li:hover,
+.donation-list li:hover {
+  background-color: #f1f1f1;
+}
+
+/* Animation Keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Responsive Design */
