@@ -13,6 +13,7 @@ import NotFound from './pages/NotFound';
 import Inventory from './pages/Inventory';
 import Donations from './pages/Donations';
 import Admin from './pages/Admin';
+import AdminUsers from './pages/AdminUsers';
 import AdminLogin from './pages/AdminLogin';
 
 function App() {
@@ -45,7 +46,8 @@ function App() {
         <Route path="/inventory" element={isLoggedIn ? <Inventory /> : <Navigate to="/login" />} />
         <Route path="/donations" element={isLoggedIn ? <Donations /> : <Navigate to="/login" />} />
         <Route path="/admin-login" element={<AdminLogin onAdminLogin={handleAdminLogin} />} />
-        <Route path="/admin" element={isAdmin ? <Admin /> : <Navigate to="/admin-login" />} />
+  <Route path="/admin" element={isAdmin ? <Admin /> : <Navigate to="/admin-login" />} />
+  <Route path="/admin/users" element={isAdmin ? <AdminUsers /> : <Navigate to="/admin-login" />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

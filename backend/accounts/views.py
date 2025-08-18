@@ -1,8 +1,8 @@
 from rest_framework import generics
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-from .serializers import UserSerializer
+from .serializers import UserSerializer, AdminUserSerializer
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -21,6 +21,33 @@ class RegisterView(generics.CreateAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class MeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            'username': user.username,
+            'email': user.email,
+            'is_staff': user.is_staff,
+            'is_superuser': user.is_superuser,
+        })
+
+
+class AdminUserListView(generics.ListAPIView):
+    permission_classes = [IsAdminUser]
+    serializer_class = AdminUserSerializer
+
+    def get_queryset(self):
+        return User.objects.select_related('userprofile').all().order_by('id')
+
+
+class AdminUserDetailView(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsAdminUser]
+    serializer_class = AdminUserSerializer
+    queryset = User.objects.select_related('userprofile').all()
 
 
 class UsernameAvailabilityView(APIView):

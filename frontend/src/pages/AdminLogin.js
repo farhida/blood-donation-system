@@ -11,23 +11,28 @@ function AdminLogin({ onAdminLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    // For demo: hardcoded admin username/password check
-    if (username === 'admin' && password === 'admin123') {
-      localStorage.setItem('admin', 'true');
-      onAdminLogin();
-      navigate('/admin');
-    } else {
+    try {
+      // Login via backend
+      const res = await axios.post('/api/login/', { username, password });
+      const { access, refresh } = res.data || {};
+      if (!access) {
+        setError('Invalid admin credentials');
+        return;
+      }
+      // Check admin status
+      const me = await axios.get('/api/auth/me/', { headers: { Authorization: `Bearer ${access}` } });
+      if (me.data.is_staff || me.data.is_superuser) {
+        localStorage.setItem('access', access);
+        localStorage.setItem('refresh', refresh || '');
+        localStorage.setItem('admin', 'true');
+        onAdminLogin();
+        navigate('/admin');
+      } else {
+        setError('You do not have admin access');
+      }
+    } catch (err) {
       setError('Invalid admin credentials');
     }
-    // For real app: use a backend endpoint for admin auth
-    // try {
-    //   const res = await axios.post('/api/admin/login/', { username, password });
-    //   localStorage.setItem('admin', res.data.token);
-    //   onAdminLogin();
-    //   navigate('/admin');
-    // } catch (err) {
-    //   setError('Invalid admin credentials');
-    // }
   };
 
   return (
