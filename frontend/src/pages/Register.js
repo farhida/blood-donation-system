@@ -7,6 +7,7 @@ function Register() {
   const [password, setPassword] = useState('');
   const [bloodGroup, setBloodGroup] = useState('');
   const [lastDonation, setLastDonation] = useState('');
+  const [donatedRecently, setDonatedRecently] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
@@ -15,7 +16,29 @@ function Register() {
     setError('');
     setSuccess('');
     try {
-  await axios.post('/api/auth/register/', { username, email, password, blood_group: bloodGroup, last_donation: lastDonation });
+      // Validate last donation conditionally
+      if (donatedRecently) {
+        if (!lastDonation) {
+          setError('Please provide the last donation date.');
+          return;
+        }
+        const selected = new Date(lastDonation);
+        const today = new Date();
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+        if (selected < threeMonthsAgo || selected > today) {
+          setError('Last donation must be within the last 3 months and not in the future.');
+          return;
+        }
+      }
+
+      await axios.post('/api/auth/register/', {
+        username,
+        email,
+        password,
+        blood_group: bloodGroup,
+        last_donation: donatedRecently ? lastDonation : null
+      });
       setSuccess('Registration successful! You can now log in.');
     } catch (err) {
   setError('Registration failed.');
@@ -40,7 +63,18 @@ function Register() {
           <option value="AB+">AB+</option>
           <option value="AB-">AB-</option>
         </select>
-        <input type="date" placeholder="Last Donation Date" value={lastDonation} onChange={e => setLastDonation(e.target.value)} required />
+        <label style={{ display: 'block', marginTop: '8px' }}>
+          <input type="checkbox" checked={donatedRecently} onChange={e => setDonatedRecently(e.target.checked)} />
+          {' '}I donated blood within the last 3 months
+        </label>
+        {donatedRecently && (
+          <input
+            type="date"
+            placeholder="Last Donation Date"
+            value={lastDonation}
+            onChange={e => setLastDonation(e.target.value)}
+          />
+        )}
         <button type="submit">Register</button>
       </form>
       {success && <p style={{color:'green'}}>{success}</p>}
