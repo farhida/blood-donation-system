@@ -41,7 +41,15 @@ function Register() {
       });
       setSuccess('Registration successful! You can now log in.');
     } catch (err) {
-  setError('Registration failed.');
+      const data = err.response && err.response.data;
+      if (data && typeof data === 'object') {
+        const msg = Object.entries(data)
+          .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
+          .join(' ');
+        setError(msg || 'Registration failed.');
+      } else {
+        setError('Registration failed.');
+      }
     }
   };
 
