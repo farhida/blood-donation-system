@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from .models import Donor, Request, BloodInventory, Donation, UserProfile
-from .serializers import DonorSerializer, RequestSerializer, BloodInventorySerializer, DonationSerializer, UserProfileSerializer, PublicDonorProfileSerializer
+from .models import Donor, Request, BloodInventory, Donation, UserProfile, Notification
+from .serializers import DonorSerializer, RequestSerializer, BloodInventorySerializer, DonationSerializer, UserProfileSerializer, PublicDonorProfileSerializer, NotificationSerializer
 from django.db.models import Count, Q
 from django.db import models
 
@@ -46,17 +46,101 @@ class DonorDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class RequestList(generics.ListCreateAPIView):
-    queryset = Request.objects.all()
+    queryset = Request.objects.all().order_by('-created_at')
     serializer_class = RequestSerializer
-    permission_classes = [IsAuthenticated]
+    # Anyone can list, only authenticated can create
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        req = serializer.save(user=self.request.user)
+        # Create notifications to matching donors (same blood group and available)
+        matching = UserProfile.objects.select_related('user').filter(
+            blood_group__iexact=req.blood_group,
+            not_ready=False,
+            donated_recently=False,
+        )
+        for prof in matching:
+            Notification.objects.create(
+                user=prof.user,
+                request=req,
+                message=f"Blood request for {req.blood_group} at {req.hospital or req.city or 'unknown location'}"
+            )
 
 class RequestDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Request.objects.all()
     serializer_class = RequestSerializer
     permission_classes = [IsAuthenticated]
+
+class AcceptRequestView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        req = Request.objects.filter(pk=pk).first()
+        if not req:
+            return Response({'error': 'Request not found'}, status=404)
+        if req.status != 'open':
+            return Response({'error': 'Request is not open'}, status=400)
+        req.status = 'accepted'
+        req.accepted_by = request.user
+        req.save()
+        # Notify requester
+        Notification.objects.create(
+            user=req.user,
+            request=req,
+            message=f"Your request has been accepted by {request.user.username}"
+        )
+        return Response({'status': 'accepted'})
+
+class MarkCollectedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        req = Request.objects.filter(pk=pk, user=request.user).first()
+        if not req:
+            return Response({'error': 'Request not found or not owned by user'}, status=404)
+        if req.status != 'accepted':
+            return Response({'error': 'Request must be accepted before collection'}, status=400)
+        req.status = 'collected'
+        req.save()
+        # Notify accepter
+        if req.accepted_by:
+            Notification.objects.create(
+                user=req.accepted_by,
+                request=req,
+                message=f"Requester marked the request as collected"
+            )
+        return Response({'status': 'collected'})
+
+class MyRequestsView(generics.ListAPIView):
+    serializer_class = RequestSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Request.objects.filter(user=self.request.user).order_by('-created_at')
+
+class MatchingRequestsView(generics.ListAPIView):
+    serializer_class = RequestSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        try:
+            profile = UserProfile.objects.get(user=self.request.user)
+        except UserProfile.DoesNotExist:
+            return Request.objects.none()
+        return Request.objects.filter(
+            blood_group__iexact=profile.blood_group,
+            status='open'
+        ).order_by('-created_at')
+
+class NotificationsView(generics.ListAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Notification.objects.filter(user=self.request.user).order_by('-created_at')
 
 
 class BloodInventoryList(generics.ListCreateAPIView):

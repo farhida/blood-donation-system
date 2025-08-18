@@ -17,6 +17,7 @@ import AdminUsers from './pages/AdminUsers';
 import AdminRequests from './pages/AdminRequests';
 import AdminInventory from './pages/AdminInventory';
 import AdminLogin from './pages/AdminLogin';
+import Notifications from './pages/Notifications';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('access'));
@@ -44,9 +45,10 @@ function App() {
         <Route path="/profile" element={isLoggedIn ? <Profile /> : <Navigate to="/login" />} />
         <Route path="/donors" element={<DonorSearch />} />
         <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
-        <Route path="/requests" element={isLoggedIn ? <Requests /> : <Navigate to="/login" />} />
+  <Route path="/requests" element={<Requests />} />
         <Route path="/inventory" element={isLoggedIn ? <Inventory /> : <Navigate to="/login" />} />
-        <Route path="/donations" element={isLoggedIn ? <Donations /> : <Navigate to="/login" />} />
+  <Route path="/donations" element={isLoggedIn ? <Donations /> : <Navigate to="/login" />} />
+  <Route path="/notifications" element={isLoggedIn ? <Notifications /> : <Navigate to="/login" />} />
         <Route path="/admin-login" element={<AdminLogin onAdminLogin={handleAdminLogin} />} />
   <Route path="/admin" element={isAdmin ? <Admin /> : <Navigate to="/admin-login" />} />
   <Route path="/admin/users" element={isAdmin ? <AdminUsers /> : <Navigate to="/admin-login" />} />

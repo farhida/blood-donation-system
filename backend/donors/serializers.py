@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Donor, Request, BloodInventory, Donation, UserProfile
+from .models import Donor, Request, BloodInventory, Donation, UserProfile, Notification
 from django.contrib.auth.models import User
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -57,8 +57,19 @@ class DonorSerializer(serializers.ModelSerializer):
 class RequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request
-        fields = ['id', 'user', 'blood_group', 'city', 'urgency', 'created_at']
-        read_only_fields = ['user', 'created_at']
+        fields = [
+            'id', 'user', 'blood_group', 'city', 'urgency',
+            'hospital', 'cause', 'address', 'contact_info',
+            'status', 'accepted_by', 'created_at'
+        ]
+        read_only_fields = ['user', 'status', 'accepted_by', 'created_at']
+
+    def validate(self, attrs):
+        if not attrs.get('blood_group'):
+            raise serializers.ValidationError({'blood_group': 'Blood group is required.'})
+        if not attrs.get('contact_info'):
+            raise serializers.ValidationError({'contact_info': 'Contact info is required.'})
+        return attrs
 
 class BloodInventorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -70,3 +81,9 @@ class DonationSerializer(serializers.ModelSerializer):
         model = Donation
         fields = ['id', 'user', 'blood_group', 'hospital', 'units_donated', 'donation_date']
         read_only_fields = ['user', 'donation_date']
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['id', 'user', 'request', 'message', 'read', 'created_at']
+        read_only_fields = ['user', 'created_at']

@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     DonorList, DonorDetail, PublicDonorSearch, MessageDonorView,
-    RequestList, RequestDetail,
+    RequestList, RequestDetail, AcceptRequestView, MarkCollectedView, MyRequestsView, MatchingRequestsView, NotificationsView,
     BloodInventoryList, BloodInventoryDetail,
     DonationList, DonationDetail,
     AnalyticsView, UserProfileView,
@@ -22,6 +22,13 @@ urlpatterns = [
     # Requests
     path('requests/', RequestList.as_view(), name='request-list'),
     path('requests/<int:pk>/', RequestDetail.as_view(), name='request-detail'),
+    path('requests/<int:pk>/accept/', AcceptRequestView.as_view(), name='request-accept'),
+    path('requests/<int:pk>/collected/', MarkCollectedView.as_view(), name='request-collected'),
+    path('requests/mine/', MyRequestsView.as_view(), name='my-requests'),
+    path('requests/matching/', MatchingRequestsView.as_view(), name='matching-requests'),
+
+    # Notifications
+    path('notifications/', NotificationsView.as_view(), name='notifications'),
 
     # Inventory
     path('inventory/', BloodInventoryList.as_view(), name='inventory-list'),

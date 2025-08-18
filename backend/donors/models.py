@@ -24,14 +24,40 @@ class Donor(models.Model):
         return self.name
 
 class Request(models.Model):
+    STATUS_CHOICES = [
+        ('open', 'Open'),
+        ('accepted', 'Accepted'),
+        ('collected', 'Collected'),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     blood_group = models.CharField(max_length=10)
-    city = models.CharField(max_length=100)
-    urgency = models.CharField(max_length=20, choices=[('urgent', 'Urgent'), ('non_urgent', 'Non-Urgent')])
+    # Legacy fields retained but optional
+    city = models.CharField(max_length=100, blank=True, null=True)
+    urgency = models.CharField(max_length=20, choices=[('urgent', 'Urgent'), ('non_urgent', 'Non-Urgent')], blank=True, null=True)
+
+    # New detailed fields
+    hospital = models.CharField(max_length=150, blank=True, null=True)
+    cause = models.CharField(max_length=255, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    contact_info = models.CharField(max_length=255, blank=True, null=True)
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
+    accepted_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='accepted_requests')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.blood_group} - {self.city}"
+        return f"{self.user.username} - {self.blood_group} - {self.hospital or self.city or ''} ({self.status})"
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name='notifications')
+    message = models.CharField(max_length=255)
+    read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"To {self.user.username}: {self.message}"
 
 class BloodInventory(models.Model):
     hospital = models.CharField(max_length=100)
