@@ -19,9 +19,8 @@ class UserSerializer(serializers.ModelSerializer):
             email=validated_data.get('email', ''),
             password=validated_data['password']
         )
-        UserProfile.objects.create(
-            user=user,
-            blood_group=blood_group,
-            last_donation=last_donation
-        )
+        profile, _ = UserProfile.objects.get_or_create(user=user)
+        profile.blood_group = blood_group
+        profile.last_donation = last_donation
+        profile.save()
         return user

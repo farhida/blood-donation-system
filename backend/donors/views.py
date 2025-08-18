@@ -127,12 +127,12 @@ class RegisterView(APIView):
         if User.objects.filter(username=username).exists():
             return Response({'error': 'Username already exists.'}, status=400)
         user = User.objects.create_user(username=username, password=password, email=email)
-        profile_kwargs = {'user': user}
+        profile, _ = UserProfile.objects.get_or_create(user=user)
         if blood_group:
-            profile_kwargs['blood_group'] = blood_group
+            profile.blood_group = blood_group
         if last_donation:
-            profile_kwargs['last_donation'] = last_donation
-        UserProfile.objects.create(**profile_kwargs)
+            profile.last_donation = last_donation
+        profile.save()
         return Response({'message': 'User registered successfully.'}, status=201)
 
 # Login endpoint (returns JWT)
