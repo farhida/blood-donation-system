@@ -19,6 +19,20 @@ class UserProfileSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+    def validate(self, attrs):
+        # Enforce district presence and phone when sharing is enabled
+        share_phone = attrs.get('share_phone', getattr(self.instance, 'share_phone', False))
+        phone = attrs.get('phone', getattr(self.instance, 'phone', '') or '')
+        district = attrs.get('district', getattr(self.instance, 'district', '') or '')
+        errors = {}
+        if not district:
+            errors['district'] = 'District is required.'
+        if share_phone and not phone:
+            errors['phone'] = 'Phone number is required when sharing phone publicly.'
+        if errors:
+            raise serializers.ValidationError(errors)
+        return attrs
+
 
 class PublicDonorProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username')

@@ -9,6 +9,7 @@ function Register() {
   const [lastDonation, setLastDonation] = useState('');
   const [district, setDistrict] = useState('');
   const [sharePhone, setSharePhone] = useState(false);
+  const [phone, setPhone] = useState('');
   const [donatedRecently, setDonatedRecently] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const [checkingUsername, setCheckingUsername] = useState(false);
@@ -47,7 +48,8 @@ function Register() {
         blood_group: bloodGroup,
         last_donation: donatedRecently ? lastDonation : null,
         district,
-        share_phone: sharePhone
+        share_phone: sharePhone,
+        phone: sharePhone ? phone : ''
       });
       setSuccess('Registration successful! You can now log in.');
     } catch (err) {
@@ -109,8 +111,8 @@ function Register() {
             onChange={e => setLastDonation(e.target.value)}
           />
         )}
-        <select value={district} onChange={e => setDistrict(e.target.value)}>
-          <option value="">District (optional)</option>
+        <select value={district} onChange={e => setDistrict(e.target.value)} required>
+          <option value="">Select District</option>
           {bangladeshDistricts.map(d => (
             <option key={d} value={d}>{d}</option>
           ))}
@@ -119,6 +121,9 @@ function Register() {
           <input type="checkbox" checked={sharePhone} onChange={e => setSharePhone(e.target.checked)} />
           {' '}Share my phone number publicly
         </label>
+        {sharePhone && (
+          <input type="tel" placeholder="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} required />
+        )}
         <button type="submit">Register</button>
       </form>
       {success && <p style={{color:'green'}}>{success}</p>}

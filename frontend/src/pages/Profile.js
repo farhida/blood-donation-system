@@ -50,10 +50,17 @@ function Profile() {
       <div><b>Email:</b> {profile.email}</div>
       {edit ? (
         <>
-          <input name="phone" value={form.phone} onChange={handleChange} placeholder="Phone" />
+          {form.share_phone && (
+            <input name="phone" value={form.phone} onChange={handleChange} placeholder="Phone" required />
+          )}
           <input name="blood_group" value={form.blood_group} onChange={handleChange} placeholder="Blood Group" />
           <input type="date" name="last_donation" value={form.last_donation || ''} onChange={handleChange} placeholder="Last Donation Date" />
-          <input name="district" value={form.district} onChange={handleChange} placeholder="District" />
+          <select name="district" value={form.district} onChange={handleChange} required>
+            <option value="">Select District</option>
+            {bangladeshDistricts.map(d => (
+              <option key={d} value={d}>{d}</option>
+            ))}
+          </select>
           <label>
             <input type="checkbox" name="share_phone" checked={form.share_phone} onChange={e => setForm({ ...form, share_phone: e.target.checked })} /> Share phone publicly
           </label>
@@ -75,3 +82,6 @@ function Profile() {
 }
 
 export default Profile;
+const bangladeshDistricts = [
+  'Bagerhat','Bandarban','Barguna','Barishal','Bhola','Bogura','Brahmanbaria','Chandpur','Chattogram','Chuadanga','Cox’s Bazar','Cumilla','Dhaka','Dinajpur','Faridpur','Feni','Gaibandha','Gazipur','Gopalganj','Habiganj','Jamalpur','Jashore','Jhalokati','Jhenaidah','Joypurhat','Khagrachari','Khulna','Kishoreganj','Kurigram','Kushtia','Lakshmipur','Lalmonirhat','Madaripur','Magura','Manikganj','Meherpur','Moulvibazar','Munshiganj','Mymensingh','Naogaon','Narail','Narayanganj','Narsingdi','Natore','Netrokona','Nilphamari','Noakhali','Pabna','Panchagarh','Patuakhali','Pirojpur','Rajbari','Rajshahi','Rangamati','Rangpur','Satkhira','Shariatpur','Sherpur','Sirajganj','Sunamganj','Sylhet','Tangail','Thakurgaon'
+];
