@@ -23,3 +23,4 @@ function NavBar({ token, handleLogout }) {
 }
 
 export default NavBar;
+
