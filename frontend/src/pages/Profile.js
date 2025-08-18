@@ -10,7 +10,7 @@ function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem('access');
-      const res = await axios.get('/api/donors/profile/', { headers: { Authorization: `Bearer ${token}` } });
+  const res = await axios.get('/api/profile/', { headers: { Authorization: `Bearer ${token}` } });
       setProfile(res.data);
       setForm({
         phone: res.data.phone || '',
@@ -26,7 +26,7 @@ function Profile() {
   const handleSave = async () => {
     const token = localStorage.getItem('access');
     try {
-      await axios.put('/api/donors/profile/', form, { headers: { Authorization: `Bearer ${token}` } });
+  await axios.put('/api/profile/', form, { headers: { Authorization: `Bearer ${token}` } });
       setMessage('Profile updated!');
       setEdit(false);
     } catch {
