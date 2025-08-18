@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 function Profile() {
   const [profile, setProfile] = useState(null);
   const [edit, setEdit] = useState(false);
   const [form, setForm] = useState({ phone: '', blood_group: '', last_donation: '' });
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem('access');
-  const res = await axios.get('/api/profile/', { headers: { Authorization: `Bearer ${token}` } });
-      setProfile(res.data);
-      setForm({
-        phone: res.data.phone || '',
-        blood_group: res.data.blood_group || '',
-        last_donation: res.data.last_donation || ''
-      });
+      try {
+        const res = await api.get('/api/profile/');
+        setProfile(res.data);
+        setForm({
+          phone: res.data.phone || '',
+          blood_group: res.data.blood_group || '',
+          last_donation: res.data.last_donation || ''
+        });
+      } catch (e) {
+        setError('Unauthorized. Please login again.');
+      }
     };
     fetchProfile();
   }, []);
@@ -26,7 +30,7 @@ function Profile() {
   const handleSave = async () => {
     const token = localStorage.getItem('access');
     try {
-  await axios.put('/api/profile/', form, { headers: { Authorization: `Bearer ${token}` } });
+  await api.put('/api/profile/', form);
       setMessage('Profile updated!');
       setEdit(false);
     } catch {
@@ -34,6 +38,7 @@ function Profile() {
     }
   };
 
+  if (error) return <div style={{color:'red'}}>{error}</div>;
   if (!profile) return <div>Loading...</div>;
 
   return (
