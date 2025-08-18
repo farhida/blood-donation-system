@@ -13,7 +13,7 @@ function Register() {
     setError('');
     setSuccess('');
     try {
-      await axios.post('/api/donors/register/', { username, email, password });
+  await axios.post('/api/auth/register/', { username, email, password });
       setSuccess('Registration successful! You can now log in.');
     } catch (err) {
       setError('Registration failed.');
@@ -26,7 +26,7 @@ function Register() {
       <form onSubmit={handleSubmit}>
         <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required />
         <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+  <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="new-password" />
         <button type="submit">Register</button>
       </form>
       {success && <p style={{color:'green'}}>{success}</p>}
