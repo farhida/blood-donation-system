@@ -1,11 +1,3 @@
-import Admin from './pages/Admin';
-  <Route path="/admin" element={isLoggedIn ? <Admin /> : <Navigate to="/login" />} />
-
-import Inventory from './pages/Inventory';
-import Donations from './pages/Donations';
-
-
-
 
 import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
@@ -18,6 +10,9 @@ import DonorSearch from './pages/DonorSearch';
 import Dashboard from './pages/Dashboard';
 import Requests from './pages/Requests';
 import NotFound from './pages/NotFound';
+import Inventory from './pages/Inventory';
+import Donations from './pages/Donations';
+import Admin from './pages/Admin';
 
 function Home() {
   return <div className="page"><h2>Home</h2><p>Welcome to the Blood Donation System!</p></div>;
