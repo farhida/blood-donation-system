@@ -8,6 +8,8 @@ function Register() {
   const [bloodGroup, setBloodGroup] = useState('');
   const [lastDonation, setLastDonation] = useState('');
   const [donatedRecently, setDonatedRecently] = useState(false);
+  const [usernameAvailable, setUsernameAvailable] = useState(true);
+  const [checkingUsername, setCheckingUsername] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
@@ -15,6 +17,10 @@ function Register() {
     e.preventDefault();
     setError('');
     setSuccess('');
+    if (!usernameAvailable) {
+      setError('Username is not available.');
+      return;
+    }
     try {
       // Validate last donation conditionally
       if (donatedRecently) {
@@ -53,11 +59,27 @@ function Register() {
     }
   };
 
+  const checkUsername = async () => {
+    const name = username.trim();
+    if (!name) return;
+    setCheckingUsername(true);
+    try {
+      const res = await axios.get('/api/auth/username-available/', { params: { username: name } });
+      setUsernameAvailable(res.data.available);
+    } catch (_) {
+      setUsernameAvailable(true);
+    } finally {
+      setCheckingUsername(false);
+    }
+  };
+
   return (
     <div className="login-form">
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required />
+  <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} onBlur={checkUsername} required />
+  {!usernameAvailable && <div style={{color:'red'}}>Username is taken.</div>}
+  {checkingUsername && <div>Checking username...</div>}
         <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
         <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="new-password" />
         <select value={bloodGroup} onChange={e => setBloodGroup(e.target.value)} required>
