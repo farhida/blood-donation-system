@@ -7,20 +7,29 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from .models import Donor, Request, BloodInventory, Donation, UserProfile
-from .serializers import DonorSerializer, RequestSerializer, BloodInventorySerializer, DonationSerializer, UserProfileSerializer
+from .serializers import DonorSerializer, RequestSerializer, BloodInventorySerializer, DonationSerializer, UserProfileSerializer, PublicDonorProfileSerializer
 from django.db.models import Count, Q
+from django.db import models
 
 
 # Public donor search (by blood group, no auth required)
 class PublicDonorSearch(generics.ListAPIView):
-    serializer_class = DonorSerializer
+    serializer_class = PublicDonorProfileSerializer
     permission_classes = [AllowAny]
 
     def get_queryset(self):
+        from datetime import date, timedelta
         blood_group = self.request.query_params.get('blood_group')
+        district = self.request.query_params.get('district')
+        three_months_ago = date.today() - timedelta(days=90)
+        qs = UserProfile.objects.select_related('user').all()
         if blood_group:
-            return Donor.objects.filter(blood_group__iexact=blood_group)
-        return Donor.objects.all()
+            qs = qs.filter(blood_group__iexact=blood_group)
+        if district:
+            qs = qs.filter(district__iexact=district)
+        # Only donors who have not donated within last 3 months
+        qs = qs.filter(models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=three_months_ago))
+        return qs
 
 # Full CRUD for Donor (auth required for create/update/delete)
 class DonorList(generics.ListCreateAPIView):

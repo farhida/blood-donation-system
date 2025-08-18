@@ -8,14 +8,29 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-    fields = ['username', 'email', 'phone', 'blood_group', 'last_donation']
+        fields = ['username', 'email', 'phone', 'blood_group', 'last_donation', 'district', 'share_phone']
 
     def update(self, instance, validated_data):
         instance.phone = validated_data.get('phone', instance.phone)
         instance.blood_group = validated_data.get('blood_group', instance.blood_group)
         instance.last_donation = validated_data.get('last_donation', instance.last_donation)
+        instance.district = validated_data.get('district', instance.district)
+        instance.share_phone = validated_data.get('share_phone', instance.share_phone)
         instance.save()
         return instance
+
+
+class PublicDonorProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+    email = serializers.EmailField(source='user.email')
+    phone = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserProfile
+        fields = ['username', 'email', 'blood_group', 'district', 'last_donation', 'phone']
+
+    def get_phone(self, obj):
+        return obj.phone if getattr(obj, 'share_phone', False) else None
 
 
 class DonorSerializer(serializers.ModelSerializer):

@@ -7,6 +7,8 @@ function Register() {
   const [password, setPassword] = useState('');
   const [bloodGroup, setBloodGroup] = useState('');
   const [lastDonation, setLastDonation] = useState('');
+  const [district, setDistrict] = useState('');
+  const [sharePhone, setSharePhone] = useState(false);
   const [donatedRecently, setDonatedRecently] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const [checkingUsername, setCheckingUsername] = useState(false);
@@ -43,7 +45,9 @@ function Register() {
         email,
         password,
         blood_group: bloodGroup,
-        last_donation: donatedRecently ? lastDonation : null
+        last_donation: donatedRecently ? lastDonation : null,
+        district,
+        share_phone: sharePhone
       });
       setSuccess('Registration successful! You can now log in.');
     } catch (err) {
@@ -105,6 +109,16 @@ function Register() {
             onChange={e => setLastDonation(e.target.value)}
           />
         )}
+        <select value={district} onChange={e => setDistrict(e.target.value)}>
+          <option value="">District (optional)</option>
+          {bangladeshDistricts.map(d => (
+            <option key={d} value={d}>{d}</option>
+          ))}
+        </select>
+        <label style={{ display: 'block', marginTop: '8px' }}>
+          <input type="checkbox" checked={sharePhone} onChange={e => setSharePhone(e.target.checked)} />
+          {' '}Share my phone number publicly
+        </label>
         <button type="submit">Register</button>
       </form>
       {success && <p style={{color:'green'}}>{success}</p>}
@@ -112,5 +126,9 @@ function Register() {
     </div>
   );
 }
+
+const bangladeshDistricts = [
+  'Bagerhat','Bandarban','Barguna','Barishal','Bhola','Bogura','Brahmanbaria','Chandpur','Chattogram','Chuadanga','Cox’s Bazar','Cumilla','Dhaka','Dinajpur','Faridpur','Feni','Gaibandha','Gazipur','Gopalganj','Habiganj','Jamalpur','Jashore','Jhalokati','Jhenaidah','Joypurhat','Khagrachari','Khulna','Kishoreganj','Kurigram','Kushtia','Lakshmipur','Lalmonirhat','Madaripur','Magura','Manikganj','Meherpur','Moulvibazar','Munshiganj','Mymensingh','Naogaon','Narail','Narayanganj','Narsingdi','Natore','Netrokona','Nilphamari','Noakhali','Pabna','Panchagarh','Patuakhali','Pirojpur','Rajbari','Rajshahi','Rangamati','Rangpur','Satkhira','Shariatpur','Sherpur','Sirajganj','Sunamganj','Sylhet','Tangail','Thakurgaon'
+];
 
 export default Register;

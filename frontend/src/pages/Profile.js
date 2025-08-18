@@ -4,7 +4,7 @@ import api from '../api';
 function Profile() {
   const [profile, setProfile] = useState(null);
   const [edit, setEdit] = useState(false);
-  const [form, setForm] = useState({ phone: '', blood_group: '', last_donation: '' });
+  const [form, setForm] = useState({ phone: '', blood_group: '', last_donation: '', district: '', share_phone: false });
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -16,7 +16,9 @@ function Profile() {
         setForm({
           phone: res.data.phone || '',
           blood_group: res.data.blood_group || '',
-          last_donation: res.data.last_donation || ''
+          last_donation: res.data.last_donation || '',
+          district: res.data.district || '',
+          share_phone: !!res.data.share_phone,
         });
       } catch (e) {
         setError('Unauthorized. Please login again.');
@@ -51,6 +53,10 @@ function Profile() {
           <input name="phone" value={form.phone} onChange={handleChange} placeholder="Phone" />
           <input name="blood_group" value={form.blood_group} onChange={handleChange} placeholder="Blood Group" />
           <input type="date" name="last_donation" value={form.last_donation || ''} onChange={handleChange} placeholder="Last Donation Date" />
+          <input name="district" value={form.district} onChange={handleChange} placeholder="District" />
+          <label>
+            <input type="checkbox" name="share_phone" checked={form.share_phone} onChange={e => setForm({ ...form, share_phone: e.target.checked })} /> Share phone publicly
+          </label>
           <button onClick={handleSave}>Save</button>
         </>
       ) : (
@@ -58,6 +64,8 @@ function Profile() {
           <div><b>Phone:</b> {profile.phone}</div>
           <div><b>Blood Group:</b> {profile.blood_group}</div>
           <div><b>Last Donation:</b> {profile.last_donation || 'N/A'}</div>
+          <div><b>District:</b> {profile.district || 'N/A'}</div>
+          <div><b>Share Phone:</b> {profile.share_phone ? 'Yes' : 'No'}</div>
           <button onClick={() => setEdit(true)}>Edit</button>
         </>
       )}
