@@ -106,7 +106,7 @@ class UserProfileView(APIView):
             profile = UserProfile.objects.get(user=request.user)
         except UserProfile.DoesNotExist:
             profile = UserProfile.objects.create(user=request.user)
-        serializer = UserProfileSerializer(profile, data=request.data)
+    serializer = UserProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -120,12 +120,19 @@ class RegisterView(APIView):
         username = request.data.get('username')
         password = request.data.get('password')
         email = request.data.get('email')
+        blood_group = request.data.get('blood_group')
+        last_donation = request.data.get('last_donation')
         if not username or not password:
             return Response({'error': 'Username and password required.'}, status=400)
         if User.objects.filter(username=username).exists():
             return Response({'error': 'Username already exists.'}, status=400)
         user = User.objects.create_user(username=username, password=password, email=email)
-        UserProfile.objects.create(user=user)
+        profile_kwargs = {'user': user}
+        if blood_group:
+            profile_kwargs['blood_group'] = blood_group
+        if last_donation:
+            profile_kwargs['last_donation'] = last_donation
+        UserProfile.objects.create(**profile_kwargs)
         return Response({'message': 'User registered successfully.'}, status=201)
 
 # Login endpoint (returns JWT)

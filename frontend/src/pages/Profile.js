@@ -45,7 +45,7 @@ function Profile() {
         <>
           <input name="phone" value={form.phone} onChange={handleChange} placeholder="Phone" />
           <input name="blood_group" value={form.blood_group} onChange={handleChange} placeholder="Blood Group" />
-          <input name="last_donation" value={form.last_donation} onChange={handleChange} placeholder="Last Donation Date" />
+          <input type="date" name="last_donation" value={form.last_donation || ''} onChange={handleChange} placeholder="Last Donation Date" />
           <button onClick={handleSave}>Save</button>
         </>
       ) : (
