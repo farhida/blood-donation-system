@@ -14,6 +14,8 @@ import Inventory from './pages/Inventory';
 import Donations from './pages/Donations';
 import Admin from './pages/Admin';
 import AdminUsers from './pages/AdminUsers';
+import AdminRequests from './pages/AdminRequests';
+import AdminInventory from './pages/AdminInventory';
 import AdminLogin from './pages/AdminLogin';
 
 function App() {
@@ -48,6 +50,8 @@ function App() {
         <Route path="/admin-login" element={<AdminLogin onAdminLogin={handleAdminLogin} />} />
   <Route path="/admin" element={isAdmin ? <Admin /> : <Navigate to="/admin-login" />} />
   <Route path="/admin/users" element={isAdmin ? <AdminUsers /> : <Navigate to="/admin-login" />} />
+  <Route path="/admin/requests" element={isAdmin ? <AdminRequests /> : <Navigate to="/admin-login" />} />
+  <Route path="/admin/inventory" element={isAdmin ? <AdminInventory /> : <Navigate to="/admin-login" />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

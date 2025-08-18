@@ -60,18 +60,13 @@ function Admin() {
         </div>
         <div className="card" style={{padding:'16px',border:'1px solid #eee',borderRadius:8}}>
           <h3>Requests</h3>
-          <p>Review and coordinate blood requests.</p>
-          <Link className="btn" to="/requests">Open Requests</Link>
+          <p>View all requests (read-only list).</p>
+          <Link className="btn" to="/admin/requests">All Requests</Link>
         </div>
         <div className="card" style={{padding:'16px',border:'1px solid #eee',borderRadius:8}}>
           <h3>Inventory</h3>
-          <p>Track available blood units in stock.</p>
-          <Link className="btn" to="/inventory">Manage Inventory</Link>
-        </div>
-        <div className="card" style={{padding:'16px',border:'1px solid #eee',borderRadius:8}}>
-          <h3>Donations</h3>
-          <p>Log and monitor donation activities.</p>
-          <Link className="btn" to="/donations">View Donations</Link>
+          <p>View available blood (read-only list).</p>
+          <Link className="btn" to="/admin/inventory">Available Blood</Link>
         </div>
       </div>
 
