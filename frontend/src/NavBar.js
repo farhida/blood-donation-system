@@ -5,7 +5,6 @@ function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
   return (
     <nav className="navbar">
       <ul>
-        <li><Link to="/">Home</Link></li>
         <li><Link to="/donors">Donor Search</Link></li>
         {isAdmin ? (
           <>
