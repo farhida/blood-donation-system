@@ -1,3 +1,7 @@
+import Inventory from './pages/Inventory';
+import Donations from './pages/Donations';
+  <Route path="/inventory" element={isLoggedIn ? <Inventory /> : <Navigate to="/login" />} />
+  <Route path="/donations" element={isLoggedIn ? <Donations /> : <Navigate to="/login" />} />
 
 
 
