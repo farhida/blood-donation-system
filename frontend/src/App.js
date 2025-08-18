@@ -15,12 +15,6 @@ import Donations from './pages/Donations';
 import Admin from './pages/Admin';
 import AdminLogin from './pages/AdminLogin';
 
-function Home() {
-  return <div className="page"><h2>Home</h2><p>Welcome to the Blood Donation System!</p></div>;
-}
-
-
-
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('access'));
   const [isAdmin, setIsAdmin] = useState(!!localStorage.getItem('admin'));
@@ -41,7 +35,7 @@ function App() {
     <div className="App">
       <NavBar token={isLoggedIn} handleLogout={handleLogout} isAdmin={isAdmin} handleAdminLogout={handleAdminLogout} />
       <Routes>
-        <Route path="/" element={<Home />} />
+  <Route path="/" element={<Navigate to="/donors" />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={isLoggedIn ? <Profile /> : <Navigate to="/login" />} />
