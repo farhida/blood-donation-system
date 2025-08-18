@@ -2,18 +2,24 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './NavBar.css';
 function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
+  // When admin is logged in, keep the nav minimal: only show Admin Logout
+  if (isAdmin) {
+    return (
+      <nav className="navbar">
+        <ul>
+          <li style={{ marginLeft: 'auto' }}>
+            <button className="logout-btn" onClick={handleAdminLogout}>Admin Logout</button>
+          </li>
+        </ul>
+      </nav>
+    );
+  }
+
   return (
     <nav className="navbar">
       <ul>
         <li><Link to="/donors">Donor Search</Link></li>
-        {isAdmin ? (
-          <>
-            <li><Link to="/admin">Admin</Link></li>
-            <li><button className="logout-btn" onClick={handleAdminLogout}>Admin Logout</button></li>
-          </>
-        ) : (
-          <li><Link to="/admin-login">Admin Login</Link></li>
-        )}
+        <li><Link to="/admin-login">Admin Login</Link></li>
         {token ? (
           <>
             <li><Link to="/dashboard">Dashboard</Link></li>
