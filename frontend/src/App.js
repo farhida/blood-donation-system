@@ -1,3 +1,5 @@
+import Admin from './pages/Admin';
+  <Route path="/admin" element={isLoggedIn ? <Admin /> : <Navigate to="/login" />} />
 
 import Inventory from './pages/Inventory';
 import Donations from './pages/Donations';
