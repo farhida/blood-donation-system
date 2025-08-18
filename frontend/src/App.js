@@ -1,7 +1,6 @@
+
 import Inventory from './pages/Inventory';
 import Donations from './pages/Donations';
-  <Route path="/inventory" element={isLoggedIn ? <Inventory /> : <Navigate to="/login" />} />
-  <Route path="/donations" element={isLoggedIn ? <Donations /> : <Navigate to="/login" />} />
 
 
 
@@ -43,8 +42,10 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={isLoggedIn ? <Profile /> : <Navigate to="/login" />} />
         <Route path="/donors" element={<DonorSearch />} />
-  <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
-  <Route path="/requests" element={isLoggedIn ? <Requests /> : <Navigate to="/login" />} />
+        <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
+        <Route path="/requests" element={isLoggedIn ? <Requests /> : <Navigate to="/login" />} />
+        <Route path="/inventory" element={isLoggedIn ? <Inventory /> : <Navigate to="/login" />} />
+        <Route path="/donations" element={isLoggedIn ? <Donations /> : <Navigate to="/login" />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
