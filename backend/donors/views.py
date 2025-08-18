@@ -27,7 +27,9 @@ class PublicDonorSearch(generics.ListAPIView):
             qs = qs.filter(blood_group__iexact=blood_group)
         if district:
             qs = qs.filter(district__iexact=district)
-        # Only donors who have not donated within last 3 months
+        # Exclude donors marked not ready or recently donated
+        qs = qs.filter(not_ready=False, donated_recently=False)
+        # Keep the original last_donation logic as a fallback (still show if none or older than 3 months)
         qs = qs.filter(models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=three_months_ago))
         return qs
 

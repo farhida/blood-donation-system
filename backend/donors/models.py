@@ -8,6 +8,8 @@ class UserProfile(models.Model):
     last_donation = models.DateField(blank=True, null=True)
     district = models.CharField(max_length=100, blank=True, null=True)
     share_phone = models.BooleanField(default=False)
+    donated_recently = models.BooleanField(default=False)
+    not_ready = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username}'s profile"

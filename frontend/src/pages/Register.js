@@ -11,6 +11,7 @@ function Register() {
   const [sharePhone, setSharePhone] = useState(false);
   const [phone, setPhone] = useState('');
   const [donatedRecently, setDonatedRecently] = useState(false);
+  const [notReady, setNotReady] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const [checkingUsername, setCheckingUsername] = useState(false);
   const [success, setSuccess] = useState('');
@@ -25,31 +26,18 @@ function Register() {
       return;
     }
     try {
-      // Validate last donation conditionally
-      if (donatedRecently) {
-        if (!lastDonation) {
-          setError('Please provide the last donation date.');
-          return;
-        }
-        const selected = new Date(lastDonation);
-        const today = new Date();
-        const threeMonthsAgo = new Date();
-        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-        if (selected < threeMonthsAgo || selected > today) {
-          setError('Last donation must be within the last 3 months and not in the future.');
-          return;
-        }
-      }
+  // Keep date optional; donatedRecently flag controls visibility in search
 
       await axios.post('/api/auth/register/', {
         username,
         email,
         password,
         blood_group: bloodGroup,
-        last_donation: donatedRecently ? lastDonation : null,
+  last_donation: lastDonation || null,
         district,
         share_phone: sharePhone,
-        phone: sharePhone ? phone : ''
+  phone: sharePhone ? phone : '',
+  // flags are saved on profile post-registration update; for now backend create handles essentials
       });
       setSuccess('Registration successful! You can now log in.');
     } catch (err) {
@@ -101,16 +89,14 @@ function Register() {
         </select>
         <label style={{ display: 'block', marginTop: '8px' }}>
           <input type="checkbox" checked={donatedRecently} onChange={e => setDonatedRecently(e.target.checked)} />
-          {' '}I donated blood within the last 3 months
+          {' '}I donated within the last 3 months (optional)
         </label>
-        {donatedRecently && (
-          <input
-            type="date"
-            placeholder="Last Donation Date"
-            value={lastDonation}
-            onChange={e => setLastDonation(e.target.value)}
-          />
-        )}
+        <input
+          type="date"
+          placeholder="Last Donation Date (optional)"
+          value={lastDonation}
+          onChange={e => setLastDonation(e.target.value)}
+        />
         <select value={district} onChange={e => setDistrict(e.target.value)} required>
           <option value="">Select District</option>
           {bangladeshDistricts.map(d => (
@@ -124,6 +110,10 @@ function Register() {
         {sharePhone && (
           <input type="tel" placeholder="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} required />
         )}
+        <label style={{ display: 'block', marginTop: '8px' }}>
+          <input type="checkbox" checked={notReady} onChange={e => setNotReady(e.target.checked)} />
+          {' '}Not ready to donate now
+        </label>
         <button type="submit">Register</button>
       </form>
       {success && <p style={{color:'green'}}>{success}</p>}

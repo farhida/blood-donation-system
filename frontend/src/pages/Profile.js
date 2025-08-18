@@ -4,7 +4,7 @@ import api from '../api';
 function Profile() {
   const [profile, setProfile] = useState(null);
   const [edit, setEdit] = useState(false);
-  const [form, setForm] = useState({ phone: '', blood_group: '', last_donation: '', district: '', share_phone: false });
+  const [form, setForm] = useState({ phone: '', blood_group: '', last_donation: '', district: '', share_phone: false, donated_recently: false, not_ready: false });
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -19,6 +19,8 @@ function Profile() {
           last_donation: res.data.last_donation || '',
           district: res.data.district || '',
           share_phone: !!res.data.share_phone,
+          donated_recently: !!res.data.donated_recently,
+          not_ready: !!res.data.not_ready,
         });
       } catch (e) {
         setError('Unauthorized. Please login again.');
@@ -63,6 +65,12 @@ function Profile() {
           </select>
           <label>
             <input type="checkbox" name="share_phone" checked={form.share_phone} onChange={e => setForm({ ...form, share_phone: e.target.checked })} /> Share phone publicly
+          </label>
+          <label>
+            <input type="checkbox" name="donated_recently" checked={form.donated_recently} onChange={e => setForm({ ...form, donated_recently: e.target.checked })} /> Donated within last 3 months
+          </label>
+          <label>
+            <input type="checkbox" name="not_ready" checked={form.not_ready} onChange={e => setForm({ ...form, not_ready: e.target.checked })} /> Not ready to donate now
           </label>
           <button onClick={handleSave}>Save</button>
         </>

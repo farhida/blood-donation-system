@@ -3,11 +3,11 @@ from django.contrib.auth.models import User
 from donors.models import UserProfile
 
 class UserSerializer(serializers.ModelSerializer):
-    blood_group = serializers.CharField(required=True)
-    last_donation = serializers.DateField(required=False, allow_null=True)
-    district = serializers.CharField(required=True, allow_blank=False)
-    share_phone = serializers.BooleanField(required=False)
-    phone = serializers.CharField(required=False, allow_blank=True)
+    blood_group = serializers.CharField(required=True, write_only=True)
+    last_donation = serializers.DateField(required=False, allow_null=True, write_only=True)
+    district = serializers.CharField(required=True, allow_blank=False, write_only=True)
+    share_phone = serializers.BooleanField(required=False, write_only=True)
+    phone = serializers.CharField(required=False, allow_blank=True, write_only=True)
 
     class Meta:
         model = User
