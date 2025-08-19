@@ -69,7 +69,15 @@ function Register() {
           <option value="AB-">AB-</option>
         </select>
         <label style={{ display: 'block', marginTop: '8px' }}>
-          <input type="checkbox" checked={donatedRecently} onChange={e => setDonatedRecently(e.target.checked)} />
+          <input
+            type="checkbox"
+            checked={donatedRecently}
+            onChange={e => {
+              const val = e.target.checked;
+              setDonatedRecently(val);
+              if (val) setNotReady(false);
+            }}
+          />
           {' '}I donated within the last 3 months (optional)
         </label>
         <input
@@ -91,10 +99,12 @@ function Register() {
         {sharePhone && (
           <input type="tel" placeholder="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} required />
         )}
-        <label style={{ display: 'block', marginTop: '8px' }}>
-          <input type="checkbox" checked={notReady} onChange={e => setNotReady(e.target.checked)} />
-          {' '}Not ready to donate now
-        </label>
+        {!donatedRecently && (
+          <label style={{ display: 'block', marginTop: '8px' }}>
+            <input type="checkbox" checked={notReady} onChange={e => setNotReady(e.target.checked)} />
+            {' '}Not ready to donate now
+          </label>
+        )}
         <button type="submit">Register</button>
       </form>
       {success && <p style={{color:'green'}}>{success}</p>}
