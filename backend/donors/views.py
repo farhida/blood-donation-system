@@ -235,20 +235,39 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        username = request.data.get('username')
+        identifier = request.data.get('username') or request.data.get('full_name') or request.data.get('email')
         password = request.data.get('password')
-        # Allow login via email or username
+        # Allow login via username, email, or full name
         user = None
-        if username:
-            user = authenticate(username=username, password=password)
+        if identifier:
+            # Try direct username
+            user = authenticate(username=identifier, password=password)
             if user is None:
+                # Try email
                 try:
                     from django.contrib.auth.models import User as DjangoUser
-                    u = DjangoUser.objects.filter(email=username).first()
+                    u = DjangoUser.objects.filter(email__iexact=identifier).first()
                     if u:
                         user = authenticate(username=u.username, password=password)
                 except Exception:
                     user = None
+            if user is None:
+                # Try full name: split to first/last and match case-insensitively
+                parts = (identifier or '').strip().split()
+                if len(parts) >= 1:
+                    first = parts[0]
+                    last = ' '.join(parts[1:])
+                    try:
+                        from django.contrib.auth.models import User as DjangoUser
+                        qs = DjangoUser.objects.filter(first_name__iexact=first)
+                        if last:
+                            qs = qs.filter(last_name__iexact=last)
+                        candidates = list(qs[:2])
+                        if len(candidates) == 1:
+                            cand = candidates[0]
+                            user = authenticate(username=cand.username, password=password)
+                    except Exception:
+                        user = None
         if user is not None:
             refresh = RefreshToken.for_user(user)
             return Response({

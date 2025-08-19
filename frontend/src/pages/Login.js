@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 function Login({ onLogin }) {
-  const [username, setUsername] = useState('');
+  const [nameOrEmail, setNameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
@@ -10,7 +10,14 @@ function Login({ onLogin }) {
     e.preventDefault();
     setError('');
     try {
-  const res = await axios.post('/api/login/', { username, password });
+      const payload = { password };
+      // Send as full_name if it looks like a name (has space), else send as username; backend also accepts email
+      if (nameOrEmail.includes(' ')) {
+        payload.full_name = nameOrEmail;
+      } else {
+        payload.username = nameOrEmail;
+      }
+      const res = await axios.post('/api/login/', payload);
       localStorage.setItem('access', res.data.access);
       localStorage.setItem('refresh', res.data.refresh);
       onLogin();
@@ -23,7 +30,7 @@ function Login({ onLogin }) {
     <div className="login-form">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required />
+        <input type="text" placeholder="Full name or Email" value={nameOrEmail} onChange={e => setNameOrEmail(e.target.value)} required />
   <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password" />
         <button type="submit">Login</button>
       </form>
