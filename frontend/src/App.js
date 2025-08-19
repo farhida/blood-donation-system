@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import NavBar from './NavBar';
 import './App.css';
 import Login from './pages/Login';
@@ -20,6 +20,7 @@ import AdminLogin from './pages/AdminLogin';
 import Notifications from './pages/Notifications';
 
 function App() {
+  const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('access'));
   const [isAdmin, setIsAdmin] = useState(!!localStorage.getItem('admin'));
 
@@ -37,8 +38,27 @@ function App() {
     setIsAdmin(false);
   };
 
+  const getPageClass = (pathname) => {
+    if (pathname.startsWith('/donors') || pathname === '/') return 'bg-donorsearch';
+    if (pathname.startsWith('/login')) return 'bg-login';
+    if (pathname.startsWith('/register')) return 'bg-register';
+    if (pathname.startsWith('/profile')) return 'bg-profile';
+    if (pathname.startsWith('/dashboard')) return 'bg-dashboard';
+    if (pathname.startsWith('/requests')) return 'bg-requests';
+    if (pathname.startsWith('/notifications')) return 'bg-notifications';
+    if (pathname.startsWith('/donations')) return 'bg-donations';
+    if (pathname.startsWith('/inventory')) return 'bg-inventory';
+    if (pathname.startsWith('/admin-login')) return 'bg-admin-login';
+    if (pathname === '/admin') return 'bg-admin';
+    if (pathname.startsWith('/admin/users')) return 'bg-admin-users';
+    if (pathname.startsWith('/admin/requests')) return 'bg-admin-requests';
+    if (pathname.startsWith('/admin/inventory')) return 'bg-admin-inventory';
+    return 'bg-generic';
+  };
+  const pageClass = getPageClass(location.pathname || '/');
+
   return (
-    <div className="App">
+    <div className={`App ${pageClass}`}>
       <NavBar token={isLoggedIn} handleLogout={handleLogout} isAdmin={isAdmin} handleAdminLogout={handleAdminLogout} />
       <Routes>
   <Route path="/" element={<Navigate to="/donors" />} />

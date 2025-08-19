@@ -8,6 +8,163 @@
   transition: all 0.3s ease;
 }
 
+/* Animated, subtle per-page backgrounds (readable center, light motion) */
+.App.bg-generic::before,
+.App.bg-donorsearch::before,
+.App.bg-login::before,
+.App.bg-register::before,
+.App.bg-profile::before,
+.App.bg-dashboard::before,
+.App.bg-requests::before,
+.App.bg-notifications::before,
+.App.bg-donations::before,
+.App.bg-inventory::before,
+.App.bg-admin-login::before,
+.App.bg-admin::before,
+.App.bg-admin-users::before,
+.App.bg-admin-requests::before,
+.App.bg-admin-inventory::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.85), rgba(255,255,255,0.6) 40%, rgba(255,255,255,0.4) 60%, rgba(255,255,255,0.2) 100%);
+}
+
+/* Base floating blobs */
+@keyframes floatSlow {
+  0% { transform: translateY(0) translateX(0) scale(1); }
+  50% { transform: translateY(-10px) translateX(5px) scale(1.02); }
+  100% { transform: translateY(0) translateX(0) scale(1); }
+}
+
+.App.bg-donorsearch::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(255,255,255,0.7) 45%, rgba(253,236,234,0.6) 70%),
+  linear-gradient(180deg, #ffffff, #fdecea);
+}
+
+.App.bg-login::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(227,242,253,0.7) 45%),
+  linear-gradient(180deg, #e3f2fd, #bbdefb);
+}
+
+.App.bg-register::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.92), rgba(255,243,224,0.7) 45%),
+  linear-gradient(180deg, #fff3e0, #ffccbc);
+}
+
+.App.bg-profile::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.93), rgba(224,242,241,0.7) 45%),
+  linear-gradient(180deg, #e0f2f1, #b2dfdb);
+}
+
+.App.bg-dashboard::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(227,242,253,0.7) 45%),
+  linear-gradient(180deg, #e3f2fd, #cfd8dc);
+}
+
+.App.bg-requests::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(255,224,224,0.7) 45%),
+  linear-gradient(180deg, #ffffff, #ffe0e0);
+}
+
+.App.bg-notifications::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.92), rgba(232,240,254,0.7) 45%),
+  linear-gradient(180deg, #f5f7fa, #e8f0fe);
+}
+
+.App.bg-donations::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(255,245,245,0.7) 45%),
+  linear-gradient(180deg, #fff5f5, #ef9a9a);
+}
+
+.App.bg-inventory::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(236,239,241,0.7) 45%),
+  linear-gradient(180deg, #f7f7f7, #cfd8dc);
+}
+
+.App.bg-admin-login::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(208,220,235,0.6) 45%),
+  linear-gradient(180deg, #e3f2fd, #cfd8dc);
+}
+
+.App.bg-admin::before,
+.App.bg-admin-users::before,
+.App.bg-admin-requests::before,
+.App.bg-admin-inventory::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(240,244,248,0.7) 45%),
+  linear-gradient(180deg, #f0f4f8, #eceff1);
+}
+
+/* Optional decorative low-contrast floating shapes */
+.App::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: 40vmax 40vmax, 30vmax 30vmax, 25vmax 25vmax;
+  background-position: -10vmax 10vmax, 80vw -5vmax, 60vw 70vh;
+  opacity: 0.15;
+  animation: floatSlow 12s ease-in-out infinite;
+}
+
+.bg-donorsearch.App::after { background-image:
+  radial-gradient(closest-side, rgba(198,40,40,0.20), rgba(198,40,40,0)),
+  radial-gradient(closest-side, rgba(244,67,54,0.16), rgba(244,67,54,0)),
+  radial-gradient(closest-side, rgba(183,28,28,0.12), rgba(183,28,28,0)); }
+
+.bg-login.App::after { background-image:
+  radial-gradient(closest-side, rgba(25,118,210,0.18), rgba(25,118,210,0)),
+  radial-gradient(closest-side, rgba(13,71,161,0.14), rgba(13,71,161,0)),
+  radial-gradient(closest-side, rgba(30,136,229,0.12), rgba(30,136,229,0)); }
+
+.bg-register.App::after { background-image:
+  radial-gradient(closest-side, rgba(211,47,47,0.16), rgba(211,47,47,0)),
+  radial-gradient(closest-side, rgba(255,112,67,0.14), rgba(255,112,67,0)),
+  radial-gradient(closest-side, rgba(255,138,128,0.12), rgba(255,138,128,0)); }
+
+.bg-profile.App::after { background-image:
+  radial-gradient(closest-side, rgba(38,166,154,0.16), rgba(38,166,154,0)),
+  radial-gradient(closest-side, rgba(0,150,136,0.14), rgba(0,150,136,0)),
+  radial-gradient(closest-side, rgba(128,203,196,0.12), rgba(128,203,196,0)); }
+
+.bg-dashboard.App::after { background-image:
+  radial-gradient(closest-side, rgba(25,118,210,0.14), rgba(25,118,210,0)),
+  radial-gradient(closest-side, rgba(33,150,243,0.12), rgba(33,150,243,0)),
+  radial-gradient(closest-side, rgba(96,125,139,0.10), rgba(96,125,139,0)); }
+
+.bg-requests.App::after { background-image:
+  radial-gradient(closest-side, rgba(229,57,53,0.16), rgba(229,57,53,0)),
+  radial-gradient(closest-side, rgba(244,81,30,0.14), rgba(244,81,30,0)),
+  radial-gradient(closest-side, rgba(255,138,101,0.12), rgba(255,138,101,0)); }
+
+.bg-notifications.App::after { background-image:
+  radial-gradient(closest-side, rgba(92,107,192,0.16), rgba(92,107,192,0)),
+  radial-gradient(closest-side, rgba(66,165,245,0.14), rgba(66,165,245,0)),
+  radial-gradient(closest-side, rgba(158,158,158,0.10), rgba(158,158,158,0)); }
+
+.bg-donations.App::after { background-image:
+  radial-gradient(closest-side, rgba(198,40,40,0.18), rgba(198,40,40,0)),
+  radial-gradient(closest-side, rgba(239,83,80,0.14), rgba(239,83,80,0)),
+  radial-gradient(closest-side, rgba(229,115,115,0.12), rgba(229,115,115,0)); }
+
+.bg-inventory.App::after { background-image:
+  radial-gradient(closest-side, rgba(84,110,122,0.16), rgba(84,110,122,0)),
+  radial-gradient(closest-side, rgba(96,125,139,0.14), rgba(96,125,139,0)),
+  radial-gradient(closest-side, rgba(176,190,197,0.12), rgba(176,190,197,0)); }
+
+.bg-admin-login.App::after,
+.bg-admin.App::after,
+.bg-admin-users.App::after,
+.bg-admin-requests.App::after,
+.bg-admin-inventory.App::after { background-image:
+  radial-gradient(closest-side, rgba(30,136,229,0.14), rgba(30,136,229,0)),
+  radial-gradient(closest-side, rgba(120,144,156,0.12), rgba(120,144,156,0)),
+  radial-gradient(closest-side, rgba(176,190,197,0.10), rgba(176,190,197,0)); }
+
 .chart-container {
   max-width: 800px;
   margin: 0 auto 40px;
