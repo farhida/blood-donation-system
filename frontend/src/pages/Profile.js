@@ -56,7 +56,15 @@ function Profile() {
             <input name="phone" value={form.phone} onChange={handleChange} placeholder="Phone" required />
           )}
           <input name="blood_group" value={form.blood_group} onChange={handleChange} placeholder="Blood Group" />
-          <input type="date" name="last_donation" value={form.last_donation || ''} onChange={handleChange} placeholder="Last Donation Date" />
+          {form.donated_recently && (
+            <input
+              type="date"
+              name="last_donation"
+              value={form.last_donation || ''}
+              onChange={handleChange}
+              placeholder="Last Donation Date"
+            />
+          )}
           <select name="district" value={form.district} onChange={handleChange} required>
             <option value="">Select District</option>
             {bangladeshDistricts.map(d => (
@@ -67,7 +75,16 @@ function Profile() {
             <input type="checkbox" name="share_phone" checked={form.share_phone} onChange={e => setForm({ ...form, share_phone: e.target.checked })} /> Share phone publicly
           </label>
           <label>
-            <input type="checkbox" name="donated_recently" checked={form.donated_recently} onChange={e => setForm({ ...form, donated_recently: e.target.checked })} /> Donated within last 3 months
+            <input
+              type="checkbox"
+              name="donated_recently"
+              checked={form.donated_recently}
+              onChange={e => {
+                const checked = e.target.checked;
+                setForm({ ...form, donated_recently: checked, last_donation: checked ? form.last_donation : '' });
+              }}
+            />{' '}
+            Donated within last 3 months
           </label>
           <label>
             <input type="checkbox" name="not_ready" checked={form.not_ready} onChange={e => setForm({ ...form, not_ready: e.target.checked })} /> Not ready to donate now
