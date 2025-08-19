@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class UserProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
+    last_donation = serializers.DateField(allow_null=True, required=False)
 
     class Meta:
         model = UserProfile
@@ -22,13 +23,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return instance
 
     def validate(self, attrs):
+        # Coerce empty last_donation to None
+        if 'last_donation' in attrs and attrs.get('last_donation') in ('', None):
+            attrs['last_donation'] = None
         # Enforce district presence and phone when sharing is enabled
         share_phone = attrs.get('share_phone', getattr(self.instance, 'share_phone', False))
         phone = attrs.get('phone', getattr(self.instance, 'phone', '') or '')
-        district = attrs.get('district', getattr(self.instance, 'district', '') or '')
         errors = {}
-        if not district:
-            errors['district'] = 'District is required.'
         if share_phone and not phone:
             errors['phone'] = 'Phone number is required when sharing phone publicly.'
         if errors:
@@ -38,15 +39,22 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class PublicDonorProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username')
+    full_name = serializers.SerializerMethodField()
     email = serializers.EmailField(source='user.email')
     phone = serializers.SerializerMethodField()
 
     class Meta:
         model = UserProfile
-        fields = ['username', 'email', 'blood_group', 'district', 'last_donation', 'phone']
+        fields = ['username', 'full_name', 'email', 'blood_group', 'district', 'last_donation', 'phone']
 
     def get_phone(self, obj):
         return obj.phone if getattr(obj, 'share_phone', False) else None
+
+    def get_full_name(self, obj):
+        first = getattr(obj.user, 'first_name', '') or ''
+        last = getattr(obj.user, 'last_name', '') or ''
+        full = f"{first} {last}".strip()
+        return full or getattr(obj.user, 'username', '')
 
 
 class DonorSerializer(serializers.ModelSerializer):
@@ -65,9 +73,11 @@ class RequestSerializer(serializers.ModelSerializer):
         read_only_fields = ['user', 'status', 'accepted_by', 'created_at']
 
     def validate(self, attrs):
-        if not attrs.get('blood_group'):
+        bg = attrs.get('blood_group')
+        ci = attrs.get('contact_info')
+        if not bg or not str(bg).strip():
             raise serializers.ValidationError({'blood_group': 'Blood group is required.'})
-        if not attrs.get('contact_info'):
+        if not ci or not str(ci).strip():
             raise serializers.ValidationError({'contact_info': 'Contact info is required.'})
         return attrs
 
@@ -83,7 +93,43 @@ class DonationSerializer(serializers.ModelSerializer):
         read_only_fields = ['user', 'donation_date']
 
 class NotificationSerializer(serializers.ModelSerializer):
+    request_info = serializers.SerializerMethodField()
+    accepted_by_info = serializers.SerializerMethodField()
+
     class Meta:
         model = Notification
-        fields = ['id', 'user', 'request', 'message', 'read', 'created_at']
+        fields = ['id', 'user', 'request', 'message', 'read', 'created_at', 'request_info', 'accepted_by_info']
         read_only_fields = ['user', 'created_at']
+
+    def get_request_info(self, obj):
+        if not obj.request:
+            return None
+        r = obj.request
+        return {
+            'id': r.id,
+            'blood_group': r.blood_group,
+            'hospital': r.hospital,
+            'city': r.city,
+            'address': r.address,
+            'contact_info': r.contact_info,
+            'status': r.status,
+        }
+
+    def get_accepted_by_info(self, obj):
+        r = getattr(obj, 'request', None)
+        if not r or not r.accepted_by:
+            return None
+        user = r.accepted_by
+        # Prefer sharing phone only if acceptor opted in
+        phone = None
+        try:
+            prof = UserProfile.objects.get(user=user)
+            phone = prof.phone if getattr(prof, 'share_phone', False) else None
+        except UserProfile.DoesNotExist:
+            phone = None
+        full_name = f"{user.first_name} {user.last_name}".strip() or user.username
+        return {
+            'name': full_name,
+            'email': user.email,
+            'phone': phone,
+        }

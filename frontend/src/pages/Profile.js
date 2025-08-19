@@ -32,13 +32,36 @@ function Profile() {
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSave = async () => {
-    const token = localStorage.getItem('access');
+    setMessage('');
+    setError('');
+    // Client-side validation to match backend rules
+    if (!form.district || !String(form.district).trim()) {
+      setError('District is required.');
+      return;
+    }
+    if (form.share_phone && (!form.phone || !String(form.phone).trim())) {
+      setError('Phone number is required when sharing phone publicly.');
+      return;
+    }
+    // Normalize last_donation: send null if not provided
+    const payload = {
+      ...form,
+      last_donation: form.donated_recently && form.last_donation ? form.last_donation : null,
+    };
     try {
-  await api.put('/api/profile/', form);
+      await api.put('/api/profile/', payload);
       setMessage('Profile updated!');
       setEdit(false);
-    } catch {
-      setMessage('Update failed.');
+    } catch (err) {
+      const data = err?.response?.data;
+      if (data && typeof data === 'object') {
+        const msg = Object.entries(data)
+          .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
+          .join(' ');
+        setError(msg || 'Update failed.');
+      } else {
+        setError('Update failed.');
+      }
     }
   };
 

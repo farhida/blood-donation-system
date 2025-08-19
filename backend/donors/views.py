@@ -66,7 +66,7 @@ class RequestList(generics.ListCreateAPIView):
             Notification.objects.create(
                 user=prof.user,
                 request=req,
-                message=f"Blood request for {req.blood_group} at {req.hospital or req.city or 'unknown location'}"
+                message="Blood needed"
             )
 
 class RequestDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -86,11 +86,23 @@ class AcceptRequestView(APIView):
         req.status = 'accepted'
         req.accepted_by = request.user
         req.save()
-        # Notify requester
+        # Notify requester with acceptor contact details
+        acceptor = request.user
+        full_name = f"{acceptor.first_name} {acceptor.last_name}".strip() or acceptor.username
+        contact_email = acceptor.email
+        contact_phone = None
+        try:
+            prof = UserProfile.objects.get(user=acceptor)
+            contact_phone = prof.phone if getattr(prof, 'share_phone', False) else None
+        except UserProfile.DoesNotExist:
+            contact_phone = None
+        contact_bits = [b for b in [contact_email, contact_phone] if b]
+        contact_str = " | ".join(contact_bits) if contact_bits else ""
+        msg = f"Your request was accepted by {full_name}." + (f" Contact: {contact_str}" if contact_str else "")
         Notification.objects.create(
             user=req.user,
             request=req,
-            message=f"Your request has been accepted by {request.user.username}"
+            message=msg
         )
         return Response({'status': 'accepted'})
 

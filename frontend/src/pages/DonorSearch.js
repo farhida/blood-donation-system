@@ -59,11 +59,14 @@ function DonorSearch() {
       </form>
       {message && <div>{message}</div>}
       <ul className="donor-list">
-        {results.map((p, idx) => (
-          <li key={idx}>
-            <b>{p.username}</b> ({p.blood_group}) - {p.email}{p.phone ? ` - ${p.phone}` : ''}
-          </li>
-        ))}
+        {results.map((p, idx) => {
+          const displayName = p.full_name && p.full_name.trim() ? p.full_name : p.username;
+          return (
+            <li key={idx}>
+              <b>{displayName}</b> ({p.blood_group}) - {p.email}{p.phone ? ` - ${p.phone}` : ''}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

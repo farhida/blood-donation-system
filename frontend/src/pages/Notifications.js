@@ -22,6 +22,18 @@ function Notifications() {
     load();
   }, []);
 
+  const accept = async (reqId) => {
+    try {
+      await api.post(`/api/requests/${reqId}/accept/`);
+      // Refresh notifications to reflect status changes or follow-up messages
+      const res = await api.get('/api/notifications/');
+      setItems(res.data || []);
+      alert('Request accepted. Please contact using the provided info.');
+    } catch {
+      alert('Failed to accept the request.');
+    }
+  };
+
   return (
     <div className="page">
       <h2>Notifications</h2>
@@ -29,12 +41,25 @@ function Notifications() {
       {error && <div style={{color:'red'}}>{error}</div>}
       {!loading && !error && (
         <ul>
-          {items.map(n => (
-            <li key={n.id}>
-              <div>{n.message}</div>
-              <small>{new Date(n.created_at).toLocaleString()}</small>
-            </li>
-          ))}
+          {items.map(n => {
+            const info = n.request_info || {};
+            return (
+              <li key={n.id} style={{marginBottom:12}}>
+                <div><strong>{n.message || 'Blood needed'}</strong></div>
+                <div>
+                  Blood Group: {info.blood_group || 'N/A'} | Location: {info.hospital || info.city || 'N/A'}
+                </div>
+                {info.address && <div>Address: {info.address}</div>}
+                {info.contact_info && <div>Contact: {info.contact_info}</div>}
+                <small>{new Date(n.created_at).toLocaleString()}</small>
+                {info.id && info.status === 'open' && (
+                  <div style={{marginTop:6}}>
+                    <button onClick={() => accept(info.id)}>Accept</button>
+                  </div>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
