@@ -122,8 +122,10 @@ class MarkCollectedView(APIView):
             Notification.objects.create(
                 user=req.accepted_by,
                 request=req,
-                message=f"Requester marked the request as collected"
+                message="Requester marked the request as collected"
             )
+        # Remove all notifications related to this request from all users
+        Notification.objects.filter(request=req).delete()
         return Response({'status': 'collected'})
 
 class MyRequestsView(generics.ListAPIView):
@@ -152,7 +154,9 @@ class NotificationsView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Notification.objects.filter(user=self.request.user).order_by('-created_at')
+        qs = Notification.objects.filter(user=self.request.user)
+        qs = qs.exclude(request__status='collected')
+        return qs.order_by('-created_at')
 
 
 class BloodInventoryList(generics.ListCreateAPIView):
