@@ -19,15 +19,13 @@ function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
     <nav className="navbar">
       <ul>
         <li><Link to="/donors">Donor Search</Link></li>
-        <li><Link to="/admin-login">Admin Login</Link></li>
         {token ? (
           <>
             <li><Link to="/dashboard">Dashboard</Link></li>
             <li><Link to="/profile">Profile</Link></li>
             <li><Link to="/notifications">Notifications</Link></li>
             <li><Link to="/requests">Requests</Link></li>
-            <li><Link to="/inventory">Inventory</Link></li>
-            <li><Link to="/donations">Donations</Link></li>
+            {/* Inventory and Donations hidden from top nav per request */}
             <li><button className="logout-btn" onClick={handleLogout}>Logout</button></li>
           </>
         ) : (

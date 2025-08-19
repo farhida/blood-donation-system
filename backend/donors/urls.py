@@ -4,7 +4,7 @@ from .views import (
     RequestList, RequestDetail, AcceptRequestView, MarkCollectedView, MyRequestsView, MatchingRequestsView, NotificationsView,
     BloodInventoryList, BloodInventoryDetail,
     DonationList, DonationDetail,
-    AnalyticsView, UserProfileView,
+    AnalyticsView, UserProfileView, DashboardSummaryView,
     RegisterView, LoginView
 )
 
@@ -41,4 +41,5 @@ urlpatterns = [
     # Analytics & Profile
     path('analytics/', AnalyticsView.as_view(), name='analytics'),
     path('profile/', UserProfileView.as_view(), name='user-profile'),
+    path('dashboard-summary/', DashboardSummaryView.as_view(), name='dashboard-summary'),
 ]

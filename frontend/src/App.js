@@ -48,7 +48,7 @@ function App() {
         <Route path="/donors" element={<DonorSearch />} />
         <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
   <Route path="/requests" element={<Requests />} />
-        <Route path="/inventory" element={isLoggedIn ? <Inventory /> : <Navigate to="/login" />} />
+  {/* Inventory route removed from user navigation per request */}
   <Route path="/donations" element={isLoggedIn ? <Donations /> : <Navigate to="/login" />} />
   <Route path="/notifications" element={isLoggedIn ? <Notifications /> : <Navigate to="/login" />} />
         <Route path="/admin-login" element={<AdminLogin onAdminLogin={handleAdminLogin} />} />

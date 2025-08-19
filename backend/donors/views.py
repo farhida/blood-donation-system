@@ -167,6 +167,27 @@ class DonationDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DonationSerializer
     permission_classes = [IsAuthenticated]
 
+class DashboardSummaryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        try:
+            profile = UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            profile = UserProfile.objects.create(user=user)
+        donation_count = Donation.objects.filter(user=user).count()
+        full_name = f"{user.first_name} {user.last_name}".strip()
+        data = {
+            'username': user.username,
+            'full_name': full_name or None,
+            'email': user.email,
+            'blood_group': profile.blood_group,
+            'district': profile.district,
+            'last_donation': profile.last_donation,
+            'donation_count': donation_count,
+        }
+        return Response(data)
 
 class AnalyticsView(APIView):
     permission_classes = [IsAuthenticated]

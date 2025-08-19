@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Login({ onLogin }) {
   const [nameOrEmail, setNameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,9 +20,10 @@ function Login({ onLogin }) {
         payload.username = nameOrEmail;
       }
       const res = await axios.post('/api/login/', payload);
-      localStorage.setItem('access', res.data.access);
-      localStorage.setItem('refresh', res.data.refresh);
-      onLogin();
+  localStorage.setItem('access', res.data.access);
+  localStorage.setItem('refresh', res.data.refresh);
+  onLogin();
+  navigate('/dashboard');
     } catch (err) {
       setError('Invalid credentials');
     }
