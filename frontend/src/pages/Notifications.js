@@ -35,6 +35,17 @@ function Notifications() {
     }
   };
 
+  const collected = async (reqId) => {
+    try {
+      await api.post(`/api/requests/${reqId}/collected/`);
+      const res = await api.get('/api/notifications/');
+      setItems(res.data || []);
+      alert('Marked as collected.');
+    } catch {
+      alert('Failed to mark as collected.');
+    }
+  };
+
   const toggle = (id) => {
     setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
   };
@@ -49,6 +60,7 @@ function Notifications() {
           {items.map(n => {
             const info = n.request_info || {};
             const isOpen = info.status === 'open';
+            const isAccepted = info.status === 'accepted';
             const isExpanded = !!expanded[n.id];
             const created = new Date(n.created_at).toLocaleString();
             return (
@@ -70,9 +82,16 @@ function Notifications() {
                     </div>
                     {info.address && <div>Address: {info.address}</div>}
                     {info.contact_info && <div>Contact: {info.contact_info}</div>}
+                    {/* If it's open, show Accept for potential donors */}
                     {isOpen && info.id && (
                       <div style={{marginTop:8}}>
                         <button onClick={() => accept(info.id)}>Accept</button>
+                      </div>
+                    )}
+                    {/* If it's accepted and the current user owns the request, show Mark as Collected */}
+                    {isAccepted && info.is_owner && (
+                      <div style={{marginTop:8}}>
+                        <button onClick={() => collected(info.id)}>Mark as Collected</button>
                       </div>
                     )}
                   </div>

@@ -105,6 +105,9 @@ class NotificationSerializer(serializers.ModelSerializer):
         if not obj.request:
             return None
         r = obj.request
+        # Determine if the current user is the owner of the request
+        req = self.context.get('request')
+        is_owner = bool(req and getattr(req, 'user', None) and r.user_id == req.user.id)
         return {
             'id': r.id,
             'blood_group': r.blood_group,
@@ -113,6 +116,7 @@ class NotificationSerializer(serializers.ModelSerializer):
             'address': r.address,
             'contact_info': r.contact_info,
             'status': r.status,
+            'is_owner': is_owner,
         }
 
     def get_accepted_by_info(self, obj):
