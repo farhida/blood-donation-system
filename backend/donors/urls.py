@@ -1,23 +1,19 @@
 from django.urls import path
 from .views import (
-    DonorList, DonorDetail, PublicDonorSearch, MessageDonorView,
-    RequestList, RequestDetail, AcceptRequestView, MarkCollectedView, MyRequestsView, MatchingRequestsView, NotificationsView,
+    PublicDonorSearch,
+    RequestList, RequestDetail, AcceptRequestView, MarkCollectedView, MyRequestsView, NotificationsView,
     BloodInventoryList, BloodInventoryDetail,
     DonationList, DonationDetail,
     AnalyticsView, UserProfileView, DashboardSummaryView,
-    RegisterView, LoginView
+    LoginView
 )
 
 urlpatterns = [
     # Auth
-    path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
 
-    # Donors
-    path('donors/', DonorList.as_view(), name='donor-list'),
-    path('donors/<int:pk>/', DonorDetail.as_view(), name='donor-detail'),
+    # Donors (public search only)
     path('donors/search/', PublicDonorSearch.as_view(), name='public-donor-search'),
-    path('donors/<int:donor_id>/message/', MessageDonorView.as_view(), name='message-donor'),
 
     # Requests
     path('requests/', RequestList.as_view(), name='request-list'),
@@ -25,7 +21,6 @@ urlpatterns = [
     path('requests/<int:pk>/accept/', AcceptRequestView.as_view(), name='request-accept'),
     path('requests/<int:pk>/collected/', MarkCollectedView.as_view(), name='request-collected'),
     path('requests/mine/', MyRequestsView.as_view(), name='my-requests'),
-    path('requests/matching/', MatchingRequestsView.as_view(), name='matching-requests'),
 
     # Notifications
     path('notifications/', NotificationsView.as_view(), name='notifications'),

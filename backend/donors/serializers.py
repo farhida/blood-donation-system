@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Donor, Request, BloodInventory, Donation, UserProfile, Notification
+from .models import Request, BloodInventory, Donation, UserProfile, Notification
 from django.contrib.auth.models import User
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -56,11 +56,6 @@ class PublicDonorProfileSerializer(serializers.ModelSerializer):
         full = f"{first} {last}".strip()
         return full or getattr(obj.user, 'username', '')
 
-
-class DonorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Donor
-        fields = ['id', 'name', 'blood_group', 'phone', 'created_at']
 
 class RequestSerializer(serializers.ModelSerializer):
     class Meta:

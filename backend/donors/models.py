@@ -14,14 +14,7 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"{self.user.username}'s profile"
 
-class Donor(models.Model):
-    name = models.CharField(max_length=100)
-    blood_group = models.CharField(max_length=10)
-    phone = models.CharField(max_length=15)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
+# Legacy Donor model removed; donor data is represented by User + UserProfile
 
 class Request(models.Model):
     STATUS_CHOICES = [

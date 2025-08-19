@@ -10,7 +10,7 @@ import DonorSearch from './pages/DonorSearch';
 import Dashboard from './pages/Dashboard';
 import Requests from './pages/Requests';
 import NotFound from './pages/NotFound';
-import Inventory from './pages/Inventory';
+// Inventory page removed for users; admin inventory remains
 import Donations from './pages/Donations';
 import Admin from './pages/Admin';
 import AdminUsers from './pages/AdminUsers';
@@ -46,8 +46,7 @@ function App() {
     if (pathname.startsWith('/dashboard')) return 'bg-dashboard';
     if (pathname.startsWith('/requests')) return 'bg-requests';
     if (pathname.startsWith('/notifications')) return 'bg-notifications';
-    if (pathname.startsWith('/donations')) return 'bg-donations';
-    if (pathname.startsWith('/inventory')) return 'bg-inventory';
+  if (pathname.startsWith('/donations')) return 'bg-donations';
     if (pathname.startsWith('/admin-login')) return 'bg-admin-login';
     if (pathname === '/admin') return 'bg-admin';
     if (pathname.startsWith('/admin/users')) return 'bg-admin-users';
@@ -68,7 +67,6 @@ function App() {
         <Route path="/donors" element={<DonorSearch />} />
         <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
   <Route path="/requests" element={<Requests />} />
-  {/* Inventory route removed from user navigation per request */}
   <Route path="/donations" element={isLoggedIn ? <Donations /> : <Navigate to="/login" />} />
   <Route path="/notifications" element={isLoggedIn ? <Notifications /> : <Navigate to="/login" />} />
         <Route path="/admin-login" element={<AdminLogin onAdminLogin={handleAdminLogin} />} />

@@ -66,8 +66,7 @@ function Requests() {
     }
   };
 
-  // No matching requests list in this view; acceptance can be done from Notifications page.
-  const accept = async (_id) => {};
+  // Acceptance is handled from Notifications page to keep this view focused.
 
   const collected = async (id) => {
     try {

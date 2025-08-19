@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -21,18 +21,6 @@ function DonorSearch() {
       if (res.data.length === 0) setMessage('No donors found.');
     } catch {
       setMessage('Search failed.');
-    }
-  };
-
-  const handleMessage = async (donorId) => {
-    const contact = prompt('Enter your contact info for the donor:');
-    const msg = prompt('Enter your message:');
-    if (!contact || !msg) return;
-    try {
-      await axios.post(`/api/donors/donors/${donorId}/message/`, { contact, message: msg });
-      alert('Message sent!');
-    } catch {
-      alert('Failed to send message.');
     }
   };
 
