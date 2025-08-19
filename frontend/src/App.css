@@ -234,3 +234,13 @@
     font-size: 14px;
   }
 }
+
+/* Utility: link styled as button */
+.button-link {
+  display: inline-block;
+  background: #1976d2;
+  color: #fff !important;
+  padding: 6px 10px;
+  border-radius: 4px;
+  text-decoration: none;
+}

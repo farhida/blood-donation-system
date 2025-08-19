@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 function DonorSearch() {
@@ -6,6 +7,7 @@ function DonorSearch() {
   const [district, setDistrict] = useState('');
   const [results, setResults] = useState([]);
   const [message, setMessage] = useState('');
+  const isLoggedIn = !!localStorage.getItem('access');
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -36,6 +38,23 @@ function DonorSearch() {
 
   return (
     <div className="donor-search">
+      {!isLoggedIn && (
+        <div style={{
+          background: '#fff8e1',
+          border: '1px solid #ffecb3',
+          padding: '10px 12px',
+          borderRadius: 6,
+          marginBottom: 12
+        }}>
+          To request blood or see requests, please login or register.
+          <span style={{ marginLeft: 12 }}>
+            <Link to="/login" className="button-link">Login</Link>
+          </span>
+          <span style={{ marginLeft: 8 }}>
+            <Link to="/register" className="button-link">Register</Link>
+          </span>
+        </div>
+      )}
       <h2>Search for Donors</h2>
       <form onSubmit={handleSearch}>
         <select value={bloodGroup} onChange={e => setBloodGroup(e.target.value)} required>

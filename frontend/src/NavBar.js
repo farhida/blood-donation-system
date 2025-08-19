@@ -1,7 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './NavBar.css';
 function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
+  const navigate = useNavigate();
   // When admin is logged in, keep the nav minimal: only show Admin Logout (doesn't affect user session)
   if (isAdmin) {
     return (
@@ -26,7 +27,17 @@ function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
             <li><Link to="/notifications">Notifications</Link></li>
             <li><Link to="/requests">Requests</Link></li>
             {/* Inventory and Donations hidden from top nav per request */}
-            <li><button className="logout-btn" onClick={handleLogout}>Logout</button></li>
+            <li>
+              <button
+                className="logout-btn"
+                onClick={() => {
+                  handleLogout();
+                  navigate('/donors');
+                }}
+              >
+                Logout
+              </button>
+            </li>
           </>
         ) : (
           <>
