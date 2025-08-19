@@ -20,7 +20,7 @@ function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
     <nav className="navbar">
       <ul>
         <li><Link to="/donors">Donor Search</Link></li>
-        {token ? (
+    {token ? (
           <>
             <li><Link to="/dashboard">Dashboard</Link></li>
             <li><Link to="/profile">Profile</Link></li>
@@ -41,6 +41,7 @@ function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
           </>
         ) : (
           <>
+      <li><Link to="/admin-login">Admin</Link></li>
             <li><Link to="/login">Login</Link></li>
             <li><Link to="/register">Register</Link></li>
           </>

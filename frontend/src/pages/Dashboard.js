@@ -24,13 +24,20 @@ function Dashboard() {
   return (
     <div className="page">
       <h2>Dashboard</h2>
-      <div style={{display:'grid',gap:8,maxWidth:520}}>
-        <div><b>Name:</b> {data.full_name || data.username}</div>
-        <div><b>Email:</b> {data.email}</div>
-        <div><b>Blood group:</b> {data.blood_group || 'N/A'}</div>
-        <div><b>District:</b> {data.district || 'N/A'}</div>
-        <div><b>Last donation:</b> {data.last_donation || 'N/A'}</div>
-        <div><b>Total donations:</b> {data.donation_count}</div>
+      <div className="card dashboard-card">
+        <div className="info-grid">
+          <div className="info-row"><span className="label">Name</span><span className="value">{data.full_name || data.username}</span></div>
+          <div className="info-row"><span className="label">Email</span><span className="value">{data.email}</span></div>
+          <div className="info-row"><span className="label">Blood Group</span><span className="value">{data.blood_group || 'N/A'}</span></div>
+          <div className="info-row"><span className="label">District</span><span className="value">{data.district || 'N/A'}</span></div>
+          <div className="info-row"><span className="label">Last Donation</span><span className="value">{data.last_donation || 'N/A'}</span></div>
+        </div>
+        <div className="stats">
+          <div className="stat">
+            <div className="stat-number">{data.donation_count}</div>
+            <div className="stat-label">Total Donations</div>
+          </div>
+        </div>
       </div>
     </div>
   );
