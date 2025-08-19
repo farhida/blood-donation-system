@@ -10,6 +10,7 @@ from .models import Donor, Request, BloodInventory, Donation, UserProfile, Notif
 from .serializers import DonorSerializer, RequestSerializer, BloodInventorySerializer, DonationSerializer, UserProfileSerializer, PublicDonorProfileSerializer, NotificationSerializer
 from django.db.models import Count, Q
 from django.db import models
+from datetime import date, timedelta
 
 
 # Public donor search (by blood group, no auth required)
@@ -18,7 +19,6 @@ class PublicDonorSearch(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        from datetime import date, timedelta
         blood_group = self.request.query_params.get('blood_group')
         district = self.request.query_params.get('district')
         three_months_ago = date.today() - timedelta(days=90)
@@ -27,10 +27,13 @@ class PublicDonorSearch(generics.ListAPIView):
             qs = qs.filter(blood_group__iexact=blood_group)
         if district:
             qs = qs.filter(district__iexact=district)
-        # Exclude donors marked not ready or recently donated
-        qs = qs.filter(not_ready=False, donated_recently=False)
-        # Keep the original last_donation logic as a fallback (still show if none or older than 3 months)
-        qs = qs.filter(models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=three_months_ago))
+        # Exclude donors marked not ready and those whose last donation is within 3 months
+        # Note: we rely on last_donation window so donors become available again automatically after 3 months
+        qs = qs.filter(
+            not_ready=False
+        ).filter(
+            models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=three_months_ago)
+        )
         return qs
 
 # Full CRUD for Donor (auth required for create/update/delete)
@@ -117,6 +120,25 @@ class MarkCollectedView(APIView):
             return Response({'error': 'Request must be accepted before collection'}, status=400)
         req.status = 'collected'
         req.save()
+        # Record donation for the accepting donor and update their profile
+        if req.accepted_by:
+            try:
+                Donation.objects.create(
+                    user=req.accepted_by,
+                    blood_group=req.blood_group,
+                    hospital=req.hospital or req.city or 'Unknown'
+                )
+            except Exception:
+                pass
+            try:
+                prof, _ = UserProfile.objects.get_or_create(user=req.accepted_by)
+                prof.last_donation = date.today()
+                # Mark as recently donated and temporarily not ready
+                prof.donated_recently = True
+                prof.not_ready = True
+                prof.save()
+            except Exception:
+                pass
         # Notify accepter
         if req.accepted_by:
             Notification.objects.create(
@@ -230,6 +252,13 @@ class UserProfileView(APIView):
             profile = UserProfile.objects.get(user=request.user)
         except UserProfile.DoesNotExist:
             profile = UserProfile.objects.create(user=request.user)
+        # Auto-clear recency flags after 90 days so donor becomes available again
+        if profile.last_donation:
+            three_months_ago = date.today() - timedelta(days=90)
+            if profile.last_donation <= three_months_ago and (profile.donated_recently or profile.not_ready):
+                profile.donated_recently = False
+                profile.not_ready = False
+                profile.save()
         serializer = UserProfileSerializer(profile)
         return Response(serializer.data)
 
