@@ -2,6 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from donors.models import UserProfile
 import re
+from datetime import date, timedelta
+
 
 class UserSerializer(serializers.ModelSerializer):
     # Use full_name instead of username; username will be auto-generated
@@ -11,10 +13,14 @@ class UserSerializer(serializers.ModelSerializer):
     district = serializers.CharField(required=True, allow_blank=False, write_only=True)
     share_phone = serializers.BooleanField(required=False, write_only=True)
     phone = serializers.CharField(required=False, allow_blank=True, write_only=True)
+    donated_recently = serializers.BooleanField(required=False, write_only=True)
 
     class Meta:
         model = User
-        fields = ['full_name', 'password', 'email', 'blood_group', 'last_donation', 'district', 'share_phone', 'phone']
+        fields = [
+            'full_name', 'password', 'email', 'blood_group', 'last_donation',
+            'district', 'share_phone', 'phone', 'donated_recently'
+        ]
         extra_kwargs = {'password': {'write_only': True}}
 
     def _slugify(self, text: str) -> str:
@@ -40,20 +46,25 @@ class UserSerializer(serializers.ModelSerializer):
         district = validated_data.pop('district')
         share_phone = validated_data.pop('share_phone', False)
         phone = validated_data.pop('phone', '')
+        donated_recently_flag = validated_data.pop('donated_recently', False)
         full_name = validated_data.pop('full_name')
+        email = validated_data.get('email', '')
+        password = validated_data.get('password')
+
         # Validation: if share_phone is true, phone must be provided
         if share_phone and not phone:
             raise serializers.ValidationError({'phone': 'Phone number is required when sharing phone publicly.'})
 
         base_username = self._slugify(full_name)
         username = self._unique_username(base_username)
-        first, *rest = full_name.strip().split()
-        last = " ".join(rest)
+        parts = full_name.strip().split()
+        first = parts[0] if parts else ''
+        last = " ".join(parts[1:]) if len(parts) > 1 else ''
 
         user = User.objects.create_user(
             username=username,
-            email=validated_data.get('email', ''),
-            password=validated_data['password']
+            email=email,
+            password=password
         )
         user.first_name = first
         user.last_name = last
@@ -65,6 +76,18 @@ class UserSerializer(serializers.ModelSerializer):
         profile.district = district
         profile.share_phone = share_phone
         profile.phone = phone
+        # Determine donated_recently based on provided flag or last_donation within 90 days
+        donated_recently_calc = False
+        if last_donation:
+            try:
+                donated_recently_calc = (date.today() - last_donation) <= timedelta(days=90)
+            except Exception:
+                donated_recently_calc = False
+        if donated_recently_flag:
+            donated_recently_calc = True
+        profile.donated_recently = donated_recently_calc
+        # Auto-set not_ready if donated within last 3 months
+        profile.not_ready = bool(donated_recently_calc)
         profile.save()
         return user
 

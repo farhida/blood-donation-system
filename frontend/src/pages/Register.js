@@ -32,6 +32,7 @@ function Register() {
         district,
         share_phone: sharePhone,
   phone: sharePhone ? phone : '',
+  donated_recently: donatedRecently,
   // flags are saved on profile post-registration update; for now backend create handles essentials
       });
       setSuccess('Registration successful! You can now log in.');
@@ -80,12 +81,14 @@ function Register() {
           />
           {' '}I donated within the last 3 months (optional)
         </label>
-        <input
-          type="date"
-          placeholder="Last Donation Date (optional)"
-          value={lastDonation}
-          onChange={e => setLastDonation(e.target.value)}
-        />
+        {donatedRecently && (
+          <input
+            type="date"
+            placeholder="Last Donation Date (optional)"
+            value={lastDonation}
+            onChange={e => setLastDonation(e.target.value)}
+          />
+        )}
         <select value={district} onChange={e => setDistrict(e.target.value)} required>
           <option value="">Select District</option>
           {bangladeshDistricts.map(d => (
@@ -99,12 +102,7 @@ function Register() {
         {sharePhone && (
           <input type="tel" placeholder="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} required />
         )}
-        {!donatedRecently && (
-          <label style={{ display: 'block', marginTop: '8px' }}>
-            <input type="checkbox" checked={notReady} onChange={e => setNotReady(e.target.checked)} />
-            {' '}Not ready to donate now
-          </label>
-        )}
+  {/* 'Not ready to donate now' is not shown on registration per requirement */}
         <button type="submit">Register</button>
       </form>
       {success && <p style={{color:'green'}}>{success}</p>}
