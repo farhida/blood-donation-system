@@ -237,7 +237,18 @@ class LoginView(APIView):
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
-        user = authenticate(username=username, password=password)
+        # Allow login via email or username
+        user = None
+        if username:
+            user = authenticate(username=username, password=password)
+            if user is None:
+                try:
+                    from django.contrib.auth.models import User as DjangoUser
+                    u = DjangoUser.objects.filter(email=username).first()
+                    if u:
+                        user = authenticate(username=u.username, password=password)
+                except Exception:
+                    user = None
         if user is not None:
             refresh = RefreshToken.for_user(user)
             return Response({

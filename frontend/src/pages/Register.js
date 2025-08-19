@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 function Register() {
-  const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [bloodGroup, setBloodGroup] = useState('');
@@ -12,8 +12,7 @@ function Register() {
   const [phone, setPhone] = useState('');
   const [donatedRecently, setDonatedRecently] = useState(false);
   const [notReady, setNotReady] = useState(false);
-  const [usernameAvailable, setUsernameAvailable] = useState(true);
-  const [checkingUsername, setCheckingUsername] = useState(false);
+  // username is auto-generated from full name on the server
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
@@ -21,15 +20,11 @@ function Register() {
     e.preventDefault();
     setError('');
     setSuccess('');
-    if (!usernameAvailable) {
-      setError('Username is not available.');
-      return;
-    }
     try {
   // Keep date optional; donatedRecently flag controls visibility in search
 
       await axios.post('/api/auth/register/', {
-        username,
+        full_name: fullName,
         email,
         password,
         blood_group: bloodGroup,
@@ -53,27 +48,13 @@ function Register() {
     }
   };
 
-  const checkUsername = async () => {
-    const name = username.trim();
-    if (!name) return;
-    setCheckingUsername(true);
-    try {
-      const res = await axios.get('/api/auth/username-available/', { params: { username: name } });
-      setUsernameAvailable(res.data.available);
-    } catch (_) {
-      setUsernameAvailable(true);
-    } finally {
-      setCheckingUsername(false);
-    }
-  };
+  const checkUsername = async () => {};
 
   return (
     <div className="login-form">
       <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-  <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} onBlur={checkUsername} required />
-  {!usernameAvailable && <div style={{color:'red'}}>Username is taken.</div>}
-  {checkingUsername && <div>Checking username...</div>}
+    <form onSubmit={handleSubmit}>
+  <input type="text" placeholder="Full Name" value={fullName} onChange={e => setFullName(e.target.value)} required />
         <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
         <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="new-password" />
         <select value={bloodGroup} onChange={e => setBloodGroup(e.target.value)} required>

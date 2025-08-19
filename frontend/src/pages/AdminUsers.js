@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import adminApi from '../adminApi';
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const access = localStorage.getItem('access');
+  const access = localStorage.getItem('admin_access');
   const auth = access ? { Authorization: `Bearer ${access}` } : {};
 
   const load = async () => {
     setError('');
     try {
-      const res = await axios.get('/api/auth/admin/users/', { headers: auth });
+  const res = await adminApi.get('/api/auth/admin/users/', { headers: auth });
       setUsers(res.data);
     } catch (e) {
       setError('Failed to load users');
@@ -25,7 +25,7 @@ function AdminUsers() {
     const u = users[idx];
     setSaving(true);
     try {
-      await axios.put(`/api/auth/admin/users/${u.id}/`, u, { headers: auth });
+  await adminApi.put(`/api/auth/admin/users/${u.id}/`, u, { headers: auth });
       await load();
     } catch (e) {
       setError('Update failed');

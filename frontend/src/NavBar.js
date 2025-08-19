@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './NavBar.css';
 function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
-  // When admin is logged in, keep the nav minimal: only show Admin Logout
+  // When admin is logged in, keep the nav minimal: only show Admin Logout (doesn't affect user session)
   if (isAdmin) {
     return (
       <nav className="navbar">

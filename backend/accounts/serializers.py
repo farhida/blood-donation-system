@@ -1,8 +1,11 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from donors.models import UserProfile
+import re
 
 class UserSerializer(serializers.ModelSerializer):
+    # Use full_name instead of username; username will be auto-generated
+    full_name = serializers.CharField(required=True, write_only=True)
     blood_group = serializers.CharField(required=True, write_only=True)
     last_donation = serializers.DateField(required=False, allow_null=True, write_only=True)
     district = serializers.CharField(required=True, allow_blank=False, write_only=True)
@@ -11,8 +14,25 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'blood_group', 'last_donation', 'district', 'share_phone', 'phone']
+        fields = ['full_name', 'password', 'email', 'blood_group', 'last_donation', 'district', 'share_phone', 'phone']
         extra_kwargs = {'password': {'write_only': True}}
+
+    def _slugify(self, text: str) -> str:
+        text = text.strip().lower()
+        # replace non-alphanumeric with underscores
+        text = re.sub(r"[^a-z0-9]+", "_", text)
+        text = text.strip("_") or "user"
+        return text[:30]
+
+    def _unique_username(self, base: str) -> str:
+        candidate = base
+        suffix = 1
+        while User.objects.filter(username=candidate).exists():
+            suffix += 1
+            candidate = f"{base}_{suffix}"
+            if len(candidate) > 30:
+                candidate = candidate[:30]
+        return candidate
 
     def create(self, validated_data):
         blood_group = validated_data.pop('blood_group')
@@ -20,14 +40,25 @@ class UserSerializer(serializers.ModelSerializer):
         district = validated_data.pop('district')
         share_phone = validated_data.pop('share_phone', False)
         phone = validated_data.pop('phone', '')
+        full_name = validated_data.pop('full_name')
         # Validation: if share_phone is true, phone must be provided
         if share_phone and not phone:
             raise serializers.ValidationError({'phone': 'Phone number is required when sharing phone publicly.'})
+
+        base_username = self._slugify(full_name)
+        username = self._unique_username(base_username)
+        first, *rest = full_name.strip().split()
+        last = " ".join(rest)
+
         user = User.objects.create_user(
-            username=validated_data['username'],
+            username=username,
             email=validated_data.get('email', ''),
             password=validated_data['password']
         )
+        user.first_name = first
+        user.last_name = last
+        user.save()
+
         profile, _ = UserProfile.objects.get_or_create(user=user)
         profile.blood_group = blood_group
         profile.last_donation = last_donation

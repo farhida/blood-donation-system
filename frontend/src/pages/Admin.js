@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../api';
+import adminApi from '../adminApi';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -20,8 +20,8 @@ function Admin() {
 
   useEffect(() => {
     const fetchAnalytics = async () => {
-      try {
-  const res = await api.get('/api/analytics/');
+    try {
+  const res = await adminApi.get('/api/analytics/');
         setAnalytics(res.data);
       } catch {
         setError('Failed to load analytics.');

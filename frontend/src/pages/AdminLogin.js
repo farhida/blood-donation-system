@@ -22,8 +22,9 @@ function AdminLogin({ onAdminLogin }) {
       // Check admin status
       const me = await axios.get('/api/auth/me/', { headers: { Authorization: `Bearer ${access}` } });
       if (me.data.is_staff || me.data.is_superuser) {
-        localStorage.setItem('access', access);
-        localStorage.setItem('refresh', refresh || '');
+        // Store admin tokens separately so admin session doesn't imply user session
+        localStorage.setItem('admin_access', access);
+        localStorage.setItem('admin_refresh', refresh || '');
         localStorage.setItem('admin', 'true');
         onAdminLogin();
         navigate('/admin');

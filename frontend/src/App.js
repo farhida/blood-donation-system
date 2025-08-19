@@ -31,7 +31,9 @@ function App() {
   };
   const handleAdminLogin = () => setIsAdmin(true);
   const handleAdminLogout = () => {
-    localStorage.removeItem('admin');
+  localStorage.removeItem('admin');
+  localStorage.removeItem('admin_access');
+  localStorage.removeItem('admin_refresh');
     setIsAdmin(false);
   };
 

@@ -20,7 +20,7 @@ class RegisterView(generics.CreateAPIView):
             logging.error(f"RegisterView errors: {serializer.errors}")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
 
 
 class MeView(APIView):
