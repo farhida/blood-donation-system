@@ -6,7 +6,35 @@
   padding: 0 20px;
   font-family: Arial, sans-serif;
   transition: all 0.3s ease;
+  position: relative; /* create stacking context for background layers */
 }
+
+/* Health/Blood theme tokens */
+:root {
+  --bg-card: #ffffff;
+  --fg-text: #19232d;
+  --fg-muted: #51606f;
+  --brand: #c62828;
+  --brand-2: #e53935;
+  --accent: #1565c0;
+  --success: #2e7d32;
+  --warning: #ef6c00;
+  --radius: 10px;
+  --shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+h1, h2, h3 { color: var(--fg-text); letter-spacing: .3px; }
+p, small, li, label { color: var(--fg-muted); }
+
+.page { max-width: 920px; margin: 0 auto; }
+
+.card { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; }
+.btn-primary { background: var(--brand); color:#fff; border: none; padding:10px 16px; border-radius: 8px; cursor:pointer; transition: filter .15s; }
+.btn-primary:hover { filter: brightness(1.05); }
+.btn-outline { background: transparent; color: var(--brand); border:2px solid var(--brand); padding:8px 14px; border-radius: 999px; cursor:pointer; }
+
+input, select, textarea { border:1px solid #d8dee6; border-radius:8px; padding:10px 12px; }
+input:focus, select:focus, textarea:focus { outline:none; border-color:#c62828; box-shadow: 0 0 0 3px rgba(198,40,40,0.12); }
 
 /* Animated, subtle per-page backgrounds (readable center, light motion) */
 .App.bg-generic::before,
@@ -27,9 +55,9 @@
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0; /* sit behind content but above page background */
   pointer-events: none;
-  background: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.85), rgba(255,255,255,0.6) 40%, rgba(255,255,255,0.4) 60%, rgba(255,255,255,0.2) 100%);
+  background: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.6), rgba(255,255,255,0.35) 40%, rgba(255,255,255,0.22) 60%, rgba(255,255,255,0.12) 100%);
 }
 
 /* Base floating blobs */
@@ -39,82 +67,125 @@
   100% { transform: translateY(0) translateX(0) scale(1); }
 }
 
-.App.bg-donorsearch::before { background:
-  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(255,255,255,0.7) 45%, rgba(253,236,234,0.6) 70%),
-  linear-gradient(180deg, #ffffff, #fdecea);
+.App.bg-donorsearch::before {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,255,255,0.75), rgba(255,255,255,0.45) 45%, rgba(253,236,234,0.3) 70%),
+    linear-gradient(180deg, #ffffff, #fdecea);
 }
 
-.App.bg-login::before { background:
-  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(227,242,253,0.7) 45%),
-  linear-gradient(180deg, #e3f2fd, #bbdefb);
+.App.bg-login::before {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,255,255,0.8), rgba(227,242,253,0.5) 45%),
+    linear-gradient(180deg, #e3f2fd, #bbdefb);
 }
 
-.App.bg-register::before { background:
-  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.92), rgba(255,243,224,0.7) 45%),
-  linear-gradient(180deg, #fff3e0, #ffccbc);
+.App.bg-register::before {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,255,255,0.85), rgba(255,243,224,0.55) 45%),
+    linear-gradient(180deg, #fff3e0, #ffccbc);
 }
 
-.App.bg-profile::before { background:
-  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.93), rgba(224,242,241,0.7) 45%),
-  linear-gradient(180deg, #e0f2f1, #b2dfdb);
+.App.bg-profile::before {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,255,255,0.85), rgba(224,242,241,0.55) 45%),
+    linear-gradient(180deg, #e0f2f1, #b2dfdb);
 }
 
-.App.bg-dashboard::before { background:
-  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(227,242,253,0.7) 45%),
-  linear-gradient(180deg, #e3f2fd, #cfd8dc);
+.App.bg-dashboard::before {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,255,255,0.8), rgba(227,242,253,0.55) 45%),
+    linear-gradient(180deg, #e3f2fd, #cfd8dc);
 }
 
-.App.bg-requests::before { background:
-  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(255,224,224,0.7) 45%),
-  linear-gradient(180deg, #ffffff, #ffe0e0);
+.App.bg-requests::before {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,255,255,0.8), rgba(255,224,224,0.55) 45%),
+    linear-gradient(180deg, #ffffff, #ffe0e0);
 }
 
-.App.bg-notifications::before { background:
-  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.92), rgba(232,240,254,0.7) 45%),
-  linear-gradient(180deg, #f5f7fa, #e8f0fe);
+.App.bg-notifications::before {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,255,255,0.8), rgba(232,240,254,0.55) 45%),
+    linear-gradient(180deg, #f5f7fa, #e8f0fe);
 }
 
-.App.bg-donations::before { background:
-  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(255,245,245,0.7) 45%),
-  linear-gradient(180deg, #fff5f5, #ef9a9a);
+.App.bg-donations::before {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,255,255,0.8), rgba(255,245,245,0.55) 45%),
+    linear-gradient(180deg, #fff5f5, #ef9a9a);
 }
 
-.App.bg-inventory::before { background:
-  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(236,239,241,0.7) 45%),
-  linear-gradient(180deg, #f7f7f7, #cfd8dc);
+.App.bg-inventory::before {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,255,255,0.8), rgba(236,239,241,0.55) 45%),
+    linear-gradient(180deg, #f7f7f7, #cfd8dc);
 }
 
-.App.bg-admin-login::before { background:
-  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(208,220,235,0.6) 45%),
-  linear-gradient(180deg, #e3f2fd, #cfd8dc);
+.App.bg-admin-login::before {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,255,255,0.8), rgba(208,220,235,0.5) 45%),
+    linear-gradient(180deg, #e3f2fd, #cfd8dc);
 }
 
-.App.bg-admin::before,
-.App.bg-admin-users::before,
-.App.bg-admin-requests::before,
+.App.bg-admin::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.8), rgba(240,244,248,0.55) 45%),
+  linear-gradient(180deg, #f0f4f8, #eceff1); }
+
+.App.bg-admin-users::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.8), rgba(240,244,248,0.55) 45%),
+  linear-gradient(180deg, #f0f4f8, #eceff1); }
+
+.App.bg-admin-requests::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.8), rgba(240,244,248,0.55) 45%),
+  linear-gradient(180deg, #f0f4f8, #eceff1); }
+
 .App.bg-admin-inventory::before { background:
-  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.9), rgba(240,244,248,0.7) 45%),
-  linear-gradient(180deg, #f0f4f8, #eceff1);
-}
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.8), rgba(240,244,248,0.55) 45%),
+  linear-gradient(180deg, #f0f4f8, #eceff1); }
 
 /* Optional decorative low-contrast floating shapes */
 .App::after {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
   background-repeat: no-repeat;
-  background-size: 40vmax 40vmax, 30vmax 30vmax, 25vmax 25vmax;
+  background-size: 42vmax 42vmax, 32vmax 32vmax, 24vmax 24vmax;
   background-position: -10vmax 10vmax, 80vw -5vmax, 60vw 70vh;
-  opacity: 0.15;
+  opacity: 0.10;
   animation: floatSlow 12s ease-in-out infinite;
 }
+.bg-donorsearch.App::after,
+.bg-requests.App::after,
+.bg-donations.App::after {
+  /* Stylized blood drop and heart via CSS gradients */
+  background-image:
+    radial-gradient(closest-side, rgba(183,28,28,0.12), rgba(183,28,28,0) 60%),
+    conic-gradient(from 200deg at 60% 40%, rgba(198,40,40,0.18) 0 140deg, rgba(198,40,40,0) 0 360deg),
+    radial-gradient(closest-side, rgba(244,67,54,0.12), rgba(244,67,54,0) 60%);
+}
+
+.bg-profile.App::after,
+.bg-dashboard.App::after,
+.bg-notifications.App::after {
+  /* Subtle cross/health motifs */
+  background-image:
+    radial-gradient(closest-side, rgba(76,175,80,0.10), rgba(76,175,80,0) 60%),
+    conic-gradient(from 45deg at 40% 60%, rgba(33,150,243,0.12) 0 90deg, rgba(33,150,243,0) 0 360deg),
+    radial-gradient(closest-side, rgba(3,155,229,0.10), rgba(3,155,229,0) 60%);
+}
+.App.bg-generic::before { background:
+  radial-gradient(circle at 50% 40%, rgba(255,255,255,0.6), rgba(255,255,255,0.35) 45%),
+  linear-gradient(180deg, #f0f4f8, #eceff1); }
+
+/* Ensure app content stays above the background layers */
+.App > * { position: relative; z-index: 1; }
 
 .bg-donorsearch.App::after { background-image:
-  radial-gradient(closest-side, rgba(198,40,40,0.20), rgba(198,40,40,0)),
-  radial-gradient(closest-side, rgba(244,67,54,0.16), rgba(244,67,54,0)),
-  radial-gradient(closest-side, rgba(183,28,28,0.12), rgba(183,28,28,0)); }
+  radial-gradient(closest-side, rgba(198,40,40,0.25), rgba(198,40,40,0)),
+  radial-gradient(closest-side, rgba(244,67,54,0.20), rgba(244,67,54,0)),
+  radial-gradient(closest-side, rgba(183,28,28,0.14), rgba(183,28,28,0)); }
 
 .bg-login.App::after { background-image:
   radial-gradient(closest-side, rgba(25,118,210,0.18), rgba(25,118,210,0)),
@@ -137,9 +208,9 @@
   radial-gradient(closest-side, rgba(96,125,139,0.10), rgba(96,125,139,0)); }
 
 .bg-requests.App::after { background-image:
-  radial-gradient(closest-side, rgba(229,57,53,0.16), rgba(229,57,53,0)),
-  radial-gradient(closest-side, rgba(244,81,30,0.14), rgba(244,81,30,0)),
-  radial-gradient(closest-side, rgba(255,138,101,0.12), rgba(255,138,101,0)); }
+  radial-gradient(closest-side, rgba(229,57,53,0.22), rgba(229,57,53,0)),
+  radial-gradient(closest-side, rgba(244,81,30,0.18), rgba(244,81,30,0)),
+  radial-gradient(closest-side, rgba(255,138,101,0.14), rgba(255,138,101,0)); }
 
 .bg-notifications.App::after { background-image:
   radial-gradient(closest-side, rgba(92,107,192,0.16), rgba(92,107,192,0)),
@@ -147,9 +218,9 @@
   radial-gradient(closest-side, rgba(158,158,158,0.10), rgba(158,158,158,0)); }
 
 .bg-donations.App::after { background-image:
-  radial-gradient(closest-side, rgba(198,40,40,0.18), rgba(198,40,40,0)),
-  radial-gradient(closest-side, rgba(239,83,80,0.14), rgba(239,83,80,0)),
-  radial-gradient(closest-side, rgba(229,115,115,0.12), rgba(229,115,115,0)); }
+  radial-gradient(closest-side, rgba(198,40,40,0.25), rgba(198,40,40,0)),
+  radial-gradient(closest-side, rgba(239,83,80,0.18), rgba(239,83,80,0)),
+  radial-gradient(closest-side, rgba(229,115,115,0.14), rgba(229,115,115,0)); }
 
 .bg-inventory.App::after { background-image:
   radial-gradient(closest-side, rgba(84,110,122,0.16), rgba(84,110,122,0)),
@@ -214,15 +285,15 @@
 .profile-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 30px;
-  max-width: 500px;
+  max-width: 560px;
   margin-left: auto;
   margin-right: auto;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: var(--bg-card);
+  padding: 22px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
   animation: fadeIn 0.5s ease-in;
 }
 
@@ -267,25 +338,20 @@
 .inventory-form button,
 .donation-form button,
 .profile-form button {
-  padding: 10px;
-  background-color: #28a745;
-  color: white;
+  background: var(--brand);
+  color:#fff;
   border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  padding:10px 16px;
+  border-radius: 8px;
+  cursor:pointer;
+  transition: filter .15s;
 }
-
 .login-form button:hover,
 .donor-form button:hover,
 .request-form button:hover,
 .inventory-form button:hover,
 .donation-form button:hover,
-.profile-form button:hover {
-  background-color: #218838;
-  transform: scale(1.05);
-}
+.profile-form button:hover { filter: brightness(1.05); }
 
 .donor-list,
 .request-list,
@@ -293,7 +359,7 @@
 .donation-list {
   list-style: none;
   padding: 0;
-  max-width: 500px;
+  max-width: 560px;
   margin: 0 auto;
   animation: fadeIn 0.5s ease-in;
 }
@@ -302,8 +368,8 @@
 .request-list li,
 .inventory-list li,
 .donation-list li {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+  padding: 12px 14px;
+  border-bottom: 1px solid #eef1f4;
   text-align: left;
   transition: background-color 0.3s ease;
 }
@@ -312,7 +378,7 @@
 .request-list li:hover,
 .inventory-list li:hover,
 .donation-list li:hover {
-  background-color: #f1f1f1;
+  background-color: #fff7f7;
 }
 
 /* Animation Keyframes */
