@@ -1,0 +1,276 @@
+Slide 1 — Title
+Title: Blood Donation System
+Subtitle: Django REST backend + React frontend
+Presenter: <Your name>
+Date: <Date>
+Repo: <paste GitHub URL>
+
+Speaker note: One-line project summary and your role.
+
+---
+
+Slide 2 — Agenda
+- Problem & goals
+- Tech stack & architecture
+- Features mapped to requirements
+- DB & CRUD
+- Auth & admin
+- Frontend pages, routing & styling
+- Demo (screenshots + code snippets)
+- How to run
+- Next steps / Q&A
+
+Speaker note: Quick roadmap for the talk.
+
+---
+
+Slide 3 — Problem & Goals
+- Problem: connect donors with people who need blood; manage requests & inventory
+- Goals: CRUD, auth, admin, polished UI, 6+ pages, dynamic routing, backend framework
+
+Speaker note: State why these features matter (privacy, speed, admin oversight).
+
+---
+
+Slide 4 — Tech Stack
+- Backend: Django, Django REST Framework, SimpleJWT
+- Database: SQLite default, supports Postgres/MySQL via DATABASE_URL (dj-database-url)
+- Frontend: React (Create React App), React Router, Axios
+- Styling: single theme in frontend/src/App.css
+
+Speaker note: Short justification for each choice (Django for quick API + admin).
+
+---
+
+Slide 5 — Architecture (diagram)
+- Browser -> React SPA -> /api -> Django REST -> DB
+- Admin: Django admin at /admin/ + frontend admin pages using admin API
+
+Speaker note: Explain separation of concerns and deployment considerations.
+
+---
+
+Slide 6 — Requirements mapping
+- CRUD + DB: implemented via Django models & DRF views (Requests, Donation, Inventory, Notification, UserProfile)
+- Auth: Registration + Login + JWT tokens
+- Admin: Django admin + frontend admin pages (users & requests)
+- Styling: App.css provides consistent theme
+- 6+ pages: DonorSearch, Login, Register, Profile, Dashboard, Requests, Donations, Notifications, Admin pages
+- Dynamic routing: React Router (Routes + Route)
+
+Speaker note: Confirm all checklist items are covered.
+
+---
+
+Slide 7 — Database & CRUD (content)
+- Models: backend/donors/models.py (UserProfile, Request, Donation, Notification, BloodInventory)
+- CRUD endpoints:
+  - GET/POST /api/requests/ — list/create requests
+  - GET/PUT/DELETE /api/requests/<id>/
+  - GET/POST /api/inventory/, GET/PUT/DELETE /api/inventory/<id>/
+  - GET/POST /api/donations/
+
+Speaker note: Mention automatic notification creation when requests are created.
+
+Code snippet placeholder:
+- Paste model example from backend/donors/models.py (class Request or UserProfile). Recommend 8–12 lines.
+
+Screenshot placeholder:
+- Requests list page (frontend /requests).
+
+---
+
+Slide 8 — Database portability
+- Support SQLite by default
+- Use env var DATABASE_URL to switch to Postgres/MySQL
+- Dependency: dj-database-url in backend/requirements.txt
+
+Speaker note: Show command-line example to set DATABASE_URL (for demo).
+
+Code snippet placeholder:
+- Paste DATABASE_URL handling from backend/blood_donation/settings.py (dj_database_url.parse usage).
+
+---
+
+Slide 9 — Authentication & Authorization
+- Registration: POST /api/auth/register/ — server auto-generates username from full name and creates UserProfile
+- Login: POST /api/login/ (custom) and /api/token/ (SimpleJWT)
+- Token storage: frontend stores access in localStorage for user sessions; admin tokens stored separately (admin_access)
+
+Speaker note: Emphasize login via username, email, or full name.
+
+Code snippet placeholder:
+- Paste create method from backend/accounts/serializers.py showing username slugifying and profile creation.
+- Paste LoginView from backend/donors/views.py (authenticate + RefreshToken parts).
+
+Screenshot placeholder:
+- Register page (frontend/src/pages/Register.js) and Login page (/login).
+
+---
+
+Slide 10 — Admin capabilities
+- Django admin at /admin/ for full model management
+- Frontend admin pages:
+  - /admin-login (login)
+  - /admin/users (edit users)
+  - /admin/requests (view/manage requests)
+  - /admin/inventory (manage inventory)
+- Backend admin API guarded by IsAdminUser
+
+Speaker note: Explain separation of admin tokens and UI, and IsAdminUser permission.
+
+Code snippet placeholder:
+- Paste AdminUserListView and AdminUserDetailView from backend/accounts/views.py.
+- Paste AdminUsers.js update/save loop from frontend/src/pages/AdminUsers.js.
+
+Screenshot placeholder:
+- Admin Users page (/admin/users) and Django admin dashboard.
+
+---
+
+Slide 11 — Frontend pages & dynamic routing
+- Pages (minimum 6+): Donor Search (/donors), Login (/login), Register (/register), Profile (/profile), Dashboard (/dashboard), Requests (/requests), Notifications (/notifications), Donations (/donations), Admin pages
+- Routes: frontend/src/App.js uses Routes and conditional redirects for auth/admin
+
+Speaker note: Show how protected routes redirect to login/admin-login.
+
+Code snippet placeholder:
+- Paste routes block from frontend/src/App.js (the Routes section).
+
+Screenshot placeholder:
+- NavBar showing links for logged-in vs anonymous vs admin.
+
+---
+
+Slide 12 — Styling & theme
+- Single theme in frontend/src/App.css:
+  - CSS variables: --brand, --accent, --bg-card for consistent colors
+  - Per-page background classes applied by App.js
+  - Reusable .card, .btn-primary, .login-form, .donor-form
+- Mobile responsive basics via media queries
+
+Speaker note: Mention how theme tokens let you change look quickly.
+
+Screenshot placeholder:
+- Screenshots of at least 3 pages with the theme: DonorSearch, Dashboard, Profile.
+
+Code snippet placeholder:
+- Paste 10–15 lines from App.css showing :root variables and .card style.
+
+---
+
+Slide 13 — Demo flow (what you'll show live)
+- Steps:
+  1. Run backend and frontend
+  2. Register a new donor (show Register)
+  3. Login as donor (show Dashboard & Profile)
+  4. Create a request (show Requests -> create -> notifications)
+  5. Login as another donor and Accept -> Mark as Collected (show Donation created)
+  6. Show AdminUsers edit flow and Django admin
+
+Speaker note: Indicate how long each demo step will take (~2 min each).
+
+Screenshot placeholders by step:
+- Step 2: Register page screenshot
+- Step 3: Dashboard screenshot
+- Step 4: Create Request screenshot and Notifications list
+- Step 5: Accept + Collected action screenshot
+- Step 6: Admin Users edit screenshot and Django /admin/ screenshot
+
+---
+
+Slide 14 — Code walk (important snippets)
+- Models: backend/donors/models.py (UserProfile, Request)
+- Serializer create: backend/accounts/serializers.py (registration)
+- Login & JWT: backend/donors/views.py LoginView or api/token/
+- API routes: backend/blood_donation/urls.py, backend/donors/urls.py
+- React routes: frontend/src/App.js
+- Register submit: frontend/src/pages/Register.js
+- Admin edit: frontend/src/pages/AdminUsers.js
+
+Speaker note: For each snippet slide, show ~12–20 lines of code and explain the input/output contract.
+
+---
+
+Slide 15 — How to run (copyable commands)
+Backend steps:
+python -m venv .venv
+source .venv/bin/activate   # windows: .venv\\Scripts\\activate
+pip install -r requirements.txt
+cd backend
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+
+Frontend steps:
+cd frontend
+npm install
+npm start
+
+Speaker note: Mention DATABASE_URL env var to switch DB for production.
+
+---
+
+Slide 16 — Tests & QA
+- Run backend tests:
+cd backend
+python manage.py test
+- Suggested tests: registration, login, request create/accept/collected, notifications, admin user edits.
+
+Speaker note: Recommend 3-5 automated tests for CI.
+
+---
+
+Slide 17 — Security & Production notes
+- Move SECRET_KEY to env and set DEBUG=False in production
+- Ensure ALLOWED_HOSTS, SECURE_* settings configured
+- Use HTTPS and strong DB credentials
+
+Speaker note: Quick checklist for deploying safely.
+
+---
+
+Slide 18 — Next steps & improvements
+- Add automated CI (tests + lint)
+- Add email notifications for accepted requests
+- Improve accessibility & i18n
+- Add analytics dashboard and reporting
+
+Speaker note: Prioritize as per stakeholder needs.
+
+---
+
+Slide 19 — Appendix (where to paste code & screenshots)
+Code snippet paste locations:
+- backend/donors/models.py (UserProfile or Request)
+- backend/accounts/serializers.py (create)
+- backend/donors/views.py (LoginView)
+- backend/donors/urls.py
+- backend/blood_donation/settings.py (DATABASE_URL parsing)
+- frontend/src/App.js (routes)
+- frontend/src/pages/Register.js
+- frontend/src/pages/AdminUsers.js
+
+Screenshot recommendations (pages):
+- DonorSearch (/donors)
+- Register (/register)
+- Login (/login)
+- Dashboard (/dashboard)
+- Requests (/requests)
+- Notifications (/notifications)
+- AdminUsers (/admin/users)
+- Django admin (/admin/)
+
+Speaker note: Keep screenshots clipped to the content area and include the route in the capture.
+
+---
+
+Slide 20 — Thank you / Q&A
+- Contact / repo link
+- Offer live demo
+
+Speaker note: Wrap up and invite questions.
+
+---
+
+End of presentation file.
