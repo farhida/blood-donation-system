@@ -1,0 +1,3 @@
+-r backend/requirements.txt
+# If you also want to pin frontend-related Python tools (not required), add them here.
+# Node.js and npm are required for the frontend and must be installed separately.
