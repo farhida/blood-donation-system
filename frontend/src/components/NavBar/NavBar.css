@@ -2,7 +2,8 @@
   background: linear-gradient(90deg, #b71c1c, #c62828, #d32f2f);
   padding: 12px 0;
   margin-bottom: 30px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  position:relative;
 }
 .navbar ul {
   display: flex;
@@ -33,4 +34,17 @@
   transition: all 0.2s;
 }
 .logout-btn:hover { background:#ffebee; border-color:#fff; }
+
+/* pulse line under the navbar to indicate live status */
+/* pulse removed: the rhythmic highlight was disabled per user request */
+
+/* animate nav items */
+.navbar ul li a{display:inline-block;padding:6px 8px;border-radius:8px;transition:transform .18s ease,box-shadow .18s ease,color .12s}
+.navbar ul li a:hover{transform:translateY(-6px) scale(1.04);box-shadow:0 10px 30px rgba(0,0,0,0.12)}
+.navbar ul li a:active{transform:translateY(-2px) scale(.99)}
+
+/* animate logout button similarly */
+.logout-btn{transition:transform .18s ease,box-shadow .18s ease,background .12s}
+.logout-btn:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 10px 30px rgba(0,0,0,0.12)}
+.logout-btn:active{transform:translateY(-1px)}
 

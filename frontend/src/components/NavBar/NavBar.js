@@ -1,6 +1,14 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './NavBar.css';
+
+/*
+  NavBar component
+  - token: boolean flag indicating normal user session
+  - isAdmin: boolean flag indicating admin session
+  - handleLogout / handleAdminLogout: callbacks to clear sessions
+  The navbar shows different links based on session state.
+*/
 function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
   const navigate = useNavigate();
 
@@ -15,7 +23,7 @@ function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
             <button className="logout-btn" onClick={() => { handleAdminLogout(); navigate('/'); }}>Admin Logout</button>
           </li>
         </ul>
-      </nav>
+  </nav>
     );
   }
 
@@ -43,7 +51,7 @@ function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
           </>
         )}
       </ul>
-    </nav>
+  </nav>
   );
 }
 

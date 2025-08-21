@@ -202,12 +202,7 @@ function AdminUsers() {
         </tbody>
       </table>
   {/* Auto-save on input; Save All button removed. */}
-      <div style={{marginTop:12}}>
-        <details>
-          <summary>Debug: raw users JSON (click to expand)</summary>
-          <pre style={{maxHeight:300, overflow:'auto', background:'#f7f7f7', padding:8}}>{JSON.stringify(users, null, 2)}</pre>
-        </details>
-      </div>
+  {/* Debug JSON removed: showing raw users in production was noisy. */}
     </div>
   );
 }
