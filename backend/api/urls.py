@@ -1,8 +1,7 @@
 from django.urls import path
-from accounts.views import RegisterView, MyProfileView, AdminUserListView, AdminUserDetailView
-from donors.views import (
-    LoginView, PublicDonorSearch, BloodInventoryList, AnalyticsView,
-    DashboardSummaryView,
+from core.views import (
+    RegisterView, MyProfileView, AdminUserListView, AdminUserDetailView,
+    LoginView, PublicDonorSearch, BloodInventoryList, AnalyticsView, DashboardSummaryView,
 )
 
 urlpatterns = [
