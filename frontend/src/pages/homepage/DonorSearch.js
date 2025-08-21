@@ -30,6 +30,7 @@ function DonorSearch() {
 
   return (
     <div className="donor-search">
+      {/* Show this prompt only when the user is NOT logged in (isLoggedIn is false). */}
       {!isLoggedIn && (
         <div style={{
           background: '#fff8e1',
