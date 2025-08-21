@@ -19,33 +19,13 @@ function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
   return (
     <nav className="navbar">
       <ul>
-        <li><Link to="/donors">Donor Search</Link></li>
-    {token ? (
-          <>
-            <li><Link to="/dashboard">Dashboard</Link></li>
-            <li><Link to="/profile">Profile</Link></li>
-            <li><Link to="/notifications">Notifications</Link></li>
-            <li><Link to="/requests">Requests</Link></li>
-            {/* Inventory and Donations hidden from top nav per request */}
-            <li>
-              <button
-                className="logout-btn"
-                onClick={() => {
-                  handleLogout();
-                  navigate('/donors');
-                }}
-              >
-                Logout
-              </button>
-            </li>
-          </>
-        ) : (
-          <>
-      <li><Link to="/admin-login">Admin</Link></li>
-            <li><Link to="/login">Login</Link></li>
-            <li><Link to="/register">Register</Link></li>
-          </>
-        )}
+    {/* Simplified navbar for the demo: always show the homepage (Donor Search), Admin, Login, and Register.
+      Faculty note: this nav intentionally hides user-specific links (Dashboard/Profile/Requests) to keep the demo focused.
+    */}
+    <li><Link to="/">Donor Search</Link></li>
+    <li><Link to="/admin-login">Admin</Link></li>
+    <li><Link to="/login">Login</Link></li>
+    <li><Link to="/register">Register</Link></li>
       </ul>
     </nav>
   );

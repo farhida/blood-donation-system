@@ -6,7 +6,8 @@ import './App.css';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
-import DonorSearch from './pages/DonorSearch';
+// Homepage DonorSearch moved to pages/homepage to mark it as the app's default public homepage.
+import DonorSearch from './pages/homepage/DonorSearch';
 import Dashboard from './pages/Dashboard';
 import Requests from './pages/Requests';
 import NotFound from './pages/NotFound';
@@ -59,12 +60,14 @@ function App() {
   return (
     <div className={`App ${pageClass}`}>
       <NavBar token={isLoggedIn} handleLogout={handleLogout} isAdmin={isAdmin} handleAdminLogout={handleAdminLogout} />
-      <Routes>
-  <Route path="/" element={<Navigate to="/donors" />} />
+    <Routes>
+  {/* Default route for anonymous users: show Donor Search as the homepage. */}
+  <Route path="/" element={<DonorSearch />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={isLoggedIn ? <Profile /> : <Navigate to="/login" />} />
-        <Route path="/donors" element={<DonorSearch />} />
+  {/* '/donors' kept for compatibility but '/' is primary homepage. */}
+  <Route path="/donors" element={<DonorSearch />} />
         <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
   <Route path="/requests" element={<Requests />} />
   <Route path="/donations" element={isLoggedIn ? <Donations /> : <Navigate to="/login" />} />
