@@ -26,10 +26,13 @@ function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
         {/* Always show homepage link */}
         <li><Link to="/">Donor Search</Link></li>
         {token ? (
-          // If a normal user is logged in, show a Logout button that clears the user session and returns to the homepage.
-          <li style={{ marginLeft: 'auto' }}>
-            <button className="logout-btn" onClick={() => { handleLogout(); navigate('/'); }}>Logout</button>
-          </li>
+          // If a normal user is logged in, show Donor Search, Dashboard and a Logout button that clears the user session and returns to the homepage.
+          <>
+            <li><Link to="/dashboard">Dashboard</Link></li>
+            <li style={{ marginLeft: 'auto' }}>
+              <button className="logout-btn" onClick={() => { handleLogout(); navigate('/'); }}>Logout</button>
+            </li>
+          </>
         ) : (
           // Anonymous visitors see Admin, Login and Register links
           <>

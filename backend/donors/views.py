@@ -163,6 +163,30 @@ class BloodInventoryList(generics.ListCreateAPIView):
     serializer_class = BloodInventorySerializer
     permission_classes = [IsAuthenticated]
 
+    # Override list to return computed available donors instead of DB inventory rows.
+    def list(self, request, *args, **kwargs):
+        three_months_ago = date.today() - timedelta(days=90)
+        available = UserProfile.objects.select_related('user').filter(
+            not_ready=False
+        ).filter(
+            models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=three_months_ago)
+        )
+        donors = []
+        for prof in available:
+            user = prof.user
+            full_name = f"{user.first_name} {user.last_name}".strip() or user.username
+            donors.append({
+                'id': prof.id,
+                'username': user.username,
+                'full_name': full_name,
+                'email': user.email,
+                'phone': prof.phone if getattr(prof, 'share_phone', False) else None,
+                'blood_group': prof.blood_group,
+                'district': prof.district,
+                'last_donation': prof.last_donation,
+            })
+        return Response(donors)
+
 class BloodInventoryDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = BloodInventory.objects.all()
     serializer_class = BloodInventorySerializer
@@ -214,15 +238,28 @@ class AnalyticsView(APIView):
         request_counts = Request.objects.values('blood_group').annotate(count=Count('id'))
         demand_data = {item['blood_group']: item['count'] for item in request_counts}
 
-        # Sum units available across inventory rows per blood group
-        inventory_data = BloodInventory.objects.values('blood_group').annotate(total_units=Sum('units_available'))
-        inventory_totals = {item['blood_group']: (item['total_units'] or 0) for item in inventory_data}
+        # Compute available donors per blood group from profiles (not recently donated and not marked not_ready)
+        three_months_ago = date.today() - timedelta(days=90)
+        available_qs = UserProfile.objects.filter(
+            not_ready=False
+        ).filter(
+            models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=three_months_ago)
+        )
+        inventory_counts_qs = available_qs.values('blood_group').annotate(count=Count('id'))
+        inventory_totals = {item['blood_group']: item['count'] for item in inventory_counts_qs}
+        # Also prepare a small list of donor names per blood group for analytics
+        names_map = {}
+        blood_groups = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']
+        for bg in blood_groups:
+            profs = available_qs.filter(blood_group__iexact=bg).select_related('user')[:50]
+            names_map[bg] = [ (f"{p.user.first_name} {p.user.last_name}".strip() or p.user.username) for p in profs ]
 
         blood_groups = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']
         response_data = {
             'blood_groups': blood_groups,
             'demand': [demand_data.get(bg, 0) for bg in blood_groups],
             'inventory': [inventory_totals.get(bg, 0) for bg in blood_groups],
+            'available_names': [names_map.get(bg, []) for bg in blood_groups],
         }
         return Response(response_data)
 
