@@ -38,12 +38,21 @@ function AdminLogin({ onAdminLogin }) {
   };
 
   return (
-    <div className="login-form">
-      <h2>Admin Login</h2>
+    <div className="auth-page admin-login-page">
+      <div className="auth-hero">
+        <div>
+          <h2>Admin Login</h2>
+          <div className="muted">Staff access only</div>
+        </div>
+        <div className="decor logo-float">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 21s-7.5-4.35-9.5-7.5C-0.5 8.5 4 4 7 6.5 9 8 12 12 12 12s3-4 5-5.5C20 4 24.5 8.5 21.5 13.5 19.5 16.65 12 21 12 21z" fill="#c62828"/></svg>
+        </div>
+      </div>
+
       <form onSubmit={handleSubmit}>
-  <input type="text" placeholder="Admin Username" value={username} onChange={e => setUsername(e.target.value)} required autoComplete="username" />
-        <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password" />
-        <button type="submit">Login</button>
+        <div className="form-row"><input className="input" type="text" placeholder="Admin Username" value={username} onChange={e => setUsername(e.target.value)} required autoComplete="username" /></div>
+        <div className="form-row"><input className="input" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password" /></div>
+        <div className="form-row"><button className="btn btn-primary" type="submit">Login</button></div>
       </form>
       {error && <p style={{color:'red'}}>{error}</p>}
     </div>

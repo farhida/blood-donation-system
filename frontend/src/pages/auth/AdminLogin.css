@@ -1,7 +1,9 @@
 .auth-page{max-width:520px;margin:28px auto;padding:20px;border-radius:12px;background:linear-gradient(180deg,#fff7f8,#fff);box-shadow:0 10px 30px rgba(220,20,60,0.06)}
 .form-row{margin-bottom:12px}
 .label{display:block;margin-bottom:6px;font-weight:600}
-.input{padding:8px;border-radius:8px;border:1px solid #eee;width:100%}
-.cta{display:inline-block;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,#c62828,#ef5350);color:#fff;border:none}
-@keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+.input{padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);width:100%}
+.btn-primary{padding:10px 14px;border-radius:10px}
 .logo-float{animation:float 3s ease-in-out infinite}
+.admin-login-page{position:relative}
+.admin-login-page::after{content:'';position:absolute;right:8px;top:6px;width:120px;height:80px;pointer-events:none}
+.auth-hero{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
