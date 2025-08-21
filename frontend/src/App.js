@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import NavBar from './NavBar';
 import './App.css';
-import Login from './pages/Login';
+import Login from './pages/auth/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 // Homepage DonorSearch moved to pages/homepage to mark it as the app's default public homepage.
@@ -17,7 +17,7 @@ import Admin from './pages/Admin';
 import AdminUsers from './pages/AdminUsers';
 import AdminRequests from './pages/AdminRequests';
 import AdminInventory from './pages/AdminInventory';
-import AdminLogin from './pages/AdminLogin';
+import AdminLogin from './pages/auth/AdminLogin';
 import Notifications from './pages/Notifications';
 
 function App() {
