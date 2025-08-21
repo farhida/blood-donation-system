@@ -1,0 +1,14 @@
+# Ignore Python artifacts and local environment
+venv/
+env/
+*.pyc
+__pycache__/
+db.sqlite3
+.env
+*.log
+
+# Django static/files
+staticfiles/
+
+# Local VSCode settings
+.vscode/

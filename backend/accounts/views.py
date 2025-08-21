@@ -1,3 +1,19 @@
+"""
+Accounts views
+
+This module exposes user-facing and admin-facing endpoints for registration,
++
+profile management, and simple admin user listing. Key endpoints:
+
+- RegisterView: public registration (creates User + profile)
+- MeView: returns basic authenticated user info (username, email, flags)
+- MyProfileView: authenticated user's profile retrieve/update (uses AdminUserSerializer)
+- AdminUserListView / AdminUserDetailView: admin-only list/detail endpoints for user management
++
+Permissions are applied on a per-view basis; admin views require IsAdminUser.
++
+"""
+
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView

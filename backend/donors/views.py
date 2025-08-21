@@ -1,3 +1,19 @@
+"""
+Donors app views
+
+This module implements the core donor-facing APIs used by the frontend:
+
+- PublicDonorSearch: public listing of available donors filtered by blood group/district.
+- Request endpoints: create/list/manage blood requests. When a request is created,
+    matching available donors receive Notification records.
+- BloodInventoryList: a computed view that returns currently available donors (not a DB-backed inventory table).
+- Donation, DashboardSummary, Analytics: utility endpoints for user dashboards and simple analytics.
+
+Business rules:
+- Donor availability is governed by `not_ready` and a 90-day `last_donation` window. A donor is available only if
+    `not_ready` is False and their `last_donation` is either null or older than 90 days.
+
+"""
 
 from rest_framework import generics, status, permissions
 from rest_framework.permissions import IsAuthenticated, AllowAny
