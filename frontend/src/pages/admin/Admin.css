@@ -1,6 +1,33 @@
-.admin-page{padding:28px;animation:fadeIn 400ms ease-in both;font-family:Inter, sans-serif}
-.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px}
-.card{background:linear-gradient(180deg, #fff, #fff);border-radius:10px;padding:18px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 6px 16px rgba(220,20,60,0.04)}
-.btn{background:linear-gradient(90deg,#c62828,#ef5350);color:#fff;padding:8px 12px;border-radius:8px;border:none;cursor:pointer;display:inline-block;text-decoration:none}
-.chart-container{background:linear-gradient(180deg,#fff5f5,#fff);padding:18px;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.04)}
+.admin-page{padding:28px;animation:fadeIn 420ms cubic-bezier(.2,.9,.2,1) both;font-family:Inter, sans-serif}
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:24px}
+.card{padding:18px;border-radius:12px}
+.admin-hero{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px}
+.admin-hero .title{font-size:20px;font-weight:700;color:var(--primary)}
+.admin-hero .subtitle{color:var(--muted);font-weight:500}
+.actions{display:flex;gap:10px;align-items:center}
+.chart-container{padding:18px;border-radius:12px}
+
+/* Apply shared tokens from base.css */
+.card.card--accent{background:linear-gradient(180deg,#fff5f5,#fff);border:1px solid rgba(198,40,40,0.06);box-shadow:0 10px 28px rgba(198,40,40,0.06)}
+.card.card--compact{padding:12px}
+
+/* Use base button styles */
+.btn-primary{padding:10px 14px;border-radius:10px}
+
+/* decorative drops along header */
+.hero-drops{position:relative}
+.hero-drops::before{content:"";position:absolute;right:6px;top:-10px;width:18px;height:18px;background:radial-gradient(circle at 35% 35%,#ff8a80,#c62828);border-radius:50%;box-shadow:0 8px 18px rgba(198,40,40,0.12);animation:drop 1.8s linear infinite}
+
+/* small fadeIn keyframe re-used */
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.stats-row{display:flex;gap:14px;align-items:stretch}
+.stat{flex:1}
+.stat .label{color:var(--muted);font-weight:600}
+.stat .value{font-size:22px;font-weight:800;color:var(--primary)}
+
+.admin-list{display:flex;flex-direction:column;gap:10px}
+.admin-item{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;border:1px solid rgba(0,0,0,0.04);background:linear-gradient(180deg,#fff,#fff);transition:transform .18s ease,box-shadow .18s ease}
+.admin-item:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(11,11,13,0.06)}
+
+.muted{color:var(--muted)}

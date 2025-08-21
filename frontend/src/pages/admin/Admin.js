@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Admin.css';
+import AdminDecor from './AdminDecor';
 import { Link } from 'react-router-dom';
 import adminApi from '../../services/adminApi';
 import { Bar } from 'react-chartjs-2';
@@ -46,24 +47,40 @@ function Admin() {
   } : null;
 
   return (
-    <div className="page">
-      <h2>Admin Control Panel</h2>
-      <div className="admin-grid" style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'16px',marginBottom:'24px'}}>
-        <div className="card" style={{padding:'16px',border:'1px solid #eee',borderRadius:8}}>
-          <h3>Users</h3>
-          <p>View and update user accounts and donor profiles.</p>
-          <Link className="btn" to="/admin/users">Manage Users</Link>
+    <div className="page" style={{position:'relative'}}>
+      <AdminDecor />
+      <div className="admin-hero hero-drops">
+        <div>
+          <h2 className="title">Admin Control Panel <span className="muted" style={{fontSize:12,fontWeight:600}}>— manage donors & inventory</span></h2>
+          <div className="subtitle muted">Real-time inventory and donor availability</div>
         </div>
-        <div className="card" style={{padding:'16px',border:'1px solid #eee',borderRadius:8}}>
+        <div className="actions">
+          <Link className="btn btn-primary" to="/admin/users">Manage Users</Link>
+          <Link className="btn btn-ghost" to="/admin/inventory">Inventory</Link>
+          <span className="heart-beat" title="Heartbeat">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 21s-7.5-4.35-9.5-7.5C-0.5 8.5 4 4 7 6.5 9 8 12 12 12 12s3-4 5-5.5C20 4 24.5 8.5 21.5 13.5 19.5 16.65 12 21 12 21z" fill="#c62828"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <div className="admin-grid">
+        <div className="card card--compact card--accent">
+          <h3>Users</h3>
+          <p className="muted">View and update user accounts and donor profiles.</p>
+          <Link className="btn btn-primary" to="/admin/users">Manage Users</Link>
+        </div>
+        <div className="card card--compact">
           <h3>Inventory</h3>
-          <p>View available blood (read-only list).</p>
-          <Link className="btn" to="/admin/inventory">Available Blood</Link>
+          <p className="muted">View available blood (read-only list).</p>
+          <Link className="btn btn-primary" to="/admin/inventory">Available Blood</Link>
         </div>
       </div>
 
       <h2>Analytics</h2>
       {loading && <div>Loading analytics...</div>}
-  {data && <div className="chart-container"><Bar data={data} /></div>}
+      {data && <div className="card chart-container"><Bar data={data} /></div>}
     </div>
   );
 }
