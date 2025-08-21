@@ -3,29 +3,41 @@ import { Link, useNavigate } from 'react-router-dom';
 import './NavBar.css';
 function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
   const navigate = useNavigate();
-  // When admin is logged in, keep the nav minimal: only show Admin Logout (doesn't affect user session)
+
+  // Admin session: show Donor Search and Admin Logout
   if (isAdmin) {
     return (
       <nav className="navbar">
         <ul>
+          <li><Link to="/">Donor Search</Link></li>
           <li style={{ marginLeft: 'auto' }}>
-            <button className="logout-btn" onClick={handleAdminLogout}>Admin Logout</button>
+            {/* When admin logs out, clear admin session and redirect to homepage for demonstration. */}
+            <button className="logout-btn" onClick={() => { handleAdminLogout(); navigate('/'); }}>Admin Logout</button>
           </li>
         </ul>
       </nav>
     );
   }
 
+  // Normal user or anonymous:
   return (
     <nav className="navbar">
       <ul>
-    {/* Simplified navbar for the demo: always show the homepage (Donor Search), Admin, Login, and Register.
-      Faculty note: this nav intentionally hides user-specific links (Dashboard/Profile/Requests) to keep the demo focused.
-    */}
-    <li><Link to="/">Donor Search</Link></li>
-    <li><Link to="/admin-login">Admin</Link></li>
-    <li><Link to="/login">Login</Link></li>
-    <li><Link to="/register">Register</Link></li>
+        {/* Always show homepage link */}
+        <li><Link to="/">Donor Search</Link></li>
+        {token ? (
+          // If a normal user is logged in, show a Logout button that clears the user session and returns to the homepage.
+          <li style={{ marginLeft: 'auto' }}>
+            <button className="logout-btn" onClick={() => { handleLogout(); navigate('/'); }}>Logout</button>
+          </li>
+        ) : (
+          // Anonymous visitors see Admin, Login and Register links
+          <>
+            <li><Link to="/admin-login">Admin</Link></li>
+            <li><Link to="/login">Login</Link></li>
+            <li><Link to="/register">Register</Link></li>
+          </>
+        )}
       </ul>
     </nav>
   );
