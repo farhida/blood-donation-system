@@ -3,7 +3,9 @@ import axios from 'axios';
 const adminApi = axios.create();
 
 adminApi.interceptors.request.use((config) => {
-  const access = localStorage.getItem('admin_access');
+  // Prefer explicit admin tokens, but fall back to the regular user access token
+  // so an admin who logged in using the normal login flow can still access admin APIs.
+  const access = localStorage.getItem('admin_access') || localStorage.getItem('access');
   if (access) {
     config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${access}`;
@@ -25,8 +27,9 @@ adminApi.interceptors.response.use(
     const originalRequest = error.config || {};
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      const refresh = localStorage.getItem('admin_refresh');
-      if (!refresh) return Promise.reject(error);
+  // Try admin-specific refresh token first, then fall back to regular refresh token
+  const refresh = localStorage.getItem('admin_refresh') || localStorage.getItem('refresh');
+  if (!refresh) return Promise.reject(error);
       if (isRefreshing) {
         return new Promise((resolve) => {
           pending.push((newAccess) => {

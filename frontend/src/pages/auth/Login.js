@@ -20,10 +20,24 @@ function Login({ onLogin }) {
         payload.username = nameOrEmail;
       }
       const res = await axios.post('/api/login/', payload);
-  localStorage.setItem('access', res.data.access);
-  localStorage.setItem('refresh', res.data.refresh);
-  onLogin();
-  navigate('/dashboard');
+      const { access, refresh } = res.data || {};
+      localStorage.setItem('access', access);
+      localStorage.setItem('refresh', refresh);
+
+      // If this user is an admin, also mirror tokens into admin keys so admin APIs work
+      try {
+        const me = await axios.get('/api/auth/me/', { headers: { Authorization: `Bearer ${access}` } });
+        if (me.data?.is_staff || me.data?.is_superuser) {
+          localStorage.setItem('admin_access', access);
+          localStorage.setItem('admin_refresh', refresh || '');
+          localStorage.setItem('admin', 'true');
+        }
+      } catch (err) {
+        // ignore - failing to check/admin-sync shouldn't block normal login
+      }
+
+      onLogin();
+      navigate('/dashboard');
     } catch (err) {
       setError('Invalid credentials');
     }

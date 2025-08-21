@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from donors.models import UserProfile
 import re
 from datetime import date, timedelta
+import logging
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -94,7 +95,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class AdminUserSerializer(serializers.ModelSerializer):
     # Embed profile fields
-    phone = serializers.CharField(source='userprofile.phone', allow_blank=True, required=False)
+    phone = serializers.CharField(source='userprofile.phone', allow_blank=True, allow_null=True, required=False)
     blood_group = serializers.CharField(source='userprofile.blood_group', allow_blank=True, required=False)
     last_donation = serializers.DateField(source='userprofile.last_donation', allow_null=True, required=False)
     district = serializers.CharField(source='userprofile.district', allow_blank=True, required=False)
@@ -111,17 +112,46 @@ class AdminUserSerializer(serializers.ModelSerializer):
         read_only_fields = ['username', 'is_staff', 'is_superuser']
 
     def update(self, instance, validated_data):
+        logging.warning(f"AdminUserSerializer.update called for user id={instance.id} with validated_data={validated_data}")
         # Update User fields
         instance.email = validated_data.get('email', instance.email)
         instance.is_active = validated_data.get('is_active', instance.is_active)
         # Update UserProfile nested
-        profile_data = validated_data.get('userprofile', {})
+        # Accept profile updates whether they arrive under 'userprofile' or as top-level keys
+        profile_data = validated_data.get('userprofile', {}) or {}
         profile, _ = UserProfile.objects.get_or_create(user=instance)
         for attr in ['phone', 'blood_group', 'district', 'share_phone', 'donated_recently', 'not_ready']:
+            # prefer nested value, fall back to top-level key
             if attr in profile_data:
-                setattr(profile, attr, profile_data.get(attr))
+                val = profile_data.get(attr)
+                setattr(profile, attr, val)
+            elif attr in validated_data:
+                val = validated_data.get(attr)
+                setattr(profile, attr, val)
+        # last_donation may also appear nested or top-level
         if 'last_donation' in profile_data:
             profile.last_donation = profile_data.get('last_donation')
+        elif 'last_donation' in validated_data:
+            profile.last_donation = validated_data.get('last_donation')
+
+        # Auto-calc donated_recently / not_ready based on last_donation (90 days window)
+        try:
+            three_months_ago = date.today() - timedelta(days=90)
+            if profile.last_donation:
+                # if last_donation within 90 days, mark donated_recently and not_ready
+                profile.donated_recently = profile.last_donation >= three_months_ago
+                profile.not_ready = profile.donated_recently
+            else:
+                # no last_donation -> available
+                profile.donated_recently = False
+                # Only preserve an explicit not_ready flag if provided; otherwise default False
+                if 'not_ready' not in profile_data and 'not_ready' not in validated_data:
+                    profile.not_ready = False
+        except Exception:
+            # if any parsing error, don't change not_ready flags
+            pass
+        # Log saved values for debugging
+        logging.warning(f"Saving profile for user id={instance.id}: phone={profile.phone!r}, blood_group={profile.blood_group!r}, district={profile.district!r}, last_donation={profile.last_donation!r}, not_ready={profile.not_ready}, donated_recently={profile.donated_recently}")
         profile.save()
         instance.save()
         return instance

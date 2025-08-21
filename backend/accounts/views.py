@@ -44,7 +44,7 @@ class AdminUserListView(generics.ListAPIView):
         return User.objects.select_related('userprofile').all().order_by('id')
 
 
-class AdminUserDetailView(generics.RetrieveUpdateAPIView):
+class AdminUserDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = AdminUserSerializer
     queryset = User.objects.select_related('userprofile').all()

@@ -37,14 +37,9 @@ function Admin() {
     labels: analytics.blood_groups,
     datasets: [
       {
-        label: 'Demand',
-        data: analytics.demand,
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-      },
-      {
         label: 'Inventory',
         data: analytics.inventory,
-        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        backgroundColor: 'rgba(54, 162, 235, 0.7)',
       },
     ],
   } : null;
@@ -68,7 +63,6 @@ function Admin() {
       <h2>Analytics</h2>
       {loading && <div>Loading analytics...</div>}
   {data && <div className="chart-container"><Bar data={data} /></div>}
-      <p style={{marginTop:12}}>For deeper configuration, use Django Admin.</p>
     </div>
   );
 }

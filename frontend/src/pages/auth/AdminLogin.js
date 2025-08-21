@@ -40,7 +40,7 @@ function AdminLogin({ onAdminLogin }) {
     <div className="login-form">
       <h2>Admin Login</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Admin Username" value={username} onChange={e => setUsername(e.target.value)} required />
+  <input type="text" placeholder="Admin Username" value={username} onChange={e => setUsername(e.target.value)} required autoComplete="username" />
         <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password" />
         <button type="submit">Login</button>
       </form>
