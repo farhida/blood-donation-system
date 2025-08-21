@@ -39,10 +39,7 @@ function DonorSearch() {
           borderRadius: 6,
           marginBottom: 12
         }}>
-          To request blood or see requests, please login or register.
-          <span style={{ marginLeft: 12 }}>
-            <Link to="/login" className="button-link">Login</Link>
-          </span>
+          To make a profile, please
           <span style={{ marginLeft: 8 }}>
             <Link to="/register" className="button-link">Register</Link>
           </span>

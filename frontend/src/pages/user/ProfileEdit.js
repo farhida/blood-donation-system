@@ -24,18 +24,29 @@ function ProfileEdit() {
     setSaving(true);
     setError('');
     try {
+      // Build nested payload to match AdminUserSerializer which maps profile fields under 'userprofile'
       const payload = {
         email: user.email ?? null,
-        blood_group: user.blood_group ?? null,
-        district: user.district ?? null,
-        phone: user.phone === '' ? null : (user.phone ?? null),
-        share_phone: !!user.share_phone,
-        last_donation: user.last_donation === '' ? null : (user.last_donation ?? null),
+        userprofile: {
+          blood_group: user.blood_group ?? null,
+          district: user.district ?? null,
+          phone: user.phone === '' ? null : (user.phone ?? null),
+          share_phone: !!user.share_phone,
+          last_donation: user.last_donation === '' ? null : (user.last_donation ?? null),
+        }
       };
+      // eslint-disable-next-line no-console
+      console.log('ProfileEdit: sending payload', payload);
       const res = await api.put('/api/auth/me/', payload);
+      // eslint-disable-next-line no-console
+      console.log('ProfileEdit: save response', res?.data);
       setUser(res.data || user);
     } catch (e) {
-      setError('Save failed');
+      // Show backend validation messages when present
+      // eslint-disable-next-line no-console
+      console.error('ProfileEdit: save error', e);
+      const detail = e?.response?.data || e?.message || 'Save failed';
+      setError(typeof detail === 'string' ? detail : JSON.stringify(detail));
     } finally {
       setSaving(false);
     }

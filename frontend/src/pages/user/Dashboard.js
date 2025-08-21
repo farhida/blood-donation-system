@@ -33,9 +33,6 @@ function Dashboard() {
           <div className="info-row"><span className="label">District</span><span className="value">{data.district || 'N/A'}</span></div>
           <div className="info-row"><span className="label">Last Donation</span><span className="value">{data.last_donation || 'N/A'}</span></div>
         </div>
-        <div style={{marginTop:12}}>
-          <Link className="btn" to="/profile">Edit Profile</Link>
-        </div>
   {/* Total Donations removed per requirements */}
       </div>
     </div>
