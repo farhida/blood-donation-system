@@ -3,3 +3,6 @@
 .label{display:block;margin-bottom:6px;font-weight:600}
 .input{padding:8px;border-radius:8px;border:1px solid #eee;width:100%}
 .cta{display:inline-block;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,#c62828,#ef5350);color:#fff;border:none}
+.auth-hero{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.auth-hero .decor{width:36px;height:36px}
+.auth-hero .decor svg{display:block}

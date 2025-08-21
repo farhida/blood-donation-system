@@ -2,3 +2,5 @@
 .form-row{margin-bottom:12px}
 .input{padding:8px;border-radius:8px;border:1px solid #eee;width:100%}
 .save{background:linear-gradient(90deg,#c62828,#ef5350);color:#fff;padding:10px 12px;border-radius:10px;border:none}
+.profile-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.profile-card{padding:16px;border-radius:12px}

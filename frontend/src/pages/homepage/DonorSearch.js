@@ -30,25 +30,21 @@ function DonorSearch() {
   };
 
   return (
-    <div className="donor-search">
+    <div className="search-page">
       {/* Show this prompt only when the user is NOT logged in (isLoggedIn is false). */}
       {!isLoggedIn && (
-        <div style={{
-          background: '#fff8e1',
-          border: '1px solid #ffecb3',
-          padding: '10px 12px',
-          borderRadius: 6,
-          marginBottom: 12
-        }}>
+        <div className="accent-note">
           To make a profile, please
           <span style={{ marginLeft: 8 }}>
-            <Link to="/register" className="button-link">Register</Link>
+            <Link to="/register" className="btn btn-primary">Register</Link>
           </span>
         </div>
       )}
-      <h2>Search for Donors</h2>
+      <h2>Search for Donors <span className="decor-heart heart-beat" title="Find donors faster">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#c62828" xmlns="http://www.w3.org/2000/svg"><path d="M12 21s-7.5-4.35-9.5-7.5C-0.5 8.5 4 4 7 6.5 9 8 12 12 12 12s3-4 5-5.5C20 4 24.5 8.5 21.5 13.5 19.5 16.65 12 21 12 21z"/></svg>
+      </span></h2>
       <form onSubmit={handleSearch}>
-        <select value={bloodGroup} onChange={e => setBloodGroup(e.target.value)} required>
+        <select className="input" value={bloodGroup} onChange={e => setBloodGroup(e.target.value)} required>
           <option value="">Select Blood Group</option>
           <option value="A+">A+</option>
           <option value="A-">A-</option>
@@ -65,7 +61,7 @@ function DonorSearch() {
             <option key={d} value={d}>{d}</option>
           ))}
         </select>
-        <button type="submit">Search</button>
+  <button type="submit" className="btn btn-search btn-primary">Search</button>
       </form>
       {message && <div>{message}</div>}
       <ul className="donor-list">

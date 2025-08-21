@@ -1,7 +1,11 @@
-body{background:linear-gradient(180deg,#fff5f6,#fff)}
 .search-page{padding:22px;font-family:Inter, sans-serif}
 .search-card{padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff,#fff7f7);box-shadow:0 8px 18px rgba(220,20,60,0.04)}
-.result{border-radius:8px;padding:12px;border:1px solid rgba(0,0,0,0.06);margin-bottom:8px}
-.cta{background:linear-gradient(90deg,#b71c1c,#ef5350);color:#fff;padding:8px 12px;border-radius:8px}
-.pulse{animation:pulse 2s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(220,20,60,0.3)}70%{box-shadow:0 0 0 12px rgba(220,20,60,0)}100%{box-shadow:0 0 0 0 rgba(220,20,60,0)}}
+.result{border-radius:10px;padding:14px;border:1px solid rgba(0,0,0,0.06);margin-bottom:12px;transition:transform .18s ease,box-shadow .18s ease}
+.result:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(11,11,13,0.06)}
+.btn-search{display:inline-block;padding:10px 14px;border-radius:10px;border:none;font-weight:600;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,opacity .12s ease}
+.btn-search.btn-primary{background:linear-gradient(90deg,var(--primary),var(--accent));color:#fff;box-shadow:0 8px 22px rgba(198,40,40,0.14)}
+.btn-primary{margin-top:8px}
+.donor-list{list-style:none;padding:0;margin-top:12px}
+.donor-list li{padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.04);margin-bottom:8px;background:linear-gradient(180deg,#fff,#fff)}
+.accent-note{background:#fff8e1;border:1px solid #ffecb3;padding:10px 12px;border-radius:8px;margin-bottom:12px}
+.decor-heart{display:inline-block;margin-left:8px}

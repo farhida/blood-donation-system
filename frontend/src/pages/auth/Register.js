@@ -53,13 +53,18 @@ function Register() {
   const checkUsername = async () => {};
 
   return (
-    <div className="login-form">
-      <h2>Register</h2>
+    <div className="register-page">
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}>
+        <h2>Register</h2>
+        <div className="register-cta heart-beat">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#c62828" xmlns="http://www.w3.org/2000/svg"><path d="M12 21s-7.5-4.35-9.5-7.5C-0.5 8.5 4 4 7 6.5 9 8 12 12 12 12s3-4 5-5.5C20 4 24.5 8.5 21.5 13.5 19.5 16.65 12 21 12 21z"/></svg>
+        </div>
+      </div>
     <form onSubmit={handleSubmit}>
-  <input type="text" placeholder="Full Name" value={fullName} onChange={e => setFullName(e.target.value)} required />
-        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="new-password" />
-        <select value={bloodGroup} onChange={e => setBloodGroup(e.target.value)} required>
+  <input className="input" type="text" placeholder="Full Name" value={fullName} onChange={e => setFullName(e.target.value)} required />
+        <input className="input" type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
+        <input className="input" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="new-password" />
+        <select className="input" value={bloodGroup} onChange={e => setBloodGroup(e.target.value)} required>
           <option value="">Select Blood Group</option>
           <option value="A+">A+</option>
           <option value="A-">A-</option>
@@ -104,7 +109,7 @@ function Register() {
           <input type="tel" placeholder="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} required />
         )}
   {/* 'Not ready to donate now' is not shown on registration per requirement */}
-        <button type="submit">Register</button>
+  <div style={{marginTop:12}}><button className="btn btn-primary" type="submit">Register</button></div>
       </form>
       {success && <p style={{color:'green'}}>{success}</p>}
       {error && <p style={{color:'red'}}>{error}</p>}

@@ -25,7 +25,13 @@ function Dashboard() {
 
   return (
     <div className="page">
-      <h2>Dashboard</h2>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+        <h2 className="title">Dashboard</h2>
+        <div className="heart-beat" title="Healthy">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#c62828" xmlns="http://www.w3.org/2000/svg"><path d="M12 21s-7.5-4.35-9.5-7.5C-0.5 8.5 4 4 7 6.5 9 8 12 12 12 12s3-4 5-5.5C20 4 24.5 8.5 21.5 13.5 19.5 16.65 12 21 12 21z"/></svg>
+        </div>
+      </div>
+
       <div className="card dashboard-card">
         <div className="info-grid">
           <div className="info-row"><span className="label">Name</span><span className="value">{data.full_name || data.username}</span></div>
@@ -34,7 +40,6 @@ function Dashboard() {
           <div className="info-row"><span className="label">District</span><span className="value">{data.district || 'N/A'}</span></div>
           <div className="info-row"><span className="label">Last Donation</span><span className="value">{data.last_donation || 'N/A'}</span></div>
         </div>
-  {/* Total Donations removed per requirements */}
       </div>
     </div>
   );

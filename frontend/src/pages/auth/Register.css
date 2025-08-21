@@ -2,3 +2,5 @@
 .form-row{margin-bottom:12px}
 .input{padding:8px;border-radius:8px;border:1px solid #eee;width:100%}
 .cta{display:inline-block;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,#c62828,#ef5350);color:#fff;border:none}
+.register-cta{animation:heartbeat 1.6s infinite}
+.register-note{background:#fff8e1;border:1px solid #ffecb3;padding:10px;border-radius:8px;margin-bottom:12px}
