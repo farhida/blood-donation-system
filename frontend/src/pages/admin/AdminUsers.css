@@ -1,0 +1,7 @@
+.admin-users{padding:20px;animation:fadeIn 400ms both;font-family:Inter, sans-serif}
+.user-table{width:100%;border-collapse:collapse}
+.user-table th{background:#fff7f7;padding:8px}
+.user-table td{padding:8px;border-top:1px solid rgba(0,0,0,0.06)}
+.save-btn{background:linear-gradient(90deg,#b71c1c,#e53935);color:#fff;padding:6px 10px;border-radius:8px;border:none;cursor:pointer}
+.input{padding:6px;border-radius:6px;border:1px solid #eee}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}

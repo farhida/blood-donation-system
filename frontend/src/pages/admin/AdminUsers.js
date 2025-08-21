@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import adminApi from '../../services/adminApi';
+import './AdminUsers.css';
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);

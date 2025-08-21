@@ -3,6 +3,7 @@
 // Use this page as the default landing page for anonymous visitors.
 
 import React, { useState } from 'react';
+import './DonorSearch.css';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 

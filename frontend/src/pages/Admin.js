@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import './Admin.css';
 import { Link } from 'react-router-dom';
-import adminApi from '../../services/adminApi';
+import { adminApi } from '../services/httpClient';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -38,9 +37,14 @@ function Admin() {
     labels: analytics.blood_groups,
     datasets: [
       {
+        label: 'Demand',
+        data: analytics.demand,
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      },
+      {
         label: 'Inventory',
         data: analytics.inventory,
-        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+        backgroundColor: 'rgba(54, 162, 235, 0.5)',
       },
     ],
   } : null;
@@ -55,6 +59,11 @@ function Admin() {
           <Link className="btn" to="/admin/users">Manage Users</Link>
         </div>
         <div className="card" style={{padding:'16px',border:'1px solid #eee',borderRadius:8}}>
+          <h3>Requests</h3>
+          <p>View all requests (read-only list).</p>
+          <Link className="btn" to="/admin/requests">All Requests</Link>
+        </div>
+        <div className="card" style={{padding:'16px',border:'1px solid #eee',borderRadius:8}}>
           <h3>Inventory</h3>
           <p>View available blood (read-only list).</p>
           <Link className="btn" to="/admin/inventory">Available Blood</Link>
@@ -63,7 +72,8 @@ function Admin() {
 
       <h2>Analytics</h2>
       {loading && <div>Loading analytics...</div>}
-  {data && <div className="chart-container"><Bar data={data} /></div>}
+      {data && <div className="chart-container"><Bar data={data} /></div>}
+      <p style={{marginTop:12}}>For deeper configuration, use Django Admin.</p>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
 import adminApi from '../../services/adminApi';
+import './AdminInventory.css';
 
 function AdminInventory() {
   const [inventory, setInventory] = useState([]);

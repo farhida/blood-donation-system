@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
+import './Dashboard.css';
 
 function Dashboard() {
   const [data, setData] = useState(null);

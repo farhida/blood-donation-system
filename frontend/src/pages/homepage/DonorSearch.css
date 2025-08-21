@@ -1,0 +1,7 @@
+body{background:linear-gradient(180deg,#fff5f6,#fff)}
+.search-page{padding:22px;font-family:Inter, sans-serif}
+.search-card{padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff,#fff7f7);box-shadow:0 8px 18px rgba(220,20,60,0.04)}
+.result{border-radius:8px;padding:12px;border:1px solid rgba(0,0,0,0.06);margin-bottom:8px}
+.cta{background:linear-gradient(90deg,#b71c1c,#ef5350);color:#fff;padding:8px 12px;border-radius:8px}
+.pulse{animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(220,20,60,0.3)}70%{box-shadow:0 0 0 12px rgba(220,20,60,0)}100%{box-shadow:0 0 0 0 rgba(220,20,60,0)}}

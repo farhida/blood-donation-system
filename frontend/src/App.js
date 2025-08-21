@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import NavBar from './components/NavBar/NavBar';
-import './styles/App.css';
+import './styles/base.css';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 // Homepage DonorSearch moved to pages/homepage to mark it as the app's default public homepage.

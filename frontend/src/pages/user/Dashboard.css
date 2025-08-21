@@ -1,0 +1,5 @@
+.dashboard{padding:20px;font-family:Inter, sans-serif;animation:fadeIn 400ms ease-in both}
+.stat{background:linear-gradient(180deg,#fff5f5,#fff);padding:12px;border-radius:10px;margin-bottom:12px}
+.stat-number{font-size:22px;font-weight:700;color:#b71c1c}
+.stat-label{color:#555}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}

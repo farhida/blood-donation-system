@@ -1,0 +1,6 @@
+.inventory-page{padding:20px;animation:fadeIn 400ms ease-in both;font-family:Inter, sans-serif}
+.table{width:100%;border-collapse:collapse}
+.table th{background:#fff7f7;padding:8px;text-align:left}
+.table td{padding:8px;border-top:1px solid rgba(0,0,0,0.06)}
+.sample-names{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:12px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}

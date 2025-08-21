@@ -1,0 +1,4 @@
+.register-page{max-width:640px;margin:24px auto;padding:20px;border-radius:12px;background:linear-gradient(180deg,#fff7f8,#fff);box-shadow:0 10px 30px rgba(220,20,60,0.06)}
+.form-row{margin-bottom:12px}
+.input{padding:8px;border-radius:8px;border:1px solid #eee;width:100%}
+.cta{display:inline-block;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,#c62828,#ef5350);color:#fff;border:none}
