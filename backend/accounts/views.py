@@ -36,6 +36,23 @@ class MeView(APIView):
         })
 
 
+class MyProfileView(generics.RetrieveUpdateAPIView):
+    """Allow an authenticated user to view and update their profile."""
+    permission_classes = [IsAuthenticated]
+    serializer_class = AdminUserSerializer
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
+
 class AdminUserListView(generics.ListAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = AdminUserSerializer
@@ -48,6 +65,15 @@ class AdminUserDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = AdminUserSerializer
     queryset = User.objects.select_related('userprofile').all()
+
+    def update(self, request, *args, **kwargs):
+        # Ensure the response includes the serialized updated user so clients can update local state
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
 
 class UsernameAvailabilityView(APIView):

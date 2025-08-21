@@ -29,6 +29,7 @@ function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
           // If a normal user is logged in, show Donor Search, Dashboard and a Logout button that clears the user session and returns to the homepage.
           <>
             <li><Link to="/dashboard">Dashboard</Link></li>
+            <li><Link to="/profile">Edit Profile</Link></li>
             <li style={{ marginLeft: 'auto' }}>
               <button className="logout-btn" onClick={() => { handleLogout(); navigate('/'); }}>Logout</button>
             </li>

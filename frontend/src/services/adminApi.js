@@ -10,6 +10,8 @@ adminApi.interceptors.request.use((config) => {
     config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${access}`;
   }
+  // eslint-disable-next-line no-console
+  console.log('[adminApi] request', config.method, config.url, config.headers && !!config.headers.Authorization ? 'AUTH' : 'NOAUTH');
   return config;
 });
 
@@ -24,6 +26,8 @@ function onRefreshed(newAccess) {
 adminApi.interceptors.response.use(
   (response) => response,
   async (error) => {
+  // eslint-disable-next-line no-console
+  console.warn('[adminApi] response error', error.config?.method, error.config?.url, error.response?.status);
     const originalRequest = error.config || {};
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;

@@ -8,6 +8,7 @@ import Register from './pages/auth/Register';
 // Homepage DonorSearch moved to pages/homepage to mark it as the app's default public homepage.
 import DonorSearch from './pages/homepage/DonorSearch';
 import Dashboard from './pages/user/Dashboard';
+import ProfileEdit from './pages/user/ProfileEdit';
 // Inventory page removed for users; admin inventory remains
 import Admin from './pages/admin/Admin';
 import AdminUsers from './pages/admin/AdminUsers';
@@ -37,7 +38,8 @@ function App() {
     if (pathname.startsWith('/donors') || pathname === '/') return 'bg-donorsearch';
     if (pathname.startsWith('/login')) return 'bg-login';
     if (pathname.startsWith('/register')) return 'bg-register';
-    if (pathname.startsWith('/dashboard')) return 'bg-dashboard';
+  if (pathname.startsWith('/dashboard')) return 'bg-dashboard';
+  if (pathname.startsWith('/profile')) return 'bg-dashboard';
     if (pathname.startsWith('/admin-login')) return 'bg-admin-login';
     if (pathname === '/admin') return 'bg-admin';
     if (pathname.startsWith('/admin/users')) return 'bg-admin-users';
@@ -56,7 +58,8 @@ function App() {
         <Route path="/register" element={<Register />} />
   {/* '/donors' kept for compatibility but '/' is primary homepage. */}
   <Route path="/donors" element={<DonorSearch />} />
-        <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
+  <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
+  <Route path="/profile" element={isLoggedIn ? <ProfileEdit /> : <Navigate to="/login" />} />
         <Route path="/admin-login" element={<AdminLogin onAdminLogin={handleAdminLogin} />} />
   <Route path="/admin" element={isAdmin ? <Admin /> : <Navigate to="/admin-login" />} />
   <Route path="/admin/users" element={isAdmin ? <AdminUsers /> : <Navigate to="/admin-login" />} />
