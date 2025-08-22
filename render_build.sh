@@ -18,5 +18,43 @@ else
   echo "prod_fixture.json not found; skipping loaddata"
 fi
 
+# Create or update admin user from environment variables (ADMIN_USERNAME, ADMIN_PASSWORD, optional ADMIN_EMAIL)
+if [ -n "$ADMIN_USERNAME" ] && [ -n "$ADMIN_PASSWORD" ]; then
+  echo "Ensuring admin user exists: $ADMIN_USERNAME"
+  python - <<'PY'
+import os
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'blood_donation.settings')
+django.setup()
+from django.contrib.auth import get_user_model
+User = get_user_model()
+u = os.environ.get('ADMIN_USERNAME')
+p = os.environ.get('ADMIN_PASSWORD')
+e = os.environ.get('ADMIN_EMAIL', 'admin@example.com')
+if u and p:
+  user, created = User.objects.get_or_create(username=u, defaults={'email': e, 'is_staff': True, 'is_superuser': True})
+  if created:
+    user.set_password(p)
+    user.save()
+    print('Created superuser', u)
+  else:
+    changed = False
+    if not user.check_password(p):
+      user.set_password(p); changed = True
+    if not user.is_staff:
+      user.is_staff = True; changed = True
+    if not user.is_superuser:
+      user.is_superuser = True; changed = True
+    if changed:
+      user.save(); print('Updated admin user:', u)
+    else:
+      print('Admin user exists and is unchanged:', u)
+else:
+  print('ADMIN_USERNAME or ADMIN_PASSWORD missing; skipping admin creation')
+PY
+else
+  echo "ADMIN_USERNAME or ADMIN_PASSWORD not set; skipping admin creation"
+fi
+
 # Collect static files
 python manage.py collectstatic --noinput
