@@ -15,9 +15,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
-# Import models/serializers from the donors app package (same DB/models)
-from donors.models import Request, BloodInventory, Donation, UserProfile, Notification
-from donors.serializers import (
+# Import models/serializers from the consolidated core app
+from core.models import Request, BloodInventory, Donation, UserProfile, Notification
+from api.serializers_donors import (
     RequestSerializer,
     BloodInventorySerializer,
     DonationSerializer,

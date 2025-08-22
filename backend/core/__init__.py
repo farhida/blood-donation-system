@@ -1,3 +1,4 @@
+default_app_config = 'core.apps.CoreConfig'
 """Core facade package
 
 This package exposes a consolidated set of view classes that the frontend
