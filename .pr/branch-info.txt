@@ -1,0 +1,9 @@
+branch: feature/use-render-build-sh
+commit_message: "Use render_build.sh as Render build command; add instructions"
+
+Notes: To create the PR from your machine:
+  git checkout -b feature/use-render-build-sh
+  git add RENDER_BUILD_PR.md
+  git commit -m "Use render_build.sh as Render build command; add instructions"
+  git push origin feature/use-render-build-sh
+  Open a PR on GitHub from feature/use-render-build-sh -> main

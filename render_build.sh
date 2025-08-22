@@ -10,12 +10,26 @@ python manage.py migrate --noinput || (
   python manage.py migrate --noinput
 )
 
-# Load production fixture (if present)
-if [ -f prod_fixture.json ]; then
-  echo "Loading prod_fixture.json"
-  python manage.py loaddata prod_fixture.json
+# Load production fixture only when explicitly requested via LOAD_FIXTURE env var
+# This prevents accidental duplicate imports and keeps production data safe.
+if [ "${LOAD_FIXTURE:-"False"}" = "True" ] && [ -f prod_fixture.json ]; then
+  echo "LOAD_FIXTURE=True and prod_fixture.json found — checking DB before loading"
+  python - <<'PY'
+import os
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'blood_donation.settings')
+django.setup()
+from django.contrib.auth import get_user_model
+from django.core.management import call_command
+User = get_user_model()
+if User.objects.count() == 0:
+    print('No users found in DB — loading prod_fixture.json')
+    call_command('loaddata', 'prod_fixture.json')
+else:
+    print('Users exist in DB — skipping prod_fixture.json load')
+PY
 else
-  echo "prod_fixture.json not found; skipping loaddata"
+  echo "Skipping fixture load (set LOAD_FIXTURE=True and ensure prod_fixture.json is present to enable)"
 fi
 
 # Create or update admin user from environment variables (ADMIN_USERNAME, ADMIN_PASSWORD, optional ADMIN_EMAIL)
