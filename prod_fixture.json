@@ -1,0 +1,553 @@
+[
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "add_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "change_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "delete_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "view_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "view_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add user profile",
+    "content_type": [
+      "core",
+      "userprofile"
+    ],
+    "codename": "add_userprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change user profile",
+    "content_type": [
+      "core",
+      "userprofile"
+    ],
+    "codename": "change_userprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete user profile",
+    "content_type": [
+      "core",
+      "userprofile"
+    ],
+    "codename": "delete_userprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view user profile",
+    "content_type": [
+      "core",
+      "userprofile"
+    ],
+    "codename": "view_userprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add request",
+    "content_type": [
+      "core",
+      "request"
+    ],
+    "codename": "add_request"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change request",
+    "content_type": [
+      "core",
+      "request"
+    ],
+    "codename": "change_request"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete request",
+    "content_type": [
+      "core",
+      "request"
+    ],
+    "codename": "delete_request"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view request",
+    "content_type": [
+      "core",
+      "request"
+    ],
+    "codename": "view_request"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add notification",
+    "content_type": [
+      "core",
+      "notification"
+    ],
+    "codename": "add_notification"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change notification",
+    "content_type": [
+      "core",
+      "notification"
+    ],
+    "codename": "change_notification"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete notification",
+    "content_type": [
+      "core",
+      "notification"
+    ],
+    "codename": "delete_notification"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view notification",
+    "content_type": [
+      "core",
+      "notification"
+    ],
+    "codename": "view_notification"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add blood inventory",
+    "content_type": [
+      "core",
+      "bloodinventory"
+    ],
+    "codename": "add_bloodinventory"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change blood inventory",
+    "content_type": [
+      "core",
+      "bloodinventory"
+    ],
+    "codename": "change_bloodinventory"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete blood inventory",
+    "content_type": [
+      "core",
+      "bloodinventory"
+    ],
+    "codename": "delete_bloodinventory"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view blood inventory",
+    "content_type": [
+      "core",
+      "bloodinventory"
+    ],
+    "codename": "view_bloodinventory"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add donation",
+    "content_type": [
+      "core",
+      "donation"
+    ],
+    "codename": "add_donation"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change donation",
+    "content_type": [
+      "core",
+      "donation"
+    ],
+    "codename": "change_donation"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete donation",
+    "content_type": [
+      "core",
+      "donation"
+    ],
+    "codename": "delete_donation"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view donation",
+    "content_type": [
+      "core",
+      "donation"
+    ],
+    "codename": "view_donation"
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$gwKMZNHIDPdLP92brR380P$TBYOmOpVOIsNd8CsXpwcY1zBiGcRMLCI9qS3QQO+5pE=",
+    "last_login": "2025-08-22T08:01:30.576Z",
+    "is_superuser": true,
+    "username": "farhida",
+    "first_name": "",
+    "last_name": "",
+    "email": "farhida@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-08-22T08:01:17.872Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$8Fae6k4olzEUrBh145C0ej$FxAjFxGty2IFgwmEnR5GI+rKMQZTnMhI03/lBgwQiwY=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "hijbullah",
+    "first_name": "Hijbullah",
+    "last_name": "",
+    "email": "22303142@iubat.edu",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-22T08:33:01.514Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$Z9OLH8UYtdZtgnMODwzDe5$J1cw9ZCaLSXYFCJD8hVsTS5vOuc2uGr9tbHaQ36p9os=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "Hijbullah",
+    "first_name": "",
+    "last_name": "",
+    "email": "hij@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-08-22T08:48:25.711Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.userprofile",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "hijbullah"
+    ],
+    "phone": null,
+    "blood_group": "O+",
+    "last_donation": null,
+    "district": "Jhenaidah",
+    "share_phone": false,
+    "donated_recently": false,
+    "not_ready": false
+  }
+}
+]
