@@ -1,29 +1,22 @@
-"""
-Accounts views
+"""Accounts API moved into backend/api.
 
-This module exposes user-facing and admin-facing endpoints for registration,
-+
-profile management, and simple admin user listing. Key endpoints:
-
-- RegisterView: public registration (creates User + profile)
-- MeView: returns basic authenticated user info (username, email, flags)
-- MyProfileView: authenticated user's profile retrieve/update (uses AdminUserSerializer)
-- AdminUserListView / AdminUserDetailView: admin-only list/detail endpoints for user management
-+
-Permissions are applied on a per-view basis; admin views require IsAdminUser.
-+
+This file contains the account-related views used by the frontend. It is a
+copy of the previous `accounts.views` logic but placed under `api/` so the
+API surface is centralized. Each view has a short TASK comment.
 """
 
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-from .serializers import UserSerializer, AdminUserSerializer
+from accounts.serializers import UserSerializer, AdminUserSerializer
 
 from rest_framework.response import Response
 from rest_framework import status
 import logging
 
+
+# TASK: Registration endpoint used by frontend at POST /api/auth/register/
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -39,6 +32,7 @@ class RegisterView(generics.CreateAPIView):
         return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
 
 
+# TASK: Simple endpoint returning basic flags about the authenticated user
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -52,6 +46,7 @@ class MeView(APIView):
         })
 
 
+# TASK: Retrieve/update current user's profile at GET/PUT /api/auth/me/
 class MyProfileView(generics.RetrieveUpdateAPIView):
     """Allow an authenticated user to view and update their profile."""
     permission_classes = [IsAuthenticated]
@@ -69,6 +64,7 @@ class MyProfileView(generics.RetrieveUpdateAPIView):
         return Response(serializer.data)
 
 
+# TASK: Admin user list used by admin UI (IsAdminUser)
 class AdminUserListView(generics.ListAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = AdminUserSerializer
@@ -77,6 +73,7 @@ class AdminUserListView(generics.ListAPIView):
         return User.objects.select_related('userprofile').all().order_by('id')
 
 
+# TASK: Admin user detail/edit/delete used by admin UI
 class AdminUserDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = AdminUserSerializer
@@ -92,6 +89,7 @@ class AdminUserDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response(serializer.data)
 
 
+# TASK: username availability check (kept out of main flow but used by frontend occasionally)
 class UsernameAvailabilityView(APIView):
     permission_classes = [AllowAny]
 

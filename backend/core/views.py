@@ -5,16 +5,16 @@ point to `core` while the original implementation remains in `accounts` and
 `donors` until we're ready to remove them.
 """
 
-# Account-related views
-from accounts.views import (
+# Account-related views now provided by api.accounts
+from api.accounts import (
     RegisterView,
     MyProfileView,
     AdminUserListView,
     AdminUserDetailView,
 )
 
-# Donor-related views
-from donors.views import (
+# Donor-related views now provided by api.donors (canonical API location)
+from api.donors import (
     LoginView,
     PublicDonorSearch,
     BloodInventoryList,

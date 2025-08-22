@@ -1,6 +1,8 @@
 from django.urls import path
-from core.views import (
+from api.accounts import (
     RegisterView, MyProfileView, AdminUserListView, AdminUserDetailView,
+)
+from api.donors import (
     LoginView, PublicDonorSearch, BloodInventoryList, AnalyticsView, DashboardSummaryView,
 )
 
