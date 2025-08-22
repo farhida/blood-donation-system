@@ -12,3 +12,10 @@ venv/
 node_modules/
 build/
 *.log
+
+# Frontend build and dependencies
+frontend/node_modules/
+frontend/build/
+
+# Local DB
+db.sqlite3

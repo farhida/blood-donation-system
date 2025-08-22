@@ -3,231 +3,38 @@ Title: Blood Donation System
 Subtitle: Django REST backend + React frontend
 Presenter: <Your name>
 Date: <Date>
-Repo: <paste GitHub URL>
+Presentation: Blood Donation System
 
-Speaker note: One-line project summary and your role.
+1) Title
+  - Blood Donation System
+  - Stack: Django (DRF) backend, React frontend
 
+2) Agenda
+  - Goals, architecture, features, deployment, next steps
+
+3) Architecture
+  - SPA frontend -> /api -> Django REST backend
+  - Supports sqlite (dev), Postgres/MySQL (prod)
+
+4) Key features
+  - Registration/login (JWT)
+  - Donor search (public)
+  - User profile & dashboard
+  - Admin pages and admin-only APIs
+  - Availability computed from `last_donation` and phone privacy respected
+
+5) How to run (brief)
+  - Backend: use virtualenv, pip install -r backend/requirements.txt, migrate, runserver
+  - Frontend: cd frontend, npm install, npm start; build with npm run build
+
+6) Deployment notes
+  - Use `DATABASE_URL` for production DB
+  - Frontend uses `runtime-config.json` at root to set API host at runtime
+  - Admin creation can be done in build scripts via env vars
+
+7) Next steps
+  - Add smoke tests and CI, tighten CORS & security headers, add cache-busting for frontend bundles
+
+Contact / repo link: (paste your repo URL)
 ---
-
-Slide 2 — Agenda
-- Problem & goals
-- Tech stack & architecture
-- Features mapped to requirements
-- DB & CRUD
-- Auth & admin
-Slide 1 — Title
-Project: Blood Donation System
-Stack: Django (DRF) backend (required), React frontend (optional)
-Presenter: <Your name>
-Date: <Date>
-Repo: <GitHub URL>
-
-Speaker note: One-line summary and what you'll cover.
-
----
-
-Slide 2 — Checklist (what this deck covers)
-- CRUD + multi-DB support (sqlite, MySQL, PostgreSQL)
-- Authorization (Register + Login with username/password)
-- Admin page (Django admin + admin APIs)
-- Styling & consistent theme (polished UI)
-- Minimum 6 webpages
-- Dynamic routing
-- Backend framework required (Django + DRF)
-
-Speaker note: These are the exact acceptance points; the rest of the deck maps to them.
-
----
-
-Slide 3 — Architecture (short)
-- Browser (SPA or multi-page) -> /api -> Django REST
-- DB choices supported: SQLite (local), MySQL, PostgreSQL (production)
-- Admin: Django admin at /admin/ and APIs for frontend admin pages
-
-Speaker note: Emphasize backend-first requirement and DB portability via settings.
-
----
-
-Slide 4 — CRUD + DB support
-- Backend contract: Django models + DRF serializers & viewsets provide full CRUD.
-- Databases: swap with `DATABASE_URL` or settings (sqlite for dev, MYSQL/POSTGRES in prod).
-
-Minimal model example (UserProfile):
-```python
-# backend/core/models.py
-class UserProfile(models.Model):
-  user = models.OneToOneField(User, on_delete=models.CASCADE)
-  phone = models.CharField(max_length=32, blank=True, null=True)
-  share_phone = models.BooleanField(default=False)
-  last_donation = models.DateField(blank=True, null=True)
-
-  def is_available(self, days=90):
-    # returns True when last_donation is None or older than cutoff
-    ...
-```
-
-Speaker note: Show how CRUD maps to ViewSets and router endpoints.
-
----
-
-Slide 5 — Authorization (Register & Login)
-- Register: username/email + password -> creates Django User + profile.
-- Login: username/password -> session or JWT (recommended for SPA).
-
-Example serializer snippet:
-```python
-class RegistrationSerializer(serializers.ModelSerializer):
-  class Meta: model = User; fields = ('username','email','password')
-  def create(self, validated):
-    user = User.objects.create_user(**validated)
-    UserProfile.objects.create(user=user)
-    return user
-```
-
-Speaker note: Mention password hashing, validation, and optional email verification.
-
----
-
-Slide 6 — Admin page and admin APIs
-- Django admin (built-in) at `/admin/` provides model management, bulk edits, and staff permissions.
-- Expose admin-only APIs for frontend admin pages (protected by staff-only permission classes).
-
-Admin usage examples:
-- Register models in `admin.py` for UserProfile, Inventory, Donation.
-- Create an admin endpoint to list users or export CSV.
-
-Speaker note: Admin must be created securely (env vars or manual createsuperuser).
-
----
-
-Slide 7 — Styling & consistent theme
-- Single theme variables in `frontend/src/App.css` (or CSS variables in :root).
-- Use a small design system: colors, spacing, typography, and a `Card` component to keep consistency.
-
-Example (concept):
-```
-:root { --primary: #2b7a78; --accent: #f6ad55; --bg:#f7fafc }
-.card { background: var(--bg); border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,.08); }
-```
-
-Speaker note: Keep UI polished by using consistent spacing and a single type scale.
-
----
-
-Slide 8 — Minimum 6 webpages (suggested pages)
-1) Home / Landing
-2) Register
-3) Login
-4) Dashboard (user profile & status)
-5) Donors / Search (public)
-6) Requests / Create & List (auth required)
-7) Admin Users (frontend admin page) — optional but recommended
-
-Speaker note: That is 6+ pages; each maps to at least one API endpoint.
-
----
-
-Slide 9 — Dynamic routing
-- Use client-side dynamic routes for user pages: e.g. `/profile/:username`, `/requests/:id`.
-- Backend provides canonical resource endpoints: `/api/users/<id>/`, `/api/requests/<id>/`.
-
-Example React route (concept):
-```jsx
-<Route path="/profile/:username" component={ProfilePage} />
-<Route path="/requests/:id" component={RequestDetail} />
-```
-
-Speaker note: Explain SSR is optional; SPA with React Router is fine.
-
----
-
-Slide 10 — Security & privacy (brief)
-- Phone privacy: only expose phone when `share_phone` is True in serializer.
-- Availability: compute from `last_donation` server-side.
-- Use HTTPS, set DEBUG=False, use strong DB credentials.
-
-Serializer example (privacy):
-```python
-class PublicProfileSerializer(serializers.ModelSerializer):
-  phone = serializers.SerializerMethodField()
-  def get_phone(self, obj):
-    return obj.phone if obj.share_phone else None
-```
-
----
-
-Slide 11 — How to run locally (short)
-Backend (Windows / cross-platform):
-```
-python -m venv .venv
-.venv\Scripts\activate    # Windows
-pip install -r backend/requirements.txt
-cd backend
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver
-```
-
-Frontend (optional):
-```
-cd frontend/blood-donation-frontend
-npm install
-npm start
-```
-
----
-
-Slide 12 — Key API endpoints (short)
-- POST /api/auth/register/  — register
-- POST /api/auth/login/     — login (returns token/session)
-- GET  /api/donors/search/  — public donor search
-- GET/POST /api/requests/   — requests list/create (auth)
-- GET  /admin/              — Django admin UI
-
----
-
-Slide 13 — Minimal demo script
-1) Open Home → show theme and nav (Home, Donors, Login)
-2) Register a new user → show success
-3) Login → show Dashboard and token/session
-4) Edit Profile (toggle share_phone) → show effect in Donors search
-5) Create a Request (auth) → view it on Requests list and Request detail (dynamic route)
-6) Visit Admin page (/admin/) to show staff controls
-
----
-
-Slide 14 — Acceptance checklist (mapping)
-- CRUD + DB support: Backend ViewSets & routers (Done)
-- Auth: Registration + Login with password (Done)
-- Admin: Django admin and admin APIs (Done)
-- Styling/theme: single CSS theme and consistent components (Done)
-- 6+ pages: Home, Register, Login, Dashboard, Donors, Requests (+Admin) (Done)
-- Dynamic routing: `/profile/:username`, `/requests/:id` (Done)
-- Backend framework required: Django + DRF (Used)
-
----
-
-Slide 15 — Next steps & extras
-- Add small visual polish: header/footer, consistent card UI, color contrast checks.
-- Add smoke tests for register/login and donor search.
-- Optional: add server-side pagination for lists.
-
----
-
-Slide 16 — Where to find code & screenshots to paste
-- Models & serializers: `backend/core/models.py`, `backend/api/serializers.py`
-- Auth endpoints: `backend/api/urls.py` and `backend/accounts/` files
-- Frontend pages: `frontend/src/pages/*` (Register, Login, Dashboard, Donors, Requests, AdminUsers)
-- Styling: `frontend/src/App.css` or `frontend/src/styles/` if present
-
-Speaker note: Replace screenshot placeholders with real captures before presenting.
-
----
-
-Slide 17 — Closing summary
-This project enforces a backend-first requirement (Django + DRF). It supports multiple databases, provides secure auth, a Django admin, a consistent themed UI across 6+ pages, and dynamic routing for resource pages.
-
-Contact / repo link: <paste repo URL>
-
-End of presentation file.
 

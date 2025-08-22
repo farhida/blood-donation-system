@@ -19,52 +19,40 @@ This repository includes a root `requirements.txt` that references the backend P
 1) Create and activate a Python virtualenv (bash / WSL / Git Bash on Windows):
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-```
+# Blood Donation System
 
-2) Install Python dependencies (single command using top-level requirements):
+This repository contains a Django REST backend and a React frontend for a Blood Donation System.
+
+This README gives quick instructions to run the project locally and notes about deployment and runtime configuration.
+
+Quickstart — backend
+
+1) Create and activate a virtualenv (recommended):
 
 ```bash
-pip install -r requirements.txt
+python -m venv .venv
+# On Windows (Git Bash / WSL): source .venv/bin/activate
+# On Windows (PowerShell): .\.venv\Scripts\Activate.ps1
 ```
 
-This will pull in the backend dependencies (Django, DRF, SimpleJWT, dj-database-url, etc.).
+2) Install backend dependencies:
 
-Backend setup
-1. Apply migrations and create a superuser:
+```bash
+pip install -r backend/requirements.txt
+```
+
+3) Run migrations and start the dev server:
 
 ```bash
 cd backend
 python manage.py migrate
 python manage.py createsuperuser
-```
-
-2. Run the dev server:
-
-```bash
 python manage.py runserver
 ```
 
-3. Open http://127.0.0.1:8000/ for API and http://127.0.0.1:8000/admin/ for the admin UI.
+Visit http://127.0.0.1:8000/ for the API and http://127.0.0.1:8000/admin/ for Django admin.
 
-Using a production DB (Postgres / MySQL)
-- Set the `DATABASE_URL` environment variable before running migrations or the server. Examples:
-
-Postgres example (bash):
-```bash
-export DATABASE_URL="postgres://USER:PASS@HOST:5432/DBNAME"
-python manage.py migrate
-```
-
-MySQL example (bash):
-```bash
-export DATABASE_URL="mysql://USER:PASS@HOST:3306/DBNAME"
-python manage.py migrate
-```
-
-Frontend setup
-1. Install Node.js (v16+) and npm/yarn. Then from repo root:
+Quickstart — frontend (dev)
 
 ```bash
 cd frontend
@@ -72,45 +60,25 @@ npm install
 npm start
 ```
 
-This starts the React dev server (usually on http://localhost:3000). The frontend expects the backend API at the same host under `/api` (proxy configured in development). For production builds:
+Build the frontend for production:
 
 ```bash
 cd frontend
 npm run build
 ```
 
-Project layout (important files)
-- `backend/` — Django project and apps (`donors`, `accounts`). API endpoints live under `/api/`.
-- `frontend/` — React app (create-react-app) with pages in `src/pages` and routes in `src/App.js`.
-- `requirements.txt` — top-level file that references backend Python requirements.
+Runtime configuration for production
+- Set `DATABASE_URL` for Postgres/MySQL in production.
+- Frontend runtime API host is provided by `runtime-config.json` served at the site root (the app reads `API_URL` from that file at startup).
+- Use environment variables to set `SECRET_KEY`, `DEBUG=False`, and admin credentials for automated admin creation if desired.
 
-API highlights
-- Registration: POST `/api/auth/register/` (payload: full_name, email, password, blood_group, district, optional phone/last_donation)
-- Login (JWT): POST `/api/login/` (also `/api/token/` available)
-- Public donor search: GET `/api/donors/search/?blood_group=A%2B&district=Dhaka`
--- Profile: GET/PUT `/api/profile/`
+Files and folders you may remove locally (we removed generated artifacts in this branch):
+- `frontend/node_modules/` (regenerate with `npm install`)
+- `frontend/build/` (regenerate with `npm run build`)
+- local DB `db.sqlite3` should not be tracked (keep a local backup if needed)
 
-How this meets the original checklist
-- CRUD + DB: implemented via Django models + DRF views/serializers. Django supports sqlite/postgres/mysql; set `DATABASE_URL` to use other DBs.
-- Auth: registration and login (JWT) implemented; `Me` endpoint and admin-only APIs provided.
-- Admin: Django admin is enabled; admin frontend pages exist.
-- Styling & theme: `frontend/src/App.css` defines a consistent theme; most pages use `.card` and token variables for look & feel.
-- 6+ pages and dynamic routing: See `frontend/src/App.js` and `frontend/src/pages` — many pages and `react-router` usage.
+Notes
+- Preserve `backend/migrations/` — they are required for schema history.
+- `prod_fixture.json` is used for guarded seed data during builds; keep it if you rely on build-time seeding.
 
-Troubleshooting
-- If `dj_database_url` import fails, ensure you installed requirements into the active venv: `pip install -r requirements.txt`.
-- If frontend cannot reach backend in dev mode, ensure the backend is running and check the proxy settings or REACT_APP_API_BASE in `.env`.
-
-Tests
-- Backend tests are under `backend/*/tests.py`. Run them with:
-
-```bash
-cd backend
-python manage.py test
-```
-
-Support and next steps
-- If you want, I can:
-	- Add `admin.site.register(...)` entries so Django admin shows custom models by default.
-	- Harden `backend/blood_donation/settings.py` for production (move SECRET_KEY to env, set DEBUG via env, tighten cookie/security settings).
-	- Add a `Makefile` or `setup.sh` to automate the entire setup (including Node install checks) for truly one-command setup.
+If you want a PDF or PPTX presentation, tell me and I will create one from `presentation.txt`.
