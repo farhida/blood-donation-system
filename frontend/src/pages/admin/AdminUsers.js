@@ -32,7 +32,6 @@ function AdminUsers() {
       district: user.district ?? null,
       phone: user.phone === '' ? null : (user.phone ?? null),
       share_phone: !!user.share_phone,
-      not_ready: !!user.not_ready,
       last_donation: user.last_donation === '' ? null : (user.last_donation ?? null),
     };
     try {
@@ -77,17 +76,15 @@ function AdminUsers() {
       // Send updates per-user. Build a minimal payload so we don't accidentally send read-only fields
       const errors = [];
       for (const u of users) {
-        const payload = {
-          email: u.email ?? null,
-          is_active: !!u.is_active,
-          blood_group: u.blood_group ?? null,
-          district: u.district ?? null,
-          phone: u.phone === '' ? null : (u.phone ?? null),
-          share_phone: !!u.share_phone,
-          not_ready: !!u.not_ready,
-          last_donation: u.last_donation === '' ? null : (u.last_donation ?? null),
-        };
-        // Log payload for debugging so we can inspect what is sent
+    const payload = {
+        email: u.email ?? null,
+        is_active: !!u.is_active,
+        blood_group: u.blood_group ?? null,
+        district: u.district ?? null,
+        phone: u.phone === '' ? null : (u.phone ?? null),
+        share_phone: !!u.share_phone,
+        last_donation: u.last_donation === '' ? null : (u.last_donation ?? null),
+      };
         // eslint-disable-next-line no-console
         console.log('AdminUsers: sending update for', u.id, payload);
         try {
@@ -159,7 +156,7 @@ function AdminUsers() {
           <tr>
             <th>ID</th><th>Username</th><th>Email</th><th>Active</th>
             <th>Blood</th><th>District</th><th>Phone</th><th>Share</th>
-            <th>Not Ready</th><th>Last Donation</th><th>Actions</th>
+            <th>Last Donation</th><th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -194,8 +191,25 @@ function AdminUsers() {
               </td>
               <td><input value={u.phone || ''} onChange={e => { const val = e.target.value; setUsers(prev => prev.map((x,i)=> i===idx?{...x,phone:val}:x)); queueSave({...u, phone: val}); }} /></td>
               <td><input type="checkbox" checked={!!u.share_phone} onChange={e => { const val = e.target.checked; setUsers(prev => prev.map((x,i)=> i===idx?{...x,share_phone:val}:x)); queueSave({...u, share_phone: val}); }} /></td>
-              <td><input type="checkbox" checked={!!u.not_ready} onChange={e => { const val = e.target.checked; setUsers(prev => prev.map((x,i)=> i===idx?{...x,not_ready:val}:x)); queueSave({...u, not_ready: val}); }} /></td>
-              <td><input type="date" value={u.last_donation || ''} onChange={e => { const val = e.target.value; setUsers(prev => prev.map((x,i)=> i===idx?{...x,last_donation:val}:x)); queueSave({...u, last_donation: val}); }} /></td>
+              <td>
+                <label>
+                  <input type="checkbox" checked={!!u.last_donation && (new Date(u.last_donation) >= (new Date(Date.now() - 90*24*60*60*1000)))} onChange={e => {
+                    const checked = e.target.checked;
+                    if (checked) {
+                      const today = new Date().toISOString().slice(0,10);
+                      const val = u.last_donation || today;
+                      setUsers(prev => prev.map((x,i)=> i===idx?{...x,last_donation:val}:x));
+                      queueSave({...u, last_donation: val});
+                    } else {
+                      setUsers(prev => prev.map((x,i)=> i===idx?{...x,last_donation:''}:x));
+                      queueSave({...u, last_donation: null});
+                    }
+                  }} />
+                </label>
+                <div>
+                  <input type="date" value={u.last_donation || ''} onChange={e => { const val = e.target.value; setUsers(prev => prev.map((x,i)=> i===idx?{...x,last_donation:val}:x)); queueSave({...u, last_donation: val}); }} />
+                </div>
+              </td>
               <td><button onClick={() => removeUser(u.id)} style={{color:'red'}}>Remove</button></td>
             </tr>
           ))}

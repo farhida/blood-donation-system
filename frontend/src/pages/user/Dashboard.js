@@ -38,6 +38,9 @@ function Dashboard() {
           <div className="info-row"><span className="label">Email</span><span className="value">{data.email}</span></div>
           <div className="info-row"><span className="label">Blood Group</span><span className="value">{data.blood_group || 'N/A'}</span></div>
           <div className="info-row"><span className="label">District</span><span className="value">{data.district || 'N/A'}</span></div>
+          {data.phone && (
+            <div className="info-row"><span className="label">Phone</span><span className="value">{data.phone}</span></div>
+          )}
           <div className="info-row"><span className="label">Last Donation</span><span className="value">{data.last_donation || 'N/A'}</span></div>
         </div>
       </div>

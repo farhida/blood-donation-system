@@ -25,16 +25,16 @@ function ProfileEdit() {
     setSaving(true);
     setError('');
     try {
-      // Build nested payload to match AdminUserSerializer which maps profile fields under 'userprofile'
+      // AdminUserSerializer maps fields to userprofile via `source='userprofile.xxx'`
+      // but expects the input as top-level keys (phone, blood_group, etc.).
       const payload = {
         email: user.email ?? null,
-        userprofile: {
-          blood_group: user.blood_group ?? null,
-          district: user.district ?? null,
-          phone: user.phone === '' ? null : (user.phone ?? null),
-          share_phone: !!user.share_phone,
-          last_donation: user.last_donation === '' ? null : (user.last_donation ?? null),
-        }
+        phone: user.phone === '' ? null : (user.phone ?? null),
+        blood_group: user.blood_group ?? null,
+        district: user.district ?? null,
+        share_phone: !!user.share_phone,
+        // availability is driven solely by last_donation: if checkbox is unchecked we clear it
+        last_donation: user.last_donation === '' ? null : (user.last_donation ?? null),
       };
       // eslint-disable-next-line no-console
       console.log('ProfileEdit: sending payload', payload);
@@ -89,12 +89,36 @@ function ProfileEdit() {
           </div>
           <div style={{marginBottom:8}}>
             <label>
-              <input type="checkbox" checked={!!user.donated_recently} onChange={e => setUser({...user, donated_recently: e.target.checked})} /> Donated within last 3 months
+              <input
+                type="checkbox"
+                checked={(() => {
+                  try {
+                    if (!user.last_donation) return false;
+                    const cutoff = new Date();
+                    cutoff.setDate(cutoff.getDate() - 90);
+                    return new Date(user.last_donation) >= cutoff;
+                  } catch (err) { return false; }
+                })()}
+                onChange={e => {
+                  const checked = e.target.checked;
+                  if (checked) {
+                    // If checking, set a sensible default (today) if no date present so calendar appears
+                    const today = new Date().toISOString().slice(0,10);
+                    setUser({ ...user, last_donation: user.last_donation || today });
+                  } else {
+                    // Unchecking clears last_donation and makes donor available immediately
+                    setUser({ ...user, last_donation: '' });
+                  }
+                }}
+              /> Donated within last 3 months
             </label>
           </div>
-          {user.donated_recently && (
-            <div style={{marginBottom:8}}><label> Last Donation </label><br /><input type="date" value={user.last_donation || ''} onChange={e => setUser({...user, last_donation: e.target.value})} /></div>
-          )}
+          {(() => {
+            const hasDate = !!user.last_donation;
+            return hasDate ? (
+              <div style={{marginBottom:8}}><label> Last Donation </label><br /><input type="date" value={user.last_donation || ''} onChange={e => setUser({...user, last_donation: e.target.value})} /></div>
+            ) : null;
+          })()}
           <div style={{marginTop:12}}>
             <button className="btn" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
           </div>

@@ -12,7 +12,6 @@ function Register() {
   const [sharePhone, setSharePhone] = useState(false);
   const [phone, setPhone] = useState('');
   const [donatedRecently, setDonatedRecently] = useState(false);
-  const [notReady, setNotReady] = useState(false);
   // username is auto-generated from full name on the server
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
@@ -29,12 +28,10 @@ function Register() {
         email,
         password,
         blood_group: bloodGroup,
-  last_donation: lastDonation || null,
+        last_donation: donatedRecently ? (lastDonation || null) : null,
         district,
         share_phone: sharePhone,
-  phone: sharePhone ? phone : '',
-  donated_recently: donatedRecently,
-  // flags are saved on profile post-registration update; for now backend create handles essentials
+        phone: sharePhone ? phone : '',
       });
       setSuccess('Registration successful! You can now log in.');
     } catch (err) {
@@ -82,10 +79,10 @@ function Register() {
             onChange={e => {
               const val = e.target.checked;
               setDonatedRecently(val);
-              if (val) setNotReady(false);
+              if (!val) setLastDonation('');
+              else if (!lastDonation) setLastDonation(new Date().toISOString().slice(0,10));
             }}
-          />
-          {' '}I donated within the last 3 months (optional)
+          />{' '}I donated within the last 3 months (optional)
         </label>
         {donatedRecently && (
           <input

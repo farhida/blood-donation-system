@@ -19,7 +19,7 @@ Important notes
   git rm --cached db.sqlite3
   git commit -m "Remove venv and db from repo; add .gitignore"
 - For production, set SECRET_KEY and DEBUG via environment variables and use a real DB (Postgres/MySQL).
-- The donor availability rule: donors marked `not_ready` or whose `last_donation` is within 90 days are excluded from public availability and inventory endpoints.
+ - The donor availability rule: donors whose `last_donation` is within 90 days are excluded from public availability and inventory endpoints. Availability is derived solely from the `last_donation` date; convenience flags were removed.
 
 Files of interest
 - `accounts/` - registration, user/profile serializers and admin user endpoints.

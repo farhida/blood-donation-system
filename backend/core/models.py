@@ -19,7 +19,6 @@ class UserProfile(models.Model):
     Fields:
     - phone, blood_group, last_donation, district: basic contact and donation info
     - share_phone: flag indicating whether the donor consents to share phone
-    - donated_recently / not_ready: convenience flags used by availability logic
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=15, blank=True, null=True)
@@ -27,11 +26,13 @@ class UserProfile(models.Model):
     last_donation = models.DateField(blank=True, null=True)
     district = models.CharField(max_length=100, blank=True, null=True)
     share_phone = models.BooleanField(default=False)
-    donated_recently = models.BooleanField(default=False)
-    not_ready = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username}'s profile"
+    
+    class Meta:
+        # Map to the original donors app table to avoid immediate DB migrations
+        db_table = 'donors_userprofile'
 
 
 class Request(models.Model):
@@ -62,6 +63,9 @@ class Request(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.blood_group} - {self.hospital or self.city or ''} ({self.status})"
+    
+    class Meta:
+        db_table = 'donors_request'
 
 
 class Notification(models.Model):
@@ -73,6 +77,9 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"To {self.user.username}: {self.message}"
+    
+    class Meta:
+        db_table = 'donors_notification'
 
 
 class BloodInventory(models.Model):
@@ -83,6 +90,9 @@ class BloodInventory(models.Model):
 
     def __str__(self):
         return f"{self.hospital} - {self.blood_group} - {self.units_available} units"
+    
+    class Meta:
+        db_table = 'donors_bloodinventory'
 
 
 class Donation(models.Model):
@@ -94,3 +104,6 @@ class Donation(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.blood_group} - {self.hospital} - {self.units_donated} units"
+    
+    class Meta:
+        db_table = 'donors_donation'

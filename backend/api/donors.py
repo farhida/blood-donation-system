@@ -44,7 +44,7 @@ class PublicDonorSearch(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        # TASK: filter available donors by blood_group and district, applying "not_ready"
+        # TASK: filter available donors by blood_group and district
         blood_group = self.request.query_params.get('blood_group')
         district = self.request.query_params.get('district')
         cutoff = date.today() - timedelta(days=DONOR_REST_WINDOW_DAYS)
@@ -53,9 +53,8 @@ class PublicDonorSearch(generics.ListAPIView):
             qs = qs.filter(blood_group__iexact=blood_group)
         if district:
             qs = qs.filter(district__iexact=district)
-        qs = qs.filter(not_ready=False).filter(
-            models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=cutoff)
-        )
+        # Availability: include profiles with no last_donation or last_donation older than cutoff
+        qs = qs.filter(models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=cutoff))
         return qs
 
 
@@ -75,9 +74,9 @@ class RequestList(generics.ListCreateAPIView):
         # TASK: create request and create Notification records for matching donors
         req = serializer.save(user=self.request.user)
         cutoff = date.today() - timedelta(days=DONOR_REST_WINDOW_DAYS)
+        # Match donors by blood group who are available per last_donation cutoff
         matching = UserProfile.objects.select_related('user').filter(
             blood_group__iexact=req.blood_group,
-            not_ready=False,
         ).filter(models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=cutoff))
         for prof in matching:
             Notification.objects.create(user=prof.user, request=req, message="Blood needed")
@@ -147,8 +146,7 @@ class MarkCollectedView(APIView):
             try:
                 prof, _ = UserProfile.objects.get_or_create(user=req.accepted_by)
                 prof.last_donation = date.today()
-                prof.donated_recently = True
-                prof.not_ready = True
+                # availability is now computed from last_donation only; do not set convenience flags
                 prof.save()
             except Exception:
                 logger.exception("Failed to update UserProfile after marking collected")
@@ -188,9 +186,7 @@ class BloodInventoryList(generics.ListCreateAPIView):
 
     def list(self, request, *args, **kwargs):
         cutoff = date.today() - timedelta(days=DONOR_REST_WINDOW_DAYS)
-        available = UserProfile.objects.select_related('user').filter(not_ready=False).filter(
-            models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=cutoff)
-        )
+        available = UserProfile.objects.select_related('user').filter(models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=cutoff))
         donors = []
         for prof in available:
             user = prof.user
@@ -255,6 +251,11 @@ class DashboardSummaryView(APIView):
             'last_donation': profile.last_donation,
             'donation_count': donation_count,
         }
+        # Include phone only if the user opted to share it
+        try:
+            data['phone'] = profile.phone if getattr(profile, 'share_phone', False) else None
+        except Exception:
+            data['phone'] = None
         return Response(data)
 
 
@@ -266,12 +267,9 @@ class AnalyticsView(APIView):
         # Aggregate total requests per blood group
         request_counts = Request.objects.values('blood_group').annotate(count=Count('id'))
         demand_data = {item['blood_group']: item['count'] for item in request_counts}
-
         # Compute available donors per blood group from profiles
         cutoff = date.today() - timedelta(days=DONOR_REST_WINDOW_DAYS)
-        available_qs = UserProfile.objects.filter(not_ready=False).filter(
-            models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=cutoff)
-        )
+        available_qs = UserProfile.objects.filter(models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=cutoff))
         inventory_counts_qs = available_qs.values('blood_group').annotate(count=Count('id'))
         inventory_totals = {item['blood_group']: item['count'] for item in inventory_counts_qs}
 
@@ -302,10 +300,8 @@ class UserProfileView(APIView):
             profile = UserProfile.objects.create(user=request.user)
         if profile.last_donation:
             cutoff = date.today() - timedelta(days=DONOR_REST_WINDOW_DAYS)
-            if profile.last_donation <= cutoff and (profile.donated_recently or profile.not_ready):
-                profile.donated_recently = False
-                profile.not_ready = False
-                profile.save()
+            # Only auto-clear flags if they were previously marked as recently donated by the system
+            # Availability is computed solely from last_donation; no convenience flags are modified here.
         serializer = UserProfileSerializer(profile)
         return Response(serializer.data)
 

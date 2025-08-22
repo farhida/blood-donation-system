@@ -24,7 +24,7 @@ Summary table
 
 6. donors/search/ — GET — AllowAny — `donors.views.PublicDonorSearch`
    - Public donor search filtered by query params (blood_group, district).
-   - Applies donor availability rules: `not_ready == False` AND (`last_donation` is null OR older than 90 days).
+   - Applies donor availability rules: include donors whose `last_donation` is null or older than 90 days. Availability is determined only by `last_donation`.
 
 7. inventory/ — GET — IsAuthenticated — `donors.views.BloodInventoryList`
    - Returns computed available donors (not a DB inventory table). Phone is returned only when the donor's `share_phone` flag is true.

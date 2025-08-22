@@ -10,7 +10,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['username', 'email', 'phone', 'blood_group', 'last_donation', 'district', 'share_phone', 'donated_recently', 'not_ready']
+    fields = ['username', 'email', 'phone', 'blood_group', 'last_donation', 'district', 'share_phone']
 
     def update(self, instance, validated_data):
         instance.phone = validated_data.get('phone', instance.phone)
@@ -18,8 +18,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         instance.last_donation = validated_data.get('last_donation', instance.last_donation)
         instance.district = validated_data.get('district', instance.district)
         instance.share_phone = validated_data.get('share_phone', instance.share_phone)
-        instance.donated_recently = validated_data.get('donated_recently', instance.donated_recently)
-        instance.not_ready = validated_data.get('not_ready', instance.not_ready)
         instance.save()
         return instance
 
