@@ -42,7 +42,14 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 # ALLOWED_HOSTS should contain your Render (backend) domain and any other
 # hostnames. You can set it as a comma-separated env var: ALLOWED_HOSTS=host1,host2
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+_raw_allowed = os.environ.get('ALLOWED_HOSTS')
+# If ALLOWED_HOSTS is set and non-empty, parse it as a comma-separated list.
+# If it's not set (or is an empty string) fall back to permissive ['*'] so deploys
+# don't fail with DisallowedHost; change this in production to a strict list.
+if _raw_allowed and _raw_allowed.strip():
+    ALLOWED_HOSTS = [h.strip() for h in _raw_allowed.split(',') if h.strip()]
+else:
+    ALLOWED_HOSTS = ['*']
 
 
 # Application definition
