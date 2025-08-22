@@ -60,6 +60,9 @@ function App() {
         <Route path="/admin/users" element={isAdmin ? <AdminUsers /> : <Navigate to="/admin-login" />} />
         <Route path="/admin/inventory" element={isAdmin ? <AdminInventory /> : <Navigate to="/admin-login" />} />
       </Routes>
+      <footer className="site-footer">
+        <div className="container muted">© Farhida Islam Toushi</div>
+      </footer>
     </div>
   );
 }
