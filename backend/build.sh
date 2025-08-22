@@ -1,29 +1,35 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
-# This wrapper is intended to be invoked from the repo root by Render as:
+# backend/build.sh - intended to be invoked from the repo root as:
 #   bash backend/build.sh
-# It runs installs, migrations, optional fixture load (safe), admin creation, and collectstatic.
+# This script locates the repository root and runs Django setup steps.
 
 echo "Running backend/build.sh"
 
-# Install top-level requirements
-echo "Installing dependencies"
-pip install -r requirements.txt
+# Compute repo root (the directory containing this script's parent directory)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+BACKEND_DIR="${SCRIPT_DIR}"
 
-echo "Changing to backend/ and running migrations"
-cd backend
+echo "Repo root: ${REPO_ROOT}"
+echo "Backend dir: ${BACKEND_DIR}"
 
-# Run migrations (with safe fake fallback for core initial rebuild migration)
+echo "Installing Python dependencies (from repo root)"
+pip install -r "${REPO_ROOT}/requirements.txt"
+
+cd "${BACKEND_DIR}"
+
+echo "Running migrations"
 python manage.py migrate --noinput || (
   python manage.py migrate core 0001_rebuild_core --fake &&
   python manage.py migrate --noinput
 )
 
-# Optional safe fixture load: only when LOAD_FIXTURE=True and DB has no users
-if [ "${LOAD_FIXTURE:-"False"}" = "True" ] && [ -f ../prod_fixture.json ]; then
+# Optional safe fixture load: only when LOAD_FIXTURE=True and prod_fixture.json exists in repo root
+if [ "${LOAD_FIXTURE:-"False"}" = "True" ] && [ -f "${REPO_ROOT}/prod_fixture.json" ]; then
   echo "LOAD_FIXTURE=True and prod_fixture.json found — checking DB before loading"
-  python - <<'PY'
+  python - <<PY
 import os
 import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'blood_donation.settings')
@@ -33,7 +39,7 @@ from django.core.management import call_command
 User = get_user_model()
 if User.objects.count() == 0:
     print('No users found in DB — loading prod_fixture.json')
-    call_command('loaddata', '../prod_fixture.json')
+    call_command('loaddata', '${REPO_ROOT}/prod_fixture.json')
 else:
     print('Users exist in DB — skipping prod_fixture.json load')
 PY
@@ -42,9 +48,9 @@ else
 fi
 
 # Create or update admin user from env vars if provided
-if [ -n "$ADMIN_USERNAME" ] && [ -n "$ADMIN_PASSWORD" ]; then
-  echo "Ensuring admin user exists: $ADMIN_USERNAME"
-  python - <<'PY'
+if [ -n "${ADMIN_USERNAME:-}" ] && [ -n "${ADMIN_PASSWORD:-}" ]; then
+  echo "Ensuring admin user exists: ${ADMIN_USERNAME}"
+  python - <<PY
 import os
 import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'blood_donation.settings')
