@@ -1,6 +1,14 @@
 import axios from 'axios';
 
-const adminApi = axios.create();
+function getApiBase() {
+  try {
+    if (typeof window !== 'undefined' && window.__API_URL) return window.__API_URL.replace(/\/+$/, '');
+  } catch (e) {}
+  return (process.env.REACT_APP_API_URL || '').replace(/\/+$/, '');
+}
+
+const API_BASE = getApiBase();
+const adminApi = axios.create({ baseURL: API_BASE || '' });
 
 adminApi.interceptors.request.use((config) => {
   // Prefer explicit admin tokens, but fall back to the regular user access token
@@ -45,7 +53,8 @@ adminApi.interceptors.response.use(
       }
       try {
         isRefreshing = true;
-        const res = await axios.post('/api/token/refresh/', { refresh });
+  const refreshUrl = (API_BASE ? API_BASE + '/api/token/refresh/' : '/api/token/refresh/');
+  const res = await axios.post(refreshUrl, { refresh });
         const newAccess = res.data?.access;
         if (newAccess) {
           localStorage.setItem('admin_access', newAccess);
