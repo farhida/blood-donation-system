@@ -113,9 +113,14 @@ DATABASES = {
 }
 
 # Allow DATABASE_URL env var to override the default sqlite DB. Supports postgres, mysql, etc.
-DATABASE_URL = os.environ.get('DATABASE_URL')
-if DATABASE_URL:
-    DATABASES['default'] = dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+DATABASE_URL = os.environ.get('DATABASE_URL', '')
+if isinstance(DATABASE_URL, str) and DATABASE_URL.strip():
+    try:
+        DATABASES['default'] = dj_database_url.parse(DATABASE_URL.strip(), conn_max_age=600)
+    except ValueError:
+        # If parsing fails (for example an empty string slipped through), keep sqlite default.
+        # This prevents manage.py from crashing when DATABASE_URL is unset or invalid in local dev.
+        pass
 
 
 # Password validation

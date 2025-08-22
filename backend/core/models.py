@@ -26,6 +26,11 @@ class UserProfile(models.Model):
     last_donation = models.DateField(blank=True, null=True)
     district = models.CharField(max_length=100, blank=True, null=True)
     share_phone = models.BooleanField(default=False)
+    # Legacy flags kept here so the model matches the existing `donors_userprofile` table
+    # which may have non-null constraints from older migrations. Keeping them allows
+    # creating rows without IntegrityError when the DB schema still requires these columns.
+    donated_recently = models.BooleanField(default=False)
+    not_ready = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username}'s profile"
