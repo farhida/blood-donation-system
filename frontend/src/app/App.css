@@ -43,8 +43,6 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#c62828; 
 .App.bg-register::before,
 .App.bg-profile::before,
 .App.bg-dashboard::before,
-.App.bg-requests::before,
-.App.bg-notifications::before,
 .App.bg-donations::before,
 .App.bg-admin-login::before,
 .App.bg-admin::before,
@@ -96,17 +94,6 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#c62828; 
     linear-gradient(180deg, #e3f2fd, #cfd8dc);
 }
 
-.App.bg-requests::before {
-  background:
-    radial-gradient(circle at 50% 40%, rgba(255,255,255,0.8), rgba(255,224,224,0.55) 45%),
-    linear-gradient(180deg, #ffffff, #ffe0e0);
-}
-
-.App.bg-notifications::before {
-  background:
-    radial-gradient(circle at 50% 40%, rgba(255,255,255,0.8), rgba(232,240,254,0.55) 45%),
-    linear-gradient(180deg, #f5f7fa, #e8f0fe);
-}
 
 .App.bg-donations::before {
   background:
@@ -200,15 +187,6 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#c62828; 
   radial-gradient(closest-side, rgba(33,150,243,0.12), rgba(33,150,243,0)),
   radial-gradient(closest-side, rgba(96,125,139,0.10), rgba(96,125,139,0)); }
 
-.bg-requests.App::after { background-image:
-  radial-gradient(closest-side, rgba(229,57,53,0.22), rgba(229,57,53,0)),
-  radial-gradient(closest-side, rgba(244,81,30,0.18), rgba(244,81,30,0)),
-  radial-gradient(closest-side, rgba(255,138,101,0.14), rgba(255,138,101,0)); }
-
-.bg-notifications.App::after { background-image:
-  radial-gradient(closest-side, rgba(92,107,192,0.16), rgba(92,107,192,0)),
-  radial-gradient(closest-side, rgba(66,165,245,0.14), rgba(66,165,245,0)),
-  radial-gradient(closest-side, rgba(158,158,158,0.10), rgba(158,158,158,0)); }
 
 .bg-donations.App::after { background-image:
   radial-gradient(closest-side, rgba(198,40,40,0.25), rgba(198,40,40,0)),
@@ -279,7 +257,6 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#c62828; 
 
 .login-form,
 .donor-form,
-.request-form,
 .donation-form,
 .profile-form {
   display: flex;
@@ -296,15 +273,13 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#c62828; 
   animation: fadeIn 0.5s ease-in;
 }
 
-.login-form input,
-.donor-form input,
-.donor-form select,
-.request-form input,
-.request-form select,
-.donation-form input,
-.donation-form select,
-.profile-form input,
-.profile-form select {
+login-form input,
+donor-form input,
+donor-form select,
+donation-form input,
+donation-form select,
+profile-form input,
+profile-form select {
   padding: 8px;
   font-size: 16px;
   border: 1px solid #ccc;
@@ -314,24 +289,21 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#c62828; 
   transition: border-color 0.3s ease;
 }
 
-.login-form input:focus,
-.donor-form input:focus,
-.donor-form select:focus,
-.request-form input:focus,
-.request-form select:focus,
-.donation-form input:focus,
-.donation-form select:focus,
-.profile-form input:focus,
-.profile-form select:focus {
+login-form input:focus,
+donor-form input:focus,
+donor-form select:focus,
+donation-form input:focus,
+donation-form select:focus,
+profile-form input:focus,
+profile-form select:focus {
   border-color: #28a745;
   outline: none;
 }
 
-.login-form button,
-.donor-form button,
-.request-form button,
-.donation-form button,
-.profile-form button {
+login-form button,
+donor-form button,
+donation-form button,
+profile-form button {
   background: var(--brand);
   color:#fff;
   border: none;
@@ -340,14 +312,12 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#c62828; 
   cursor:pointer;
   transition: filter .15s;
 }
-.login-form button:hover,
-.donor-form button:hover,
-.request-form button:hover,
-.donation-form button:hover,
-.profile-form button:hover { filter: brightness(1.05); }
+login-form button:hover,
+donor-form button:hover,
+donation-form button:hover,
+profile-form button:hover { filter: brightness(1.05); }
 
 .donor-list,
-.request-list,
 .donation-list {
   list-style: none;
   padding: 0;
@@ -357,7 +327,6 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#c62828; 
 }
 
 .donor-list li,
-.request-list li,
 .donation-list li {
   padding: 12px 14px;
   border-bottom: 1px solid #eef1f4;
@@ -366,7 +335,6 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#c62828; 
 }
 
 .donor-list li:hover,
-.request-list li:hover,
 .donation-list li:hover {
   background-color: #fff7f7;
 }

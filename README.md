@@ -9,7 +9,7 @@ Requirements covered
 - Authorization — registration and login implemented (JWT via SimpleJWT). Registration creates a Django User and a `UserProfile`.
 - Admin page — Django admin available at `/admin/`; additional admin frontend pages exist under `/admin`.
 - Styling & consistent theme — frontend provides a cohesive theme via `src/App.css` and component styles.
-- 6+ webpages — frontend routes include Donor Search, Login, Register, Profile, Dashboard, Requests, Donations, Notifications, Admin pages, NotFound.
+-- 6+ webpages — frontend routes include Donor Search, Login, Register, Profile, Dashboard, Donations, Admin pages, NotFound.
 - Dynamic routing — React Router is used (`Routes`, `Route`, `useLocation`, etc.).
 - Backend framework used — Django + DRF (required).
 
@@ -88,9 +88,7 @@ API highlights
 - Registration: POST `/api/auth/register/` (payload: full_name, email, password, blood_group, district, optional phone/last_donation)
 - Login (JWT): POST `/api/login/` (also `/api/token/` available)
 - Public donor search: GET `/api/donors/search/?blood_group=A%2B&district=Dhaka`
-- Requests CRUD: `/api/requests/` and `/api/requests/<id>/` with accept/collected endpoints.
-- Profile: GET/PUT `/api/profile/`
-- Notifications: GET `/api/notifications/`
+-- Profile: GET/PUT `/api/profile/`
 
 How this meets the original checklist
 - CRUD + DB: implemented via Django models + DRF views/serializers. Django supports sqlite/postgres/mysql; set `DATABASE_URL` to use other DBs.

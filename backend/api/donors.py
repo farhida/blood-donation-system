@@ -16,14 +16,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
 # Import models/serializers from the consolidated core app
-from core.models import Request, BloodInventory, Donation, UserProfile, Notification
+from core.models import BloodInventory, Donation, UserProfile
 from api.serializers_donors import (
-    RequestSerializer,
     BloodInventorySerializer,
     DonationSerializer,
     UserProfileSerializer,
     PublicDonorProfileSerializer,
-    NotificationSerializer,
 )
 
 from django.db.models import Count, Sum
@@ -58,124 +56,8 @@ class PublicDonorSearch(generics.ListAPIView):
         return qs
 
 
-# Requests list/create
-# TASK: GET /api/requests/ (public list); POST /api/requests/ (authenticated create)
-class RequestList(generics.ListCreateAPIView):
-    queryset = Request.objects.all().order_by('-created_at')
-    serializer_class = RequestSerializer
-
-    def get_permissions(self):
-        # Allow any to list; require auth for creation
-        if self.request.method == 'GET':
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
-
-    def perform_create(self, serializer):
-        # TASK: create request and create Notification records for matching donors
-        req = serializer.save(user=self.request.user)
-        cutoff = date.today() - timedelta(days=DONOR_REST_WINDOW_DAYS)
-        # Match donors by blood group who are available per last_donation cutoff
-        matching = UserProfile.objects.select_related('user').filter(
-            blood_group__iexact=req.blood_group,
-        ).filter(models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=cutoff))
-        for prof in matching:
-            Notification.objects.create(user=prof.user, request=req, message="Blood needed")
-
-
-class RequestDetail(generics.RetrieveUpdateDestroyAPIView):
-    # TASK: GET/PUT/DELETE for a single request (auth required)
-    queryset = Request.objects.all()
-    serializer_class = RequestSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class AcceptRequestView(APIView):
-    # TASK: POST /api/requests/<pk>/accept/ — mark request accepted by current user
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, pk):
-        req = Request.objects.filter(pk=pk).first()
-        if not req:
-            return Response({'error': 'Request not found'}, status=404)
-        if req.status != 'open':
-            return Response({'error': 'Request is not open'}, status=400)
-        req.status = 'accepted'
-        req.accepted_by = request.user
-        req.save()
-
-        # Notify requester with contact info of acceptor (respect share_phone)
-        acceptor = request.user
-        full_name = f"{acceptor.first_name} {acceptor.last_name}".strip() or acceptor.username
-        contact_email = acceptor.email
-        contact_phone = None
-        try:
-            prof = UserProfile.objects.get(user=acceptor)
-            contact_phone = prof.phone if getattr(prof, 'share_phone', False) else None
-        except UserProfile.DoesNotExist:
-            contact_phone = None
-        contact_bits = [b for b in [contact_email, contact_phone] if b]
-        contact_str = " | ".join(contact_bits) if contact_bits else ""
-        msg = f"Your request was accepted by {full_name}." + (f" Contact: {contact_str}" if contact_str else "")
-        Notification.objects.create(user=req.user, request=req, message=msg)
-        return Response({'status': 'accepted'})
-
-
-class MarkCollectedView(APIView):
-    # TASK: POST /api/requests/<pk>/collected/ — mark collected and record donation
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, pk):
-        req = Request.objects.filter(pk=pk, user=request.user).first()
-        if not req:
-            return Response({'error': 'Request not found or not owned by user'}, status=404)
-        if req.status != 'accepted':
-            return Response({'error': 'Request must be accepted before collection'}, status=400)
-        req.status = 'collected'
-        req.save()
-
-        # Record donation for accepter and update their profile
-        if req.accepted_by:
-            try:
-                Donation.objects.create(
-                    user=req.accepted_by,
-                    blood_group=req.blood_group,
-                    hospital=req.hospital or req.city or 'Unknown'
-                )
-            except Exception:
-                logger.exception("Failed to create Donation record for accepted request")
-            try:
-                prof, _ = UserProfile.objects.get_or_create(user=req.accepted_by)
-                prof.last_donation = date.today()
-                # availability is now computed from last_donation only; do not set convenience flags
-                prof.save()
-            except Exception:
-                logger.exception("Failed to update UserProfile after marking collected")
-
-        # Notify accepter and remove related notifications
-        if req.accepted_by:
-            Notification.objects.create(user=req.accepted_by, request=req, message="Requester marked the request as collected")
-        Notification.objects.filter(request=req).delete()
-        return Response({'status': 'collected'})
-
-
-class MyRequestsView(generics.ListAPIView):
-    # TASK: GET /api/requests/mine/ — list requests created by the current user
-    serializer_class = RequestSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Request.objects.filter(user=self.request.user).order_by('-created_at')
-
-
-class NotificationsView(generics.ListAPIView):
-    # TASK: GET /api/notifications/ — list current user's notifications (exclude collected requests)
-    serializer_class = NotificationSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        qs = Notification.objects.filter(user=self.request.user)
-        qs = qs.exclude(request__status='collected')
-        return qs.order_by('-created_at')
+# Request and Notification endpoints removed to simplify API surface.
+# Models remain in `core.models` to preserve database compatibility.
 
 
 class BloodInventoryList(generics.ListCreateAPIView):
@@ -264,9 +146,17 @@ class AnalyticsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Aggregate total requests per blood group
-        request_counts = Request.objects.values('blood_group').annotate(count=Count('id'))
-        demand_data = {item['blood_group']: item['count'] for item in request_counts}
+        # Aggregate total requests per blood group.
+        # The Request model / endpoints were removed from the public API to simplify the surface;
+        # if the DB still contains requests, we attempt to read them dynamically to compute demand.
+        demand_data = {}
+        try:
+            from core.models import Request as _Request
+            request_counts = _Request.objects.values('blood_group').annotate(count=Count('id'))
+            demand_data = {item['blood_group']: item['count'] for item in request_counts}
+        except Exception:
+            # If Request isn't present or inaccessible, fall back to empty demand counts
+            demand_data = {}
         # Compute available donors per blood group from profiles
         cutoff = date.today() - timedelta(days=DONOR_REST_WINDOW_DAYS)
         available_qs = UserProfile.objects.filter(models.Q(last_donation__isnull=True) | models.Q(last_donation__lt=cutoff))
