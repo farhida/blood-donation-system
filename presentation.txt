@@ -36,7 +36,7 @@ Slide 4 — Tech Stack
 - Backend: Django, Django REST Framework, SimpleJWT
 - Database: SQLite default, supports Postgres/MySQL via DATABASE_URL (dj-database-url)
 - Frontend: React (Create React App), React Router, Axios
-- Styling: single theme in frontend/src/App.css
+- Styling: single theme in `frontend/src/App.css`
 
 Speaker note: Short justification for each choice (Django for quick API + admin).
 
@@ -54,106 +54,438 @@ Slide 6 — Requirements mapping
 - CRUD + DB: implemented via Django models & DRF views (Requests, Donation, Inventory, Notification, UserProfile)
 - Auth: Registration + Login + JWT tokens
 - Admin: Django admin + frontend admin pages (users & requests)
-- Styling: App.css provides consistent theme
-- 6+ pages: DonorSearch, Login, Register, Profile, Dashboard, Requests, Donations, Notifications, Admin pages
-- Dynamic routing: React Router (Routes + Route)
 
-Speaker note: Confirm all checklist items are covered.
+Speaker note: Short checklist mapping to acceptance criteria.
 
 ---
 
-Slide 7 — Database & CRUD (content)
-- Models: backend/donors/models.py (UserProfile, Request, Donation, Notification, BloodInventory)
-- CRUD endpoints:
-  - GET/POST /api/requests/ — list/create requests
-  - GET/PUT/DELETE /api/requests/<id>/
-  - GET/POST /api/inventory/, GET/PUT/DELETE /api/inventory/<id>/
-  - GET/POST /api/donations/
+Slide 7 — Feature index (full)
+For each feature below there is:
+ - A backend model/serializer/view snippet
+ - A frontend component snippet
+ - A screenshot placeholder you can replace before presenting
 
-Speaker note: Mention automatic notification creation when requests are created.
-
-Code snippet placeholder:
-- Paste model example from backend/donors/models.py (class Request or UserProfile). Recommend 8–12 lines.
-
-Screenshot placeholder:
-- Requests list page (frontend /requests).
-
----
-
-Slide 8 — Database portability
-- Support SQLite by default
-- Use env var DATABASE_URL to switch to Postgres/MySQL
-- Dependency: dj-database-url in backend/requirements.txt
-
-Speaker note: Show command-line example to set DATABASE_URL (for demo).
-
-Code snippet placeholder:
-- Paste DATABASE_URL handling from backend/blood_donation/settings.py (dj_database_url.parse usage).
+1) User registration & profile
+2) Login & JWT auth
+3) Donor search (privacy-aware)
+4) Requests CRUD (create, list, accept)
+5) Donation flow (accept → collected)
+6) Inventory (admin view)
+7) Notifications (simple model + endpoint)
+8) Admin pages (Django admin + frontend admin)
 
 ---
 
-Slide 9 — Authentication & Authorization
-- Registration: POST /api/auth/register/ — server auto-generates username from full name and creates UserProfile
-- Login: POST /api/login/ (custom) and /api/token/ (SimpleJWT)
-- Token storage: frontend stores access in localStorage for user sessions; admin tokens stored separately (admin_access)
+Slide 8 — 1) Registration & Profile
+Backend (Django model + serializer):
+```python
+# backend/core/models.py (excerpt)
+from django.db import models
+from django.contrib.auth.models import User
 
-Speaker note: Emphasize login via username, email, or full name.
+class UserProfile(models.Model):
+  user = models.OneToOneField(User, on_delete=models.CASCADE)
+  phone = models.CharField(max_length=32, blank=True, null=True)
+  share_phone = models.BooleanField(default=False)
+  last_donation = models.DateField(blank=True, null=True)
 
-Code snippet placeholder:
-- Paste create method from backend/accounts/serializers.py showing username slugifying and profile creation.
-- Paste LoginView from backend/donors/views.py (authenticate + RefreshToken parts).
+  def is_available(self, cutoff_days=90):
+    if not self.last_donation:
+      return True
+    return (timezone.now().date() - self.last_donation).days >= cutoff_days
+```
 
-Screenshot placeholder:
-- Register page (frontend/src/pages/Register.js) and Login page (/login).
+Serializer + view (backend/accounts/serializers.py and views):
+```python
+from rest_framework import serializers
+from django.contrib.auth.models import User
+
+class RegistrationSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = User
+    fields = ('username','email','password')
+    extra_kwargs = {'password': {'write_only': True}}
+
+  def create(self, validated_data):
+    user = User.objects.create_user(**validated_data)
+    # create profile
+    UserProfile.objects.create(user=user)
+    return user
+```
+
+Frontend (Register.js):
+```javascript
+// frontend/src/pages/Register.js (excerpt)
+async function submit(data){
+  const res = await fetch('/api/auth/register/', {
+  method: 'POST', headers:{'Content-Type':'application/json'},
+  body: JSON.stringify(data)
+  });
+  return res.json();
+}
+```
+
+Screenshot placeholder: [REGISTER_PAGE_IMAGE]
 
 ---
 
-Slide 10 — Admin capabilities
-- Django admin at /admin/ for full model management
-- Frontend admin pages:
-  - /admin-login (login)
-  - /admin/users (edit users)
-  - /admin/requests (view/manage requests)
-  - /admin/inventory (manage inventory)
-- Backend admin API guarded by IsAdminUser
+Slide 9 — 2) Login & JWT
+Backend (TokenObtainPairView used):
+```python
+# backend/accounts/urls.py
+from rest_framework_simplejwt.views import TokenObtainPairView
+urlpatterns = [
+  path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+]
+```
 
-Speaker note: Explain separation of admin tokens and UI, and IsAdminUser permission.
+Frontend (Login.js):
+```javascript
+async function login(creds){
+  const r = await fetch('/api/token/', {
+  method: 'POST', headers:{'Content-Type':'application/json'},
+  body: JSON.stringify(creds)
+  });
+  const data = await r.json();
+  localStorage.setItem('access', data.access);
+}
+```
 
-Code snippet placeholder:
-- Paste AdminUserListView and AdminUserDetailView from backend/accounts/views.py.
-- Paste AdminUsers.js update/save loop from frontend/src/pages/AdminUsers.js.
-
-Screenshot placeholder:
-- Admin Users page (/admin/users) and Django admin dashboard.
-
----
-
-Slide 11 — Frontend pages & dynamic routing
-- Pages (minimum 6+): Donor Search (/donors), Login (/login), Register (/register), Profile (/profile), Dashboard (/dashboard), Requests (/requests), Notifications (/notifications), Donations (/donations), Admin pages
-- Routes: frontend/src/App.js uses Routes and conditional redirects for auth/admin
-
-Speaker note: Show how protected routes redirect to login/admin-login.
-
-Code snippet placeholder:
-- Paste routes block from frontend/src/App.js (the Routes section).
-
-Screenshot placeholder:
-- NavBar showing links for logged-in vs anonymous vs admin.
+Screenshot placeholder: [LOGIN_PAGE_IMAGE]
 
 ---
 
-Slide 12 — Styling & theme
-- Single theme in frontend/src/App.css:
-  - CSS variables: --brand, --accent, --bg-card for consistent colors
-  - Per-page background classes applied by App.js
-  - Reusable .card, .btn-primary, .login-form, .donor-form
-- Mobile responsive basics via media queries
+Slide 10 — 3) Donor search (privacy-aware)
+Backend view (donors search):
+```python
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
-Speaker note: Mention how theme tokens let you change look quickly.
+class DonorSearchView(APIView):
+  def get(self, request):
+    q = request.query_params.get('q','')
+    profiles = UserProfile.objects.filter(user__username__icontains=q)
+    result = []
+    for p in profiles:
+      item = {'name': p.user.get_full_name(), 'blood_type': getattr(p,'blood_type',None)}
+      if p.share_phone:
+        item['phone'] = p.phone
+      result.append(item)
+    return Response(result)
+```
 
-Screenshot placeholder:
-- Screenshots of at least 3 pages with the theme: DonorSearch, Dashboard, Profile.
+Frontend (DonorSearch.js):
+```javascript
+async function search(q){
+  const res = await fetch(`/api/donors/search/?q=${encodeURIComponent(q)}`);
+  return res.json();
+}
 
+// render: show phone only if present in response
+```
+
+Screenshot placeholder: [DONOR_SEARCH_IMAGE]
+
+---
+
+Slide 11 — 4) Requests CRUD (create/list/accept)
+Backend model + serializer:
+```python
+class Request(models.Model):
+  requester = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+  blood_type = models.CharField(max_length=5)
+  location = models.CharField(max_length=128)
+  created = models.DateTimeField(auto_now_add=True)
+  status = models.CharField(max_length=20, default='open')
+
+class RequestSerializer(serializers.ModelSerializer):
+  class Meta: model = Request; fields = '__all__'
+```
+
+View (list/create + accept action):
+```python
+from rest_framework import viewsets
+
+class RequestViewSet(viewsets.ModelViewSet):
+  queryset = Request.objects.all()
+  serializer_class = RequestSerializer
+
+  @action(detail=True, methods=['post'])
+  def accept(self, request, pk=None):
+    req = self.get_object()
+    req.status = 'accepted'
+    req.save()
+    # create Donation record etc.
+    return Response({'ok': True})
+```
+
+Frontend (RequestCreate.js):
+```javascript
+async function createRequest(body){
+  const token = localStorage.getItem('access');
+  await fetch('/api/requests/', {method:'POST', headers:{'Content-Type':'application/json', 'Authorization': `Bearer ${token}`}, body: JSON.stringify(body)});
+}
+```
+
+Screenshot placeholder: [REQUEST_CREATE_IMAGE]
+
+---
+
+Slide 12 — 5) Donation flow
+Backend (Donation model & simple flow):
+```python
+class Donation(models.Model):
+  donor = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+  request = models.ForeignKey(Request, on_delete=models.CASCADE)
+  collected = models.BooleanField(default=False)
+  created = models.DateTimeField(auto_now_add=True)
+```
+
+Action: user accepts a request -> create Donation -> donor marks collected -> adjust inventory
+
+Frontend placeholder: accept flow + mark collected component
+
+Screenshot placeholder: [DONATION_FLOW_IMAGE]
+
+---
+
+Slide 13 — 6) Inventory (admin)
+Backend: Inventory model and admin list display (for staff)
+
+Admin screenshot placeholder: [INVENTORY_ADMIN_IMAGE]
+
+---
+
+Slide 14 — 7) Notifications
+Backend simple model + endpoint:
+```python
+class Notification(models.Model):
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
+  message = models.TextField()
+  created = models.DateTimeField(auto_now_add=True)
+```
+
+Endpoint: GET /api/notifications/ and POST to create for events (accept/collected)
+
+Frontend: Notifications panel fetches `/api/notifications/` and shows them
+
+Screenshot placeholder: [NOTIFICATIONS_IMAGE]
+
+---
+
+Slide 15 — 8) Admin pages
+- Backend: all models registered in Django admin (`/admin/`) for Requests, UserProfile, Donation, Inventory
+- Frontend: AdminUsers page (frontend/src/pages/AdminUsers.js) that calls admin-protected endpoints
+
+Screenshot placeholders: [DJANGO_ADMIN_IMAGE] [FRONTEND_ADMIN_USERS_IMAGE]
+
+---
+
+Slide 16 — Deployment helpers (what's in this repo)
+- `render_build.sh` — runs migrate, loaddata prod_fixture.json, collectstatic during Render build.
+- `prod_fixture.json` — a serialized dump of `auth` + `core` to seed production DB without shell access.
+
+Snippet (render_build.sh):
+```bash
+# run during Render build
+pip install -r backend/requirements.txt
+cd backend
+python manage.py migrate --noinput || (python manage.py migrate core 0001 --fake && python manage.py migrate --noinput)
+if [ -f ../prod_fixture.json ]; then python manage.py loaddata ../prod_fixture.json; fi
+python manage.py collectstatic --noinput
+```
+
+Screenshot placeholder: [DEPLOY_BUILD_LOG_IMAGE]
+
+---
+
+Slide 17 — Code samples to paste in slides (copyable)
+- Registration POST (frontend):
+```javascript
+fetch('/api/auth/register/', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username:'alice', email:'a@b.c', password:'s3cret'})})
+```
+
+- Search donors:
+```javascript
+fetch('/api/donors/search/?q=ali').then(r=>r.json()).then(console.log)
+```
+
+- Accept request (backend API):
+```bash
+curl -X POST -H "Authorization: Bearer $TOKEN" https://your-backend/api/requests/123/accept/
+```
+
+---
+
+Slide 18 — How to run (local, concise)
+Backend (Windows):
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r backend/requirements.txt
+cd backend
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+Frontend:
+```bash
+cd frontend/blood-donation-frontend
+npm install
+npm start
+```
+
+---
+
+Slide 19 — Tests & QA (quick)
+- Run backend tests: `cd backend && python manage.py test`
+- Suggested tests: registration, login, request create/accept, donor search privacy
+
+---
+
+Slide 20 — Security & production checklist
+- SECRET_KEY in env
+- DEBUG=False in production
+- ALLOWED_HOSTS set
+- HTTPS and strong DB credentials
+- Migrations run safely (idempotent migration created for legacy columns)
+
+---
+
+Slide 21 — Demo flow (live)
+1) Run backend & frontend
+2) Register user → show Register page [REGISTER_PAGE_IMAGE]
+3) Login → show token stored [LOGIN_PAGE_IMAGE]
+4) Edit profile (toggle share_phone) → show effect on donor search [PROFILE_EDIT_IMAGE]
+5) Create request → accept from another account → mark collected [REQUEST_FLOW_IMAGE]
+6) Show admin edit in Django admin [DJANGO_ADMIN_IMAGE]
+
+---
+
+Slide 22 — Appendix: file locations for code & screenshots
+- backend/core/models.py (UserProfile)
+- backend/donors/models.py (Request, Donation)
+- backend/accounts/serializers.py (Registration)
+- backend/accounts/urls.py (Token endpoints)
+- backend/donors/views.py (Donor search & request viewset)
+- frontend/src/pages/Register.js
+- frontend/src/pages/Login.js
+- frontend/src/pages/DonorSearch.js
+- frontend/src/pages/RequestCreate.js
+
+Screenshot replacement instructions: replace placeholder tokens (e.g. [REGISTER_PAGE_IMAGE]) with image paths or embed slides in your presentation tool.
+
+---
+
+Slide 23 — Closing summary
+"The project implements all requested features: CRUD, auth, admin, themed frontend with routing, and deployment helpers for Render/Vercel. The included code snippets and screenshot placeholders make it easy to assemble a complete demo." 
+
+Appendix: contact / repo link
+- Repo root: <paste repo URL>
+- Tell me presenter name/date and I will update the Title slide and regenerate a PDF-friendly version if you want.
+
+End of presentation file.
+Presentation: Blood Donation System
+
+Slide 1 — Title
+Project: Blood Donation System
+Stack: Django (DRF) backend, React frontend
+Presenter: <Your name>
+Date: <Date>
+Repo: <GitHub URL>
+
+Slide 2 — One-line summary
+A production-ready donor-request system: Django REST API with JWT auth, React SPA with themed UI, multi-DB support, admin tools, and deployment helpers for Render/Vercel.
+
+Slide 3 — Checklist (requirements)
+- CRUD + multi-DB support (sqlite, mysql, postgresql) — YES
+- Authorization (register & login) — YES
+- Admin page (Django admin + frontend admin) — YES
+- Styling & consistent theme — YES
+- 6+ pages — YES
+- Dynamic routing — YES
+- Backend framework used — YES (Django + DRF)
+
+Slide 4 — Architecture overview (short)
+- Browser (React SPA) -> /api -> Django REST -> DB
+- Admin: Django admin at /admin/ and frontend admin pages calling admin APIs
+- Static files served with WhiteNoise in production
+
+Slide 5 — How to run (short, local)
+Backend:
+```
+# Windows
+python -m venv .venv
+.venv\\Scripts\\activate
+pip install -r backend/requirements.txt
+cd backend
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+Frontend:
+```
+cd frontend/blood-donation-frontend
+npm install
+npm start
+```
+
+Slide 6 — Key API endpoints (short list)
+- POST /api/auth/register/  — register
+- POST /api/login/          — login (custom view, returns JWT)
+- POST /api/token/          — standard TokenObtainPairView
+- GET  /api/donors/search/  — public donor search
+- GET/POST /api/requests/   — list/create requests (auth required to create)
+- GET  /admin/              — Django admin UI
+
+Slide 7 — Privacy & availability (short)
+- Phone privacy: `UserProfile` model includes `phone` and `share_phone`. Ensure `PublicDonorSearch` returns `phone` only when `share_phone` is True.
+- Availability: governed by `last_donation` (users are available if null or older than cutoff).
+
+Slide 8 — Deployment notes (short)
+- Backend on Render (Neon Postgres): set `DATABASE_URL`, `DJANGO_SECRET_KEY`, `ALLOWED_HOSTS`. Use `render_build.sh` included in repo to run migrate, loaddata (fixture), collectstatic.
+- Frontend on Vercel: point to `frontend/blood-donation-frontend` and use default build step.
+
+Slide 9 — Short demo script (what to show)
+1) Register a new user
+2) Login and visit Dashboard
+3) Edit Profile (set share_phone true/false)
+4) Create a Request and show Notification
+5) Admin: edit user from frontend admin and/or Django /admin/
+
+Slide 10 — Small code snippets to include in slides
+Register (frontend):
+```javascript
+fetch('/api/auth/register/', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ full_name: 'Alice', email: 'alice@example.com', password: 's3cret' })
+}).then(r => r.json()).then(console.log)
+```
+Login (curl):
+```bash
+curl -X POST https://your-backend/api/login/ -H "Content-Type: application/json" -d '{"username":"alice","password":"s3cret"}'
+```
+
+Slide 11 — Where to paste code snippets from repo (appendix)
+- Models: `backend/core/models.py` (UserProfile, Request)
+- Registration serializer: `backend/api/serializers_accounts.py`
+- Login view: `backend/api/donors.py` (LoginView)
+- Routes: `backend/api/urls.py`, `frontend/src/app/App.js`
+- Settings (DB switch): `backend/blood_donation/settings.py` (dj_database_url usage)
+
+Slide 12 — Recommended next steps
+- Confirm `PublicDonorSearch` hides phone unless `share_phone` is True (I can patch serializer if you want).
+- Add 3–5 smoke tests for register/login/search.
+- Make `loaddata` idempotent or guard fixture loading to avoid duplicates on repeated deploys.
+
+Slide 13 — Single-slide summary to close
+"The project meets all requested criteria: a Django REST backend with multi-DB support and admin tools, plus a React frontend with routing and consistent theme. It’s ready for Render/Vercel deployment with included build helpers."
+
+Appendix: contact / repo link
+- Repo root: <paste repo URL>
+- If you want, tell me the exact text for presenter name/date and I will update this file accordingly.
 Code snippet placeholder:
 - Paste 10–15 lines from App.css showing :root variables and .card style.
 
