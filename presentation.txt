@@ -1,9 +1,4 @@
-Slide 1 — Title
-Title: Blood Donation System
-Subtitle: Django REST backend + React frontend
-Presenter: <Your name>
-Date: <Date>
-Presentation: Blood Donation System
+
 
 1) Title
   - Blood Donation System

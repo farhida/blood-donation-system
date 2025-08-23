@@ -30,12 +30,15 @@ a{color:var(--primary)}
 @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
 
 /* Heartbeat animation for call-to-action icons */
-.heart-beat{display:inline-block;transform-origin:center center;animation:heartbeat 1.2s ease-in-out infinite}
+/* Slightly slower and larger heart globally */
+.heart-beat{display:inline-block;transform-origin:center center;animation:heartbeat 1.6s ease-in-out infinite}
+.heart-beat svg{width:20px;height:20px;display:inline-block}
 @keyframes heartbeat{0%{transform:scale(1)}10%{transform:scale(1.12)}30%{transform:scale(1)}40%{transform:scale(1.08)}100%{transform:scale(1)}}
 
 /* Decorative blood drop animation (small falling drop used as background/pseudo-element) */
 .blood-drop{position:relative;overflow:visible}
-.blood-drop::after{content:"";position:absolute;left:12px;top:-6px;width:12px;height:12px;background:radial-gradient(circle at 35% 35%,#ff8a80,#c62828);border-radius:50%;box-shadow:0 8px 18px rgba(198,40,40,0.18);transform-origin:center;animation:drop 1.6s linear infinite}
+/* slightly smaller drops globally to match larger hearts */
+.blood-drop::after{content:"";position:absolute;left:12px;top:-6px;width:8px;height:8px;background:radial-gradient(circle at 35% 35%,#ff8a80,#c62828);border-radius:50%;box-shadow:0 6px 12px rgba(198,40,40,0.14);transform-origin:center;animation:drop 1.6s linear infinite}
 @keyframes drop{0%{transform:translateY(-6px) scale(.7);opacity:0}20%{opacity:1}60%{transform:translateY(26px) scale(.9);opacity:0.9}100%{transform:translateY(44px) scale(.2);opacity:0}}
 
 /* Soft utility text */

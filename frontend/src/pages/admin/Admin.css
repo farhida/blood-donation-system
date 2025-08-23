@@ -18,6 +18,16 @@
 .hero-drops{position:relative}
 .hero-drops::before{content:"";position:absolute;right:6px;top:-10px;width:18px;height:18px;background:radial-gradient(circle at 35% 35%,#ff8a80,#c62828);border-radius:50%;box-shadow:0 8px 18px rgba(198,40,40,0.12);animation:drop 1.8s linear infinite}
 
+/* Animated blood drops used in AdminDecor and DonorSearch */
+.blood-drop{animation:drop 1.6s linear infinite;transform-origin:center;}
+.blood-drop ellipse{transform-origin:center}
+@keyframes drop{0%{transform:translateY(-8px) scale(.8);opacity:0}20%{opacity:1}60%{transform:translateY(34px) scale(.9);opacity:0.9}100%{transform:translateY(70px) scale(.2);opacity:0}}
+
+.admin-decor{pointer-events:none;z-index:2}
+
+/* When used on the public landing page, nudge decor to the left for better composition */
+.admin-decor--landing{right:auto;left:8px;top:12px;width:140px;height:90px}
+
 /* small fadeIn keyframe re-used */
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 

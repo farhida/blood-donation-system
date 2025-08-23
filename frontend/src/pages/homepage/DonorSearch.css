@@ -1,4 +1,4 @@
-.search-page{padding:22px;font-family:Inter, sans-serif}
+.search-page{padding:22px;font-family:Inter, sans-serif;position:relative}
 .search-card{padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff,#fff7f7);box-shadow:0 8px 18px rgba(220,20,60,0.04)}
 .result{border-radius:10px;padding:14px;border:1px solid rgba(0,0,0,0.06);margin-bottom:12px;transition:transform .18s ease,box-shadow .18s ease}
 .result:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(11,11,13,0.06)}
@@ -8,4 +8,27 @@
 .donor-list{list-style:none;padding:0;margin-top:12px}
 .donor-list li{padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.04);margin-bottom:8px;background:linear-gradient(180deg,#fff,#fff)}
 .accent-note{background:#fff8e1;border:1px solid #ffecb3;padding:10px 12px;border-radius:8px;margin-bottom:12px}
-.decor-heart{display:inline-block;margin-left:8px}
+.decor-heart{display:inline-block;margin-left:8px;position:relative}
+
+/* Slow down heartbeat slightly when used here so drops sync visually */
+.decor-heart.heart-beat{animation-duration:1.6s}
+
+/* Drops that fall from the heart and land on the select boxes */
+.heart-drops{display:inline-block;position:absolute;left:2px;top:18px;width:24px;height:80px;pointer-events:none}
+.heart-drop{position:absolute;top:0;width:7px;height:7px;border-radius:50%;background:#c62828;opacity:0;transform:translateY(0) scale(0.9);animation:heart-drop 1.6s linear infinite}
+.heart-drop:nth-child(1){left:4px}
+.heart-drop:nth-child(2){left:0px;background:#ef5350}
+.heart-drop:nth-child(3){left:8px;background:#d32f2f}
+
+@keyframes heart-drop{
+	0%{opacity:0;transform:translateY(0) scale(0.75)}
+	10%{opacity:1}
+	65%{opacity:0.9;transform:translateY(42px) scale(0.9)}
+	100%{opacity:0;transform:translateY(86px) scale(0.22)}
+}
+
+/* Improved select styles */
+.input{appearance:none;-webkit-appearance:none;padding:10px 12px;border-radius:10px;border:1px solid rgba(0,0,0,0.08);background:#fff;box-shadow:0 6px 18px rgba(11,11,13,0.04);margin-right:8px}
+.input--blood{background:linear-gradient(180deg,#fff,#fff7f7);border:1px solid rgba(198,40,40,0.12);box-shadow:0 10px 30px rgba(198,40,40,0.06)}
+.input--district{min-width:180px}
+.input:focus{outline:none;box-shadow:0 12px 30px rgba(198,40,40,0.08);border-color:rgba(198,40,40,0.18)}

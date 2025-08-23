@@ -71,6 +71,8 @@ function AdminInventory() {
           cutoff.setDate(cutoff.getDate() - 90);
           const visible = (inventory || []).filter(i => {
             if (!i) return false;
+            // Exclude items explicitly marked as selected (field may be 'selected' or 'is_selected')
+            if (i.selected === true || i.is_selected === true) return false;
             if (!i.last_donation) return true;
             const d = new Date(i.last_donation);
             return d < cutoff;

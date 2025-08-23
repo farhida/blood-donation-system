@@ -17,7 +17,9 @@ function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
     return (
       <nav className="navbar">
         <ul>
-          <li><Link to="/">Donor Search</Link></li>
+          <li><Link to="/" className="nav-donor-btn">Donor Search</Link></li>
+          <li><Link to="/admin/users" className="nav-admin-link">Manage Users</Link></li>
+          <li><Link to="/admin/inventory" className="nav-admin-link">Inventory</Link></li>
           <li style={{ marginLeft: 'auto' }}>
             {/* When admin logs out, clear admin session and redirect to homepage for demonstration. */}
             <button className="logout-btn" onClick={() => { handleAdminLogout(); navigate('/'); }}>Admin Logout</button>
@@ -31,8 +33,8 @@ function NavBar({ token, handleLogout, isAdmin, handleAdminLogout }) {
   return (
     <nav className="navbar">
       <ul>
-        {/* Always show homepage link */}
-        <li><Link to="/">Donor Search</Link></li>
+  {/* Always show homepage link */}
+  <li><Link to="/" className="nav-donor-btn">Donor Search</Link></li>
         {token ? (
           // If a normal user is logged in, show Donor Search, Dashboard and a Logout button that clears the user session and returns to the homepage.
           <>

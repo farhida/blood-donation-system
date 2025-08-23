@@ -34,17 +34,26 @@ function DonorSearch() {
       {/* Show this prompt only when the user is NOT logged in (isLoggedIn is false). */}
       {!isLoggedIn && (
         <div className="accent-note">
-          To make a profile, please
+          Give blood, give life — your one drop can be someone’s lifeline.
           <span style={{ marginLeft: 8 }}>
             <Link to="/register" className="btn btn-primary">Register</Link>
           </span>
+            &nbsp;now to be a hero
         </div>
       )}
-      <h2>Search for Donors <span className="decor-heart heart-beat" title="Find donors faster">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="#c62828" xmlns="http://www.w3.org/2000/svg"><path d="M12 21s-7.5-4.35-9.5-7.5C-0.5 8.5 4 4 7 6.5 9 8 12 12 12 12s3-4 5-5.5C20 4 24.5 8.5 21.5 13.5 19.5 16.65 12 21 12 21z"/></svg>
-      </span></h2>
+      <h2 className="search-title">
+        Search for Donors
+        <span className="decor-heart heart-beat" title="Find donors faster">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#c62828" xmlns="http://www.w3.org/2000/svg"><path d="M12 21s-7.5-4.35-9.5-7.5C-0.5 8.5 4 4 7 6.5 9 8 12 12 12 12s3-4 5-5.5C20 4 24.5 8.5 21.5 13.5 19.5 16.65 12 21 12 21z"/></svg>
+          <span className="heart-drops" aria-hidden>
+            <span className="heart-drop" style={{animationDelay:'0s'}} />
+            <span className="heart-drop" style={{animationDelay:'0.6s'}} />
+            <span className="heart-drop" style={{animationDelay:'1.2s'}} />
+          </span>
+        </span>
+      </h2>
       <form onSubmit={handleSearch}>
-        <select className="input" value={bloodGroup} onChange={e => setBloodGroup(e.target.value)} required>
+        <select className="input input--blood" value={bloodGroup} onChange={e => setBloodGroup(e.target.value)} required>
           <option value="">Select Blood Group</option>
           <option value="A+">A+</option>
           <option value="A-">A-</option>
@@ -54,8 +63,8 @@ function DonorSearch() {
           <option value="O-">O-</option>
           <option value="AB+">AB+</option>
           <option value="AB-">AB-</option>
-        </select>
-        <select value={district} onChange={e => setDistrict(e.target.value)}>
+  </select>
+  <select className="input input--district" value={district} onChange={e => setDistrict(e.target.value)}>
           <option value="">All Districts</option>
           {bangladeshDistricts.map(d => (
             <option key={d} value={d}>{d}</option>
